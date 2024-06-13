@@ -95,7 +95,7 @@ export async function fetchFilteredSongs(
     return songs;
   } catch (error) {
     console.error('Database Error:', error);
-    throw new Error('Failed to fetch song');
+    throw new Error('Failed to fetch filtered songs');
   }
 }
 
@@ -144,7 +144,7 @@ export async function fetchSongById(id: number): Promise<Song | null> {
 
   } catch (error) {
     console.error('Database Error:', error);
-    throw new Error('Failed to fetch song.');
+    throw new Error(`Failed to fetch song with ID: ${id}`);
   }
 }
 
