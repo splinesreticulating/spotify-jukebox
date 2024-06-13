@@ -91,5 +91,5 @@ export type NowPlayingData = {
   artist: string
   title: string
   songID: number
-  uniquenessScore?: number
+  poolDepth?: number
 }
