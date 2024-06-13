@@ -5,7 +5,8 @@ import { NowPlayingData, NowPlayingSong } from '@/app/lib/definitions'
 import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { HeartIcon } from '@heroicons/react/24/outline';
+import { HeartIcon as FullHeart } from '@heroicons/react/24/solid';
+import { HeartIcon as EmptyHeart } from '@heroicons/react/24/outline';
 
 interface SongLinkProps {
   label: string
@@ -22,11 +23,13 @@ const SongLink: React.FC<SongLinkProps> = ({ label, song }) => {
 }
 
 const Heart: React.FC<{ enabled: boolean }> = ({ enabled }) => {
-  console.log({ enabled })
-
   return (
-    <HeartIcon></HeartIcon>
-  )
+    <div className="flex items-center justify-center h-16 w-16 mx-auto">
+      {enabled ?
+        <FullHeart className={`h-8 w-8 text-red-500`} /> :
+        <EmptyHeart className={`h-8 w-8 text-red-500`} />
+      }
+    </div>)
 }
 
 export default function Page() {
@@ -46,7 +49,8 @@ export default function Page() {
             poolDepth: await calculateUniqueness(currentSong.songID),
             ...currentSong
           },
-          lastSong })
+          lastSong
+        })
     } catch (err) {
       console.error('error')
     }
