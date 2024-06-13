@@ -75,21 +75,27 @@ export type ArtistField = {
 };
 
 export type SongForm = Pick<Song,
-  "id" |
-  "title" |
-  "artist" |
-  "bpm" |
-  "genre" |
-  "info" |
-  "hours_off" |
-  "albumyear" |
-  "date_added" |
-  "grouping"
+  'id' |
+  'title' |
+  'artist' |
+  'bpm' |
+  'genre' |
+  'info' |
+  'hours_off' |
+  'albumyear' |
+  'date_added' |
+  'grouping'
 >
 
-export type NowPlayingData = {
-  artist: string
-  title: string
-  songID: number
+export type NowPlayingSong = {
+  songID: Song['id']
+  artist: Song['artist']
+  title: Song['title']
   poolDepth?: number
+}
+
+export type NowPlayingData = {
+  currentSong: NowPlayingSong
+  lastSong: NowPlayingSong 
+  friends: boolean
 }

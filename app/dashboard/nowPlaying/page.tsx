@@ -1,14 +1,15 @@
 "use client"
 
 import { fetchNowPlaying, calculateUniqueness } from '@/app/lib/data'
-import { NowPlayingData } from '@/app/lib/definitions'
+import { NowPlayingData, NowPlayingSong } from '@/app/lib/definitions'
 import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { HeartIcon } from '@heroicons/react/24/outline';
 
 interface SongLinkProps {
-  label: string;
-  song: NowPlayingData;
+  label: string
+  song: NowPlayingSong
 }
 
 const SongLink: React.FC<SongLinkProps> = ({ label, song }) => {
@@ -20,21 +21,32 @@ const SongLink: React.FC<SongLinkProps> = ({ label, song }) => {
   )
 }
 
+const Heart: React.FC<{ enabled: boolean }> = ({ enabled }) => {
+  console.log({ enabled })
+
+  return (
+    <HeartIcon></HeartIcon>
+  )
+}
+
 export default function Page() {
-  const [data, setData] = useState<NowPlayingData[] | null>(null)
+  const [data, setData] = useState<NowPlayingData | null>(null)
 
   const fetchData = async () => {
     try {
       const nowPlaying = await fetchNowPlaying()
 
-      const currentSong = nowPlaying[0]
-      const lastSong = nowPlaying[1]
+      const currentSong: NowPlayingSong = nowPlaying[0]
+      const lastSong: NowPlayingSong = nowPlaying[1]
 
       if (nowPlaying)
-        setData([{
-          poolDepth: await calculateUniqueness(currentSong.songID), ...currentSong
-        },
-        { ...lastSong }])
+        setData({
+          friends: false,
+          currentSong: {
+            poolDepth: await calculateUniqueness(currentSong.songID),
+            ...currentSong
+          },
+          lastSong })
     } catch (err) {
       console.error('error')
     }
@@ -63,10 +75,11 @@ export default function Page() {
             />
           </div>
           <br />
-          <SongLink label='last' song={data[1]}></SongLink>
-          <SongLink label='now' song={data[0]}></SongLink>
+          <SongLink label='last' song={data.lastSong}></SongLink>
+          <Heart enabled={data.friends}></Heart>
+          <SongLink label='now' song={data.currentSong}></SongLink>
           <br />
-          <pre>{`Pool depth: ${data[0].poolDepth}`}</pre>
+          <pre>{`Pool depth: ${data.currentSong.poolDepth}`}</pre>
         </div>
       )}
     </div>
