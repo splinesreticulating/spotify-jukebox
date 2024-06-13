@@ -177,11 +177,10 @@ export async function fetchFilteredArtists(query: string) {
 }
 
 export const fetchNowPlaying = async () => {
-  console.log('checking what\'s playing...')
-
-  return await db.historylist.findFirst({
+  return await db.historylist.findMany({
     select: { title: true, artist: true, songID: true },
-    orderBy: { date_played: 'desc' }
+    orderBy: { date_played: 'desc' },
+    take: 2
   })
 }
 
