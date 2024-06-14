@@ -3,28 +3,28 @@
 // For simplicity of teaching, we're manually defining these types.
 // However, these types are generated automatically if you're using an ORM such as Prisma.
 export type User = {
-  id: string;
-  name: string;
-  email: string;
-  password: string;
-};
+  id: string
+  name: string
+  email: string
+  password: string
+}
 
 export type Artist = {
-  id: string;
-  name: string;
-  email: string;
-  image_url: string;
-};
+  id: string
+  name: string
+  email: string
+  image_url: string
+}
 
 export type Revenue = {
-  month: string;
-  revenue: number;
-};
+  month: string
+  revenue: number
+}
 
 // The database returns a number for amount, but we later format it to a string with the formatCurrency function
 export type LatestSongRaw = Omit<LatestSong, 'amount'> & {
-  amount: number;
-};
+  amount: number
+}
 
 export type Song = {
   id: number
@@ -44,35 +44,35 @@ export type Song = {
 export type LatestSong = Pick<Song, "title" | "id" | "artist">
 
 export type SongsTable = {
-  id: string;
-  artist_id: string;
-  name: string;
-  email: string;
-  image_url: string;
-  date: string;
-  amount: number;
-  status: 'pending' | 'paid';
-};
+  id: string
+  artist_id: string
+  name: string
+  email: string
+  image_url: string
+  date: string
+  amount: number
+  status: 'pending' | 'paid'
+}
 
 export type ArtistsTableType = {
-  id: string;
-  name: string;
-  email: string;
-  image_url: string;
-  total_songs: number;
-  total_pending: number;
-  total_paid: number;
-};
+  id: string
+  name: string
+  email: string
+  image_url: string
+  total_songs: number
+  total_pending: number
+  total_paid: number
+}
 
 export type FormattedArtistsTable = {
-  id: number;
-  name: string;
-};
+  id: number
+  name: string
+}
 
 export type ArtistField = {
-  id: string;
-  name: string;
-};
+  id: string
+  name: string
+}
 
 export type SongForm = Pick<Song,
   'id' |

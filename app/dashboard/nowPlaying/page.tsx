@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import { fetchNowPlaying, calculateUniqueness } from '@/app/lib/data'
 import { NowPlayingData, NowPlayingSong } from '@/app/lib/definitions'

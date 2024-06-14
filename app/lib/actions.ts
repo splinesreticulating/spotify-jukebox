@@ -1,13 +1,13 @@
-'use server';
+'use server'
 
-import { z } from 'zod';
-import { sql } from '@vercel/postgres';
-import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
-import { signIn } from '@/auth';
-import { AuthError } from 'next-auth';
-import { db } from './db';
-import { NowPlayingData } from './definitions';
+import { z } from 'zod'
+import { sql } from '@vercel/postgres'
+import { revalidatePath } from 'next/cache'
+import { redirect } from 'next/navigation'
+import { signIn } from '@/auth'
+import { AuthError } from 'next-auth'
+import { db } from './db'
+import { NowPlayingData } from './definitions'
 
 const FormSchema = z.object({
   id: z.number(),
@@ -22,20 +22,20 @@ const FormSchema = z.object({
   date_added: z.date().optional(),
   albumyear: z.string(),
   hours_off: z.number().optional(),
-});
+})
 
-// const CreateSong = FormSchema.omit({ id: true, date_added: true });
-const UpdateSong = FormSchema.omit({ date_added: true, id: true });
+// const CreateSong = FormSchema.omit({ id: true, date_added: true })
+const UpdateSong = FormSchema.omit({ date_added: true, id: true })
 
 // This is temporary
 export type State = {
   errors?: {
-    artist?: string[];
-    title?: string[];
+    artist?: string[]
+    title?: string[]
     // do we really need these? Or should we add more?
-  };
-  message?: string | null;
-};
+  }
+  message?: string | null
+}
 
 export async function updateSong(
   id: string,
@@ -51,7 +51,7 @@ export async function updateSong(
     instrumentalness: Number(formData.get('instrumentalness')?.toString()),
     albumyear: formData.get('albumyear')?.toString(),
     hours_off: Number(formData.get('hours_off')?.toString())
-  };
+  }
 
   const {
     artist,
@@ -61,7 +61,7 @@ export async function updateSong(
     instrumentalness,
     albumyear,
     hours_off
-  } = fields;
+  } = fields
 
   try {
     await db.songlist.update({
@@ -78,11 +78,11 @@ export async function updateSong(
     })
 
   } catch (error) {
-    return { message: 'Database Error: Failed to Update Song.' };
+    return { message: 'Database Error: Failed to Update Song.' }
   }
 
-  revalidatePath('/dashboard/songs');
-  redirect('/dashboard/songs');
+  revalidatePath('/dashboard/songs')
+  redirect('/dashboard/songs')
 }
 
 export async function befriend(nowPlayingData: NowPlayingData) {
@@ -95,7 +95,7 @@ export async function befriend(nowPlayingData: NowPlayingData) {
 
   } catch (error) {
     console.error(error)
-    return { message: 'Database Error: Failed to create friendship', error };
+    return { message: 'Database Error: Failed to create friendship', error }
   }
 }
 
@@ -112,7 +112,7 @@ export async function defriend(nowPlayingData: NowPlayingData) {
     })
   } catch (error) {
     console.error(error)
-    return { message: 'Database Error: Failed to remove friendship', error };
+    return { message: 'Database Error: Failed to remove friendship', error }
   }
 }
 
@@ -121,16 +121,16 @@ export async function authenticate(
   formData: FormData,
 ) {
   try {
-    await signIn('credentials', formData);
+    await signIn('credentials', formData)
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
         case 'CredentialsSignin':
-          return 'Invalid credentials.';
+          return 'Invalid credentials.'
         default:
-          return 'Something went wrong.';
+          return 'Something went wrong.'
       }
     }
-    throw error;
+    throw error
   }
 }
