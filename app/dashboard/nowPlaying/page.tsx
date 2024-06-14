@@ -24,28 +24,29 @@ const SongLink: React.FC<SongLinkProps> = ({ label, song }) => {
   )
 }
 
-const Heart: React.FC<{ enabled: boolean }> = ({ enabled }) => {
+const Heart: React.FC<{ nowPlaying: NowPlayingData }> = ({ nowPlaying }) => {
   return (
     <div className="flex items-center justify-center h-16 w-16 mx-auto">
-      {enabled ?
-        <FullHeart className={`h-8 w-8 text-red-500`} /> :
-        <EmptyHeart className={`h-8 w-8 text-red-500`} />
+      { nowPlaying.friends ?
+        <Link
+          href={`#`}><FullHeart className={`h-8 w-8 text-red-500`} />
+        </Link> :
+        <Link
+          href={`#`}><EmptyHeart className={`h-8 w-8 text-red-500`} />
+        </Link>
       }
     </div>)
 }
 
 export default function Page() {
-  const [data, setData] = useState<NowPlayingData | null>(null)
+  const [nowPlayingData, setNowPlayingData] = useState<NowPlayingData | null>(null)
 
-  const fetchData = async () => {
+  const fetchNowPlayingData = async () => {
     try {
       const { currentSong, lastSong, friends } = await fetchNowPlaying()
+      const poolDepth = await calculateUniqueness(currentSong.songID)
 
-      setData({
-        currentSong: { poolDepth: await calculateUniqueness(currentSong.songID), ...currentSong },
-        lastSong,
-        friends
-      })
+      setNowPlayingData({ lastSong, currentSong: { poolDepth, ...currentSong }, friends })
     } catch (err) {
       console.error('error getting now playing info', err)
     }
@@ -53,16 +54,16 @@ export default function Page() {
 
   // fetch data and set up the interval for auto-refresh
   useEffect(() => {
-    fetchData() // Initial data fetch
+    fetchNowPlayingData() // Initial data fetch
 
-    const interval = setInterval(() => { fetchData() }, 30000)
+    const interval = setInterval(() => { fetchNowPlayingData() }, 30000)
 
     return () => clearInterval(interval)
   }, [])
 
   return (
     <div className="flex items-center justify-center">
-      {data && (
+      {nowPlayingData && (
         <div className="text-center">
           <pre><strong>Now Playing:</strong></pre>
           <div className="flex justify-center">
@@ -74,11 +75,11 @@ export default function Page() {
             />
           </div>
           <br />
-          <SongLink label='last' song={data.lastSong}></SongLink>
-          <Heart enabled={data.friends}></Heart>
-          <SongLink label='now' song={data.currentSong}></SongLink>
+          <SongLink label='last' song={nowPlayingData.lastSong}></SongLink>
+          <Heart nowPlaying={nowPlayingData}></Heart>
+          <SongLink label='now' song={nowPlayingData.currentSong}></SongLink>
           <br />
-          <pre>{`Pool depth: ${data.currentSong.poolDepth}`}</pre>
+          <pre>{`Pool depth: ${nowPlayingData.currentSong.poolDepth}`}</pre>
         </div>
       )}
     </div>
