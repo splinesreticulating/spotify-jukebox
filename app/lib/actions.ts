@@ -7,6 +7,7 @@ import { redirect } from 'next/navigation';
 import { signIn } from '@/auth';
 import { AuthError } from 'next-auth';
 import { db } from './db';
+import { NowPlayingData } from './definitions';
 
 const FormSchema = z.object({
   id: z.number(),
@@ -84,15 +85,34 @@ export async function updateSong(
   redirect('/dashboard/songs');
 }
 
-export async function deleteSong(id: string) {
-  // throw new Error('Failed to Delete Song');
+export async function befriend(nowPlayingData: NowPlayingData) {
+  const { lastSong, currentSong } = nowPlayingData
 
   try {
-    await sql`DELETE FROM songs WHERE id = ${id}`;
-    revalidatePath('/dashboard/songs');
-    return { message: 'Deleted Song' };
+    await db.tblbranches.create(
+      { data: { root: lastSong.songID, branch: currentSong.songID, level: currentSong.level } }
+    )
+
   } catch (error) {
-    return { message: 'Database Error: Failed to Delete Song.' };
+    console.error(error)
+    return { message: 'Database Error: Failed to create friendship', error };
+  }
+}
+
+export async function defriend(nowPlayingData: NowPlayingData) {
+  const { lastSong, currentSong } = nowPlayingData
+
+  try {
+    await db.tblbranches.delete({
+      where: {
+        root_branch: {
+          root: lastSong.songID, branch: currentSong.songID
+        }
+      }
+    })
+  } catch (error) {
+    console.error(error)
+    return { message: 'Database Error: Failed to remove friendship', error };
   }
 }
 

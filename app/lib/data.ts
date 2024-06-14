@@ -185,13 +185,20 @@ export const fetchNowPlaying = async (): Promise<NowPlayingData> => {
     take: 2
   })
 
-  const currentSong: NowPlayingSong = nowPlaying[0]
-  const lastSong: NowPlayingSong = nowPlaying[1]
+  const currentSong: NowPlayingSong = nowPlaying[0];
+  const lastSong: NowPlayingSong = nowPlaying[1];
 
-  const friends = await db.tblbranches.findFirst({ where: { branch: currentSong.songID, root: lastSong.songID }})
-  
-  return { currentSong, lastSong, friends: !!friends }
+  // Run queries in parallel
+  const [friends, currentSongData] = await Promise.all([
+    db.tblbranches.findFirst({ where: { branch: currentSong.songID, root: lastSong.songID } }),
+    fetchSongById(currentSong.songID)
+  ])
+
+  currentSong.level = Number(currentSongData!.genre);
+
+  return { currentSong, lastSong, friends: !!friends };
 }
+
 
 export const calculateUniqueness = async (songId: number) => {
   const song = await fetchSongById(songId)

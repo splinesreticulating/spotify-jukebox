@@ -5,8 +5,9 @@ import { NowPlayingData, NowPlayingSong } from '@/app/lib/definitions'
 import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { HeartIcon as FullHeart } from '@heroicons/react/24/solid';
-import { HeartIcon as EmptyHeart } from '@heroicons/react/24/outline';
+import { HeartIcon as FullHeart } from '@heroicons/react/24/solid'
+import { HeartIcon as EmptyHeart } from '@heroicons/react/24/outline'
+import { befriend, defriend } from '@/app/lib/actions'
 
 interface SongLinkProps {
   label: string
@@ -17,29 +18,29 @@ const SongLink: React.FC<SongLinkProps> = ({ label, song }) => {
   return (
     <pre>
       {`${label}: `}
-      <Link href={
-        `/dashboard/songs/${song.songID}/edit`}>{`${song.artist} - ${song.title}`
-        }</Link>
+      <Link href={`/dashboard/songs/${song.songID}/edit`}>
+        {`${song.artist} - ${song.title}`}
+      </Link>
     </pre>
   )
 }
 
-const Heart: React.FC<{ nowPlaying: NowPlayingData }> = ({ nowPlaying }) => {
+const Heart: React.FC<{ nowPlaying: NowPlayingData, onHeartClick: () =>
+  void, isHeartFilled: boolean }> = ({ nowPlaying, onHeartClick, isHeartFilled }) => {
   return (
-    <div className="flex items-center justify-center h-16 w-16 mx-auto">
-      { nowPlaying.friends ?
-        <Link
-          href={`#`}><FullHeart className={`h-8 w-8 text-red-500`} />
-        </Link> :
-        <Link
-          href={`#`}><EmptyHeart className={`h-8 w-8 text-red-500`} />
-        </Link>
-      }
-    </div>)
+    <div className="flex items-center justify-center h-16 w-16 mx-auto" onClick={onHeartClick}>
+      {isHeartFilled ? (
+        <FullHeart className={'h-8 w-8 text-red-500 cursor-pointer'} />
+      ) : (
+        <EmptyHeart className={'h-8 w-8 text-red-500 cursor-pointer'} />
+      )}
+    </div>
+  )
 }
 
 export default function Page() {
   const [nowPlayingData, setNowPlayingData] = useState<NowPlayingData | null>(null)
+  const [isHeartFilled, setIsHeartFilled] = useState(false)
 
   const fetchNowPlayingData = async () => {
     try {
@@ -47,12 +48,22 @@ export default function Page() {
       const poolDepth = await calculateUniqueness(currentSong.songID)
 
       setNowPlayingData({ lastSong, currentSong: { poolDepth, ...currentSong }, friends })
+      setIsHeartFilled(friends) // Set initial heart status based on `friends` property
     } catch (err) {
       console.error('error getting now playing info', err)
     }
   }
 
-  // fetch data and set up the interval for auto-refresh
+  const setFriendship = async () => {
+    if (!nowPlayingData) throw new Error
+
+    nowPlayingData.friends ? await defriend(nowPlayingData) : await befriend(nowPlayingData)
+    
+    // update the friendship and the heart
+    setNowPlayingData({ ...nowPlayingData, friends: !nowPlayingData.friends })
+    setIsHeartFilled(prevState => !prevState)
+  }
+
   useEffect(() => {
     fetchNowPlayingData() // Initial data fetch
 
@@ -76,7 +87,10 @@ export default function Page() {
           </div>
           <br />
           <SongLink label='last' song={nowPlayingData.lastSong}></SongLink>
-          <Heart nowPlaying={nowPlayingData}></Heart>
+          <Heart 
+            nowPlaying={nowPlayingData} 
+            onHeartClick={setFriendship} 
+            isHeartFilled={isHeartFilled}     />
           <SongLink label='now' song={nowPlayingData.currentSong}></SongLink>
           <br />
           <pre>{`Pool depth: ${nowPlayingData.currentSong.poolDepth}`}</pre>

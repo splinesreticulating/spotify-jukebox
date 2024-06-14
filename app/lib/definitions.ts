@@ -92,6 +92,7 @@ export type NowPlayingSong = {
   artist: Song['artist']
   title: Song['title']
   poolDepth?: number
+  level?: number
 }
 
 export type NowPlayingData = {
