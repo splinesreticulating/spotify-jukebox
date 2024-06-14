@@ -17,7 +17,9 @@ const SongLink: React.FC<SongLinkProps> = ({ label, song }) => {
   return (
     <pre>
       {`${label}: `}
-      <Link href={`/dashboard/songs/${song.songID}/edit`}>{`${song.artist} - ${song.title}`}</Link>
+      <Link href={
+        `/dashboard/songs/${song.songID}/edit`}>{`${song.artist} - ${song.title}`
+        }</Link>
     </pre>
   )
 }
@@ -37,22 +39,15 @@ export default function Page() {
 
   const fetchData = async () => {
     try {
-      const nowPlaying = await fetchNowPlaying()
+      const { currentSong, lastSong, friends } = await fetchNowPlaying()
 
-      const currentSong: NowPlayingSong = nowPlaying[0]
-      const lastSong: NowPlayingSong = nowPlaying[1]
-
-      if (nowPlaying)
-        setData({
-          friends: false,
-          currentSong: {
-            poolDepth: await calculateUniqueness(currentSong.songID),
-            ...currentSong
-          },
-          lastSong
-        })
+      setData({
+        currentSong: { poolDepth: await calculateUniqueness(currentSong.songID), ...currentSong },
+        lastSong,
+        friends
+      })
     } catch (err) {
-      console.error('error')
+      console.error('error getting now playing info', err)
     }
   }
 

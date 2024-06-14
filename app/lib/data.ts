@@ -2,6 +2,8 @@
 
 import { ITEMS_PER_PAGE, db } from './db';
 import {
+  NowPlayingData,
+  NowPlayingSong,
   Song,
 } from './definitions';
 import { unstable_noStore as noStore } from 'next/cache';
@@ -176,12 +178,19 @@ export async function fetchFilteredArtists(query: string) {
   }
 }
 
-export const fetchNowPlaying = async () => {
-  return await db.historylist.findMany({
+export const fetchNowPlaying = async (): Promise<NowPlayingData> => {
+  const nowPlaying = await db.historylist.findMany({
     select: { title: true, artist: true, songID: true },
     orderBy: { date_played: 'desc' },
     take: 2
   })
+
+  const currentSong: NowPlayingSong = nowPlaying[0]
+  const lastSong: NowPlayingSong = nowPlaying[1]
+
+  const friends = await db.tblbranches.findFirst({ where: { branch: currentSong.songID, root: lastSong.songID }})
+  
+  return { currentSong, lastSong, friends: !!friends }
 }
 
 export const calculateUniqueness = async (songId: number) => {
