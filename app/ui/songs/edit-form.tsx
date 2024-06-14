@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Button } from '@/app/ui/button';
 import { updateSong } from '@/app/lib/actions';
 import { useFormState } from 'react-dom';
+import { TimeOffDropdown } from '@/app/lib/components/TimeOffDropdown'
 
 export default function EditSongForm({
   song,
@@ -90,22 +91,7 @@ export default function EditSongForm({
         </div>
 
         {/* Time off */}
-        <div className="mb-4">
-          <label htmlFor="hours_off" className="mb-2 block text-sm font-medium">
-            Hours off
-          </label>
-          <div className="relative mt-2 rounded-md">
-            <div className="relative">
-              <input
-                id="hours_off"
-                name="hours_off"
-                type="number"
-                step="1"
-                defaultValue={song.hours_off || 'NOT SET'}
-              />
-            </div>
-          </div>
-        </div>
+          <TimeOffDropdown initialValue={song.hours_off} onChange={(value: number) => console.log(value)} />
 
         {/* tags */}
         <div className="mb-4">
