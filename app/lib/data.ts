@@ -43,7 +43,7 @@ export async function fetchCardData() {
     // You can probably combine these into a single SQL query
     // However, we are intentionally splitting them to demonstrate
     // how to initialize multiple queries in parallel with JS.
-    const songCountPromise = db.songlist.count()
+    const songCountPromise = db.songlist.count({ where: { songtype: 'S' }})
     const artistCountPromise = db.songlist.findMany({ distinct: ['artist'], select: { artist: true } })
 
     const data = await Promise.all([
