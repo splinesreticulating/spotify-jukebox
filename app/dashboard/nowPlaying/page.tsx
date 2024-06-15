@@ -1,42 +1,12 @@
 'use client'
 
-import { fetchNowPlaying, calculateUniqueness } from '@/app/lib/data'
-import { NowPlayingData, NowPlayingSong } from '@/app/lib/definitions'
 import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
-import Link from 'next/link'
-import { HeartIcon as FullHeart } from '@heroicons/react/24/solid'
-import { HeartIcon as EmptyHeart } from '@heroicons/react/24/outline'
+import { fetchNowPlaying, calculateUniqueness } from '@/app/lib/data'
 import { befriend, defriend } from '@/app/lib/actions'
-
-interface SongLinkProps {
-  label: string
-  song: NowPlayingSong
-}
-
-const SongLink: React.FC<SongLinkProps> = ({ label, song }) => {
-  return (
-    <pre>
-      {`${label}: `}
-      <Link href={`/dashboard/songs/${song.songID}/edit`}>
-        {`${song.artist} - ${song.title}`}
-      </Link>
-    </pre>
-  )
-}
-
-const Heart: React.FC<{ nowPlaying: NowPlayingData, onHeartClick: () =>
-  void, isHeartFilled: boolean }> = ({ nowPlaying, onHeartClick, isHeartFilled }) => {
-  return (
-    <div className="flex items-center justify-center h-16 w-16 mx-auto" onClick={onHeartClick}>
-      {isHeartFilled ? (
-        <FullHeart className={'h-8 w-8 text-red-500 cursor-pointer'} />
-      ) : (
-        <EmptyHeart className={'h-8 w-8 text-red-500 cursor-pointer'} />
-      )}
-    </div>
-  )
-}
+import { NowPlayingData } from '@/app/lib/definitions'
+import { SongLink } from '@/app/lib/components/SongLink'
+import { Heart } from '@/app/lib/components/Heart'
 
 export default function Page() {
   const [nowPlayingData, setNowPlayingData] = useState<NowPlayingData | null>(null)
@@ -73,27 +43,36 @@ export default function Page() {
   }, [])
 
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex flex-col items-center justify-center p-4 sm:p-6">
       {nowPlayingData && (
-        <div className="text-center">
-          <pre><strong>Now Playing:</strong></pre>
-          <div className="flex justify-center">
+        <div className="text-center w-full max-w-md">
+          <pre className="text-sm sm:text-base"><strong>Now Playing:</strong></pre>
+          <div className="flex justify-center my-2">
             <Image
-              src={`/squirrelGuitarButton.png`}
+              src="/squirrelGuitarButton.png"
               width={82}
               height={87}
               alt="Squirrel button"
+              className="max-w-full h-auto sm:w-20 sm:h-24"
             />
           </div>
           <br />
-          <SongLink label='last' song={nowPlayingData.lastSong}></SongLink>
-          <Heart 
-            nowPlaying={nowPlayingData} 
-            onHeartClick={setFriendship} 
-            isHeartFilled={isHeartFilled}     />
-          <SongLink label='now' song={nowPlayingData.currentSong}></SongLink>
+          <table className="w-full table-auto border-collapse">
+            <tbody>
+              last: <SongLink song={nowPlayingData.lastSong} />
+              <tr>
+                <td colSpan={2} className="py-2">
+                  <Heart 
+                    onHeartClick={setFriendship} 
+                    isHeartFilled={isHeartFilled} 
+                  />
+                </td>
+              </tr>
+              now: <strong><SongLink song={nowPlayingData.currentSong} /></strong>
+            </tbody>
+          </table>
           <br />
-          <pre>{`Pool depth: ${nowPlayingData.currentSong.poolDepth}`}</pre>
+          <pre className="text-sm sm:text-base">{`pool depth: ${nowPlayingData.currentSong.poolDepth}`}</pre>
         </div>
       )}
     </div>
