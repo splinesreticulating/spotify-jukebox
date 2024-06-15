@@ -6,6 +6,8 @@ import { Button } from '@/app/ui/button';
 import { updateSong } from '@/app/lib/actions';
 import { useFormState } from 'react-dom';
 import { TimeOffDropdown } from '@/app/lib/components/TimeOffDropdown'
+import { DateAdded } from '@/app/lib/components/DateAdded';
+import { LastPlayed } from '@/app/lib/components/LastPlayed';
 
 export default function EditSongForm({
   song,
@@ -18,7 +20,9 @@ export default function EditSongForm({
 
   return (
     <form action={dispatch}>
-      <p>{song.artist} - {song.title} ({song.bpm} : {song.info})</p>
+      <div className="text-2xl">{song.artist} - {song.title}</div>
+      <p><LastPlayed song={song}></LastPlayed></p>
+      <p><DateAdded song={song}></DateAdded></p>
       <div className="rounded-md bg-gray-50 p-4 md:p-6">
         {/* Song title */}
         <div className="mb-4">

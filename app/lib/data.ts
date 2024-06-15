@@ -139,6 +139,8 @@ export async function fetchSongById(id: number): Promise<Song | null> {
         date_added: true,
         albumyear: true,
         hours_off: true,
+        count_played: true,
+        date_played: true,
       }
     })
 
