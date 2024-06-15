@@ -201,7 +201,7 @@ export default function EditSongForm({
                   name="status"
                   type="radio"
                   value="club"
-                  defaultChecked={song.genre === '4000'}
+                  defaultChecked={song.genre === '5000'}
                 />
                 <label
                   htmlFor="club"
