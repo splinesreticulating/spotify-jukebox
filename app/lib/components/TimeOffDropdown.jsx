@@ -18,6 +18,7 @@ export function TimeOffDropdown({ initialValue, onChange }) {
     { label: '5 months', value: 3650 },
     { label: '6 months', value: 4368 },
     { label: '1 year', value: 8760 },
+    { label: '<abandon this nut>', value: 9999 }
   ];
 
   const [selectedValue, setSelectedValue] = useState(initialValue || '');
