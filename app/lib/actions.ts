@@ -81,7 +81,7 @@ export async function updateSong(
   }
 
   revalidatePath('/dashboard/songs')
-  redirect('/dashboard/songs')
+  redirect('/dashboard/nowPlaying')
 }
 
 export async function befriend(nowPlayingData: NowPlayingData) {
