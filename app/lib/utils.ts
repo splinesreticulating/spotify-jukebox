@@ -1,8 +1,17 @@
-export const pstToUTC = (date: Date): Date => {
+const pstToUTC = (date: Date): Date => {
   const pstOffset = 8 * 60 // Update one day to account for DST?
   const dateUTC = new Date(date.getTime() + pstOffset * 60 * 1000)
   
   return dateUTC
+}
+
+export const daysAgo = (date: Date) => {
+  const datePlayedUTC = pstToUTC(date)
+  const currentDateUTC = new Date()
+  const differenceInMilliseconds = currentDateUTC.getTime() - datePlayedUTC.getTime()
+  const differenceInDays = differenceInMilliseconds / 1000 / 60 / 60 / 24
+
+  return Math.abs(differenceInDays).toFixed(0)
 }
 
 export const generatePagination = (currentPage: number, totalPages: number) => {

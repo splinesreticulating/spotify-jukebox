@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import { openSans } from '@/app/ui/fonts';
 import { fetchLatestSongs } from '@/app/lib/data';
 import Link from 'next/link';
+import { daysAgo } from '@/app/lib/utils';
 
 export default async function LatestSongs() {
   const latestSongs = await fetchLatestSongs();
@@ -38,15 +39,11 @@ export default async function LatestSongs() {
                 <p
                   className={`${openSans.className} truncate text-sm font-medium md:text-base`}
                 >
-                  {song.bpm}
+                  {daysAgo(song.date_added!)} days ago
                 </p>
               </div>
             );
           })}
-        </div>
-        <div className="flex items-center pb-2 pt-6">
-          <ArrowPathIcon className="h-5 w-5 text-gray-500" />
-          <h3 className="ml-2 text-sm text-gray-500 ">Updated just now</h3>
         </div>
       </div>
     </div>
