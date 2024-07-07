@@ -4,7 +4,7 @@ import Table from '@/app/ui/songs/table';
 import { openSans } from '@/app/ui/fonts';
 import { SongsTableSkeleton } from '@/app/ui/skeletons';
 import { Suspense } from 'react';
-import { fetchSongsPages, fetchFilteredSongs } from '@/app/lib/data';
+import { fetchSongsPages } from '@/app/lib/data';
 import { Metadata } from 'next';
 import { LevelFilters } from '@/app/lib/components/LevelFilters';
 
