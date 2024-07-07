@@ -3,78 +3,52 @@
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
+const allLevels = ['1000', '2000', '3000', '4000', '5000']
+
 export function LevelFilters({ levels }: { levels: string }) {
-    const router = useRouter()
-    const currentSearchParams = useSearchParams()
-    const [selectedLevels, setSelectedLevels] = useState<string[]>(levels.split(',').filter(Boolean))
+  const router = useRouter()
+  const currentSearchParams = useSearchParams()
+  const initialLevels = levels ? levels.split(',').filter(Boolean) : allLevels
+  const [selectedLevels, setSelectedLevels] = useState<string[]>(initialLevels)
 
-    useEffect(() => {
-        const levelsQuery = selectedLevels.join(',')
-        const newSearchParams = new URLSearchParams(Object.fromEntries(currentSearchParams.entries()))
-        newSearchParams.set('levels', levelsQuery)
-        router.replace(`?${newSearchParams.toString()}`)
-    }, [selectedLevels])
+  useEffect(() => {
+    const levelsQuery = selectedLevels.join(',')
+    const newSearchParams = new URLSearchParams(Object.fromEntries(currentSearchParams.entries()))
+    newSearchParams.set('levels', levelsQuery)
+    router.replace(`?${newSearchParams.toString()}`)
+  }, [selectedLevels])
 
-    const handleCheckboxChange = (level: string) => {
-        setSelectedLevels((prevLevels) =>
-            prevLevels.includes(level)
-                ? prevLevels.filter((l) => l !== level)
-                : [...prevLevels, level]
-        )
-    }
-
-    return (
-        <div className='mb-4'>
-            <label>
-                <input
-                    type='checkbox'
-                    name='levels'
-                    value='1000'
-                    onChange={() => handleCheckboxChange('1000')}
-                    checked={selectedLevels.includes('1000')}
-                />
-                1
-            </label>
-            <label>
-                <input
-                    type='checkbox'
-                    name='levels'
-                    value='2000'
-                    onChange={() => handleCheckboxChange('2000')}
-                    checked={selectedLevels.includes('2000')}
-                />
-                2
-            </label>
-            <label>
-                <input
-                    type='checkbox'
-                    name='levels'
-                    value='3000'
-                    onChange={() => handleCheckboxChange('3000')}
-                    checked={selectedLevels.includes('3000')}
-                />
-                3
-            </label>
-            <label>
-                <input
-                    type='checkbox'
-                    name='levels'
-                    value='4000'
-                    onChange={() => handleCheckboxChange('4000')}
-                    checked={selectedLevels.includes('4000')}
-                />
-                4
-            </label>
-            <label>
-                <input
-                    type='checkbox'
-                    name='levels'
-                    value='5000'
-                    onChange={() => handleCheckboxChange('5000')}
-                    checked={selectedLevels.includes('5000')}
-                />
-                5
-            </label>
-        </div>
+  const handleCheckboxChange = (level: string) => {
+    setSelectedLevels((prevLevels) =>
+      prevLevels.includes(level)
+        ? prevLevels.filter((l) => l !== level)
+        : [...prevLevels, level]
     )
+  }
+
+  return (
+    <div className="mb-4 flex flex-wrap gap-2 justify-end">
+      {allLevels.map((level) => (
+        <label key={level} className="flex items-center">
+          <input
+            type="checkbox"
+            name="levels"
+            value={level}
+            onChange={() => handleCheckboxChange(level)}
+            checked={selectedLevels.includes(level)}
+            className="hidden"
+          />
+          <span
+            className={`px-4 py-2 border rounded cursor-pointer ${
+              selectedLevels.includes(level)
+                ? 'bg-blue-500 text-white border-blue-500'
+                : 'bg-white text-blue-500 border-blue-500'
+            }`}
+          >
+            {level[0]}
+          </span>
+        </label>
+      ))}
+    </div>
+  )
 }
