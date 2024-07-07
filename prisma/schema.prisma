@@ -37,6 +37,36 @@ model historylist {
   @@index([date_played], map: "date_played")
 }
 
+model historylist_last {
+  ID          Int                 @id @default(autoincrement())
+  songID      Int                 @default(0)
+  filename    String              @default("") @db.VarChar(255)
+  date_played DateTime            @default(dbgenerated("'0000-00-00 00:00:00'")) @db.DateTime(0)
+  duration    Int                 @default(0)
+  artist      String              @default("") @db.VarChar(255)
+  title       String              @default("") @db.VarChar(255)
+  album       String              @default("") @db.VarChar(255)
+  albumyear   String              @default("") @db.VarChar(4)
+  website     String              @default("") @db.VarChar(255)
+  buycd       String              @default("") @db.VarChar(255)
+  picture     String              @default("") @db.VarChar(255)
+  listeners   Int                 @default(0) @db.MediumInt
+  label       String              @default("") @db.VarChar(100)
+  pline       String              @default("") @db.VarChar(50)
+  trackno     Int                 @default(0)
+  composer    String              @default("") @db.VarChar(100)
+  ISRC        String              @default("") @db.VarChar(50)
+  catalog     String              @default("") @db.VarChar(50)
+  UPC         String              @default("") @db.VarChar(50)
+  feeagency   String              @default("") @db.VarChar(20)
+  songtype    String              @default("") @db.Char(1)
+  requestID   Int                 @default(0)
+  overlay     historylist_overlay @default(no)
+  songrights  String              @default("broadcast")
+
+  @@index([date_played], map: "date_played")
+}
+
 model keywords {
   ID      Int    @id @default(autoincrement()) @db.UnsignedInt
   keyword String @unique(map: "keyword") @default("") @db.VarChar(25)
