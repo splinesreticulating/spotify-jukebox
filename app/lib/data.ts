@@ -67,16 +67,26 @@ export async function fetchCardData() {
 export async function fetchFilteredSongs(
   query: string,
   currentPage: number,
+  levels: string
 ): Promise<Song[]> {
   noStore()
   const offset = (currentPage - 1) * ITEMS_PER_PAGE
 
   try {
+    const levelsArray = levels ? levels.split(',').map(level => level) : []
+
     const songs = await db.songlist.findMany({
       where: {
-        OR: [
-          { artist: { contains: query } },
-          { title: { contains: query } },
+        AND: [
+          {
+            OR: [
+              { artist: { contains: query } },
+              { title: { contains: query } },
+            ],
+          },
+          levelsArray.length > 0
+            ? { genre: { in: levelsArray } }
+            : {},
         ],
       },
       orderBy: {
@@ -98,7 +108,7 @@ export async function fetchFilteredSongs(
         info: true,
         hours_off: true,
         count_played: true,
-        date_played: true
+        date_played: true,
       },
     })
     return songs
@@ -108,15 +118,25 @@ export async function fetchFilteredSongs(
   }
 }
 
-export async function fetchSongsPages(query: string) {
+export async function fetchSongsPages(query: string, levels: string): Promise<number> {
   noStore()
+
   try {
+    const levelsArray = levels ? levels.split(',').map(level => level) : []
+
     const count = await db.songlist.count({
       where: {
-        OR: [
-          { artist: { contains: query } },
-          { title: { contains: query } }
-        ]
+        AND: [
+          {
+            OR: [
+              { artist: { contains: query } },
+              { title: { contains: query } },
+            ],
+          },
+          levelsArray.length > 0
+            ? { genre: { in: levelsArray } }
+            : {},
+        ],
       },
     })
 
