@@ -67,7 +67,7 @@ export async function fetchCardData() {
 export async function fetchFilteredSongs(
   query: string,
   currentPage: number,
-): Promise<Song[]> {
+) {
   noStore()
   const offset = (currentPage - 1) * ITEMS_PER_PAGE
 
@@ -92,13 +92,6 @@ export async function fetchFilteredSongs(
         date_added: true,
         albumyear: true,
         genre: true,
-        grouping: true,
-        album: true,
-        instrumentalness: true,
-        info: true,
-        hours_off: true,
-        count_played: true,
-        date_played: true
       },
     })
     return songs
