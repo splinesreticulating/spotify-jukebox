@@ -1,3 +1,4 @@
+import { NowPlayingData } from "../definitions"
 import { HeartIcon as FullHeart } from '@heroicons/react/24/solid'
 import { HeartIcon as EmptyHeart } from '@heroicons/react/24/outline'
 
