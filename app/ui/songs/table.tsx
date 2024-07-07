@@ -4,13 +4,11 @@ import Link from 'next/link';
 export default async function SongsTable({
   query,
   currentPage,
-  levels,
 }: {
   query: string;
   currentPage: number;
-  levels: string;
 }) {
-  const songs = await fetchFilteredSongs(query, currentPage, levels);
+  const songs = await fetchFilteredSongs(query, currentPage);
 
   return (
     <div className="mt-6 flow-root">

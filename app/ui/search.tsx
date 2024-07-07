@@ -1,32 +1,27 @@
 'use client';
 
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useDebouncedCallback } from 'use-debounce';
-import { useSearchParams } from 'next/navigation';
 
-interface SearchProps {
-  placeholder: string;
-  defaultValue?: string;
-  onSearch?: (term: string) => void;
-}
-
-export default function Search({ placeholder, defaultValue = '', onSearch }: SearchProps) {
+export default function Search({ placeholder }: { placeholder: string }) {
   const searchParams = useSearchParams();
+  const { replace } = useRouter();
+  const pathname = usePathname();
+
   const handleSearch = useDebouncedCallback((term) => {
-    if (onSearch) {
-      onSearch(term);
+    console.log(`Searching... ${term}`);
+
+    const params = new URLSearchParams(searchParams);
+
+    params.set('page', '1');
+
+    if (term) {
+      params.set('query', term);
     } else {
-      console.log(`Searching... ${term}`);
-      const params = new URLSearchParams(searchParams);
-
-      params.set('page', '1');
-
-      if (term) {
-        params.set('query', term);
-      } else {
-        params.delete('query');
-      }
+      params.delete('query');
     }
+    replace(`${pathname}?${params.toString()}`);
   }, 300);
 
   return (
@@ -40,7 +35,7 @@ export default function Search({ placeholder, defaultValue = '', onSearch }: Sea
         onChange={(e) => {
           handleSearch(e.target.value);
         }}
-        defaultValue={defaultValue}
+        defaultValue={searchParams.get('query')?.toString()}
       />
       <MagnifyingGlassIcon className="absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
     </div>
