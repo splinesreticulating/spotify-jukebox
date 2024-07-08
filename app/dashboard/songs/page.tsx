@@ -33,7 +33,7 @@ export default async function Page({
         <h1 className={`${openSans.className} text-2xl`}>Songs</h1>
       </div>
       <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
-        <Search placeholder="Search..." defaultValue={query} />
+        <Search placeholder="Search..." />
       </div>
       <LevelFilters levels={levels} />
       <Suspense key={query + currentPage + levels} fallback={<SongsTableSkeleton />}>
