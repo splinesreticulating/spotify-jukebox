@@ -1,25 +1,24 @@
-import { fetchFilteredSongs } from '@/app/lib/data';
-import Link from 'next/link';
+import { fetchFilteredSongs } from '@/app/lib/data'
+import Link from 'next/link'
 
 export default async function SongsTable({
   query,
   currentPage,
   levels,
+  instrumental,
 }: {
-  query: string;
-  currentPage: number;
-  levels: string;
+  query: string
+  currentPage: number
+  levels: string
+  instrumental: number
 }) {
-  const songs = await fetchFilteredSongs(query, currentPage, levels);
+  const songs = await fetchFilteredSongs(query, currentPage, levels, instrumental)
 
   return (
     <div className="mt-6 flow-root">
       <div className="inline-block min-w-full align-middle">
         <div className="rounded-lg bg-gray-50 p-2 md:pt-0">
-
-
           {/* MOBILE */}
-          
           <div className="md:hidden">
             {songs?.map((song) => (
               <div
@@ -31,14 +30,12 @@ export default async function SongsTable({
                     <p className="text-sm text-gray-500">{song.artist} - {song.title}</p>
                   </div>
                   <p className="text-sm text-gray-500">{song.info} / {song.bpm}</p>
-               </div>
+                </div>
               </div>
             ))}
           </div>
 
-
           {/* DESKTOP */}
-
           <table className="hidden min-w-full text-gray-900 md:table">
             <thead className="rounded-lg text-left text-sm font-normal">
               <tr>
@@ -62,6 +59,9 @@ export default async function SongsTable({
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
                   Added
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                  Instrumental
                 </th>
               </tr>
             </thead>
@@ -92,6 +92,9 @@ export default async function SongsTable({
                   <td className="whitespace-nowrap px-3 py-3">
                     {song.date_added && song.date_added.toDateString()}
                   </td>
+                  <td className="whitespace-nowrap px-3 py-3">
+                    {(song.instrumentalness ?? 0) >= 90 ? 'Yes' : 'No'}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -99,5 +102,5 @@ export default async function SongsTable({
         </div>
       </div>
     </div>
-  );
+  )
 }

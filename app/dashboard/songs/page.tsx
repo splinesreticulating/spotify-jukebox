@@ -7,6 +7,7 @@ import { Suspense } from 'react';
 import { fetchSongsPages } from '@/app/lib/data';
 import { Metadata } from 'next';
 import { LevelFilters } from '@/app/lib/components/LevelFilters';
+import InstrumentalFilter from '@/app/ui/components/InstrumentalFilter';
 
 export const metadata: Metadata = {
   title: 'Songs',
@@ -19,13 +20,15 @@ export default async function Page({
     query?: string;
     page?: string;
     levels?: string;
+    instrumental?: string;
   };
 }) {
   const query = searchParams?.query || '';
   const currentPage = Number(searchParams?.page) || 1;
   const levels = searchParams?.levels || '';
+  const instrumental = Number(searchParams?.instrumental) || 0;
 
-  const totalPages = await fetchSongsPages(query, levels);
+  const totalPages = await fetchSongsPages(query, levels, instrumental);
 
   return (
     <div className="w-full">
@@ -35,9 +38,12 @@ export default async function Page({
       <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
         <Search placeholder="Search..." />
       </div>
-      <LevelFilters levels={levels} />
-      <Suspense key={query + currentPage + levels} fallback={<SongsTableSkeleton />}>
-        <Table query={query} currentPage={currentPage} levels={levels} />
+      <div className="flex items-center justify-between gap-2">
+        <LevelFilters levels={levels} />
+        <InstrumentalFilter initialValue={instrumental} />
+      </div>
+      <Suspense key={query + currentPage + levels + instrumental} fallback={<SongsTableSkeleton />}>
+        <Table query={query} currentPage={currentPage} levels={levels} instrumental={instrumental} />
       </Suspense>
       <div className="mt-5 flex w-full justify-center">
         <Pagination totalPages={totalPages} />
