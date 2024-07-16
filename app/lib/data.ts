@@ -85,17 +85,46 @@ export async function fetchCardData() {
   }
 }
 
-export async function fetchFilteredSongs(query: string, currentPage: number, levels: string): Promise<Song[]> {
-  noStore()
+export async function fetchFilteredSongs(query: string, currentPage: number, levels: string, instrumentalness: number): Promise<Song[]> {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE
   const levelsArray = levels ? levels.split(',').map(level => level) : []
 
   try {
     const songs = await db.songlist.findMany({
-      ...fetchSongsBaseQuery(query, levelsArray),
+      where: {
+        AND: [
+          {
+            OR: [
+              { artist: { contains: query } },
+              { title: { contains: query } },
+              { albumyear: { contains: query }},
+            ],
+          },
+          levelsArray.length > 0 ? { genre: { in: levelsArray } } : {},
+          instrumentalness >= 90 ? { instrumentalness: { gte: 90 } } : {},
+        ],
+      },
+      orderBy: {
+        date_added: 'desc',
+      },
       take: ITEMS_PER_PAGE,
       skip: offset,
-      select: songSelectFields,
+      select: {
+        id: true,
+        artist: true,
+        title: true,
+        bpm: true,
+        date_added: true,
+        albumyear: true,
+        genre: true,
+        grouping: true,
+        album: true,
+        instrumentalness: true,
+        info: true,
+        hours_off: true,
+        count_played: true,
+        date_played: true,
+      },
     })
     return songs
   } catch (error) {
@@ -104,13 +133,24 @@ export async function fetchFilteredSongs(query: string, currentPage: number, lev
   }
 }
 
-export async function fetchSongsPages(query: string, levels: string): Promise<number> {
-  noStore()
+export async function fetchSongsPages(query: string, levels: string, instrumentalness: number): Promise<number> {
   const levelsArray = levels ? levels.split(',').map(level => level) : []
 
   try {
     const count = await db.songlist.count({
-      ...fetchSongsBaseQuery(query, levelsArray),
+      where: {
+        AND: [
+          {
+            OR: [
+              { artist: { contains: query } },
+              { title: { contains: query } },
+              { albumyear: { contains: query }},
+            ],
+          },
+          levelsArray.length > 0 ? { genre: { in: levelsArray } } : {},
+          instrumentalness >= 90 ? { instrumentalness: { gte: 90 } } : {},
+        ],
+      },
     })
 
     return Math.ceil(count / ITEMS_PER_PAGE)
