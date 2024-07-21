@@ -20,8 +20,8 @@ const MaybeFilter: React.FC<MaybeFilterProps> = ({ initialValue }) => {
 
     const params = new URLSearchParams(window.location.search)
     
-    if (isChecked) {
-      params.set('keyRef', initialValue || 'undefined')
+    if (isChecked && initialValue) {
+      params.set('keyRef', initialValue)
     } else {
       params.delete('keyRef')
     }
