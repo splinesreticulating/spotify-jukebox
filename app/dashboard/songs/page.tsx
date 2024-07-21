@@ -8,7 +8,7 @@ import { fetchNowPlayingSongID, fetchSongById, fetchSongsPages } from '@/app/lib
 import { Metadata } from 'next'
 import { LevelFilters } from '@/app/lib/components/LevelFilters'
 import InstrumentalFilter from '@/app/ui/components/InstrumentalFilter'
-import MaybeFilter from '@/app/ui/components/maybeFilter'
+import KeyFilter from '@/app/ui/components/KeyFilter'
 
 export const metadata: Metadata = {
   title: 'Songs',
@@ -46,7 +46,7 @@ export default async function Page({
       <div className="flex items-center justify-between gap-2">
         <LevelFilters levels={levels} />
         <InstrumentalFilter initialValue={instrumental} />
-        <MaybeFilter initialValue={nowPlayingKey} />
+        <KeyFilter initialValue={nowPlayingKey} />
       </div>
       <Suspense key={query + currentPage + levels + instrumental + nowPlayingKey} fallback={<SongsTableSkeleton />}>
         <Table query={query} currentPage={currentPage} levels={levels} instrumental={instrumental} keyRef={searchParams?.keyRef}/>
