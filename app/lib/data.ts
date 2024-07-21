@@ -25,7 +25,7 @@ const songSelectFields = {
   date_played: true,
 }
 
-const fetchSongsBaseQuery = (query: string, levelsArray: string[]) => ({
+const fetchSongsBaseQuery = (query: string, levelsArray: string[], instrumentalness: number) => ({
   where: {
     AND: [
       {
@@ -35,9 +35,8 @@ const fetchSongsBaseQuery = (query: string, levelsArray: string[]) => ({
           { albumyear: { contains: query }},
         ],
       },
-      levelsArray.length > 0
-        ? { genre: { in: levelsArray } }
-        : {},
+      levelsArray.length > 0 ? { genre: { in: levelsArray } } : {},
+      instrumentalness >= 90 ? { instrumentalness: { gte: 90 } } : {},
     ],
   },
   orderBy: {
@@ -91,40 +90,10 @@ export async function fetchFilteredSongs(query: string, currentPage: number, lev
 
   try {
     const songs = await db.songlist.findMany({
-      where: {
-        AND: [
-          {
-            OR: [
-              { artist: { contains: query } },
-              { title: { contains: query } },
-              { albumyear: { contains: query }},
-            ],
-          },
-          levelsArray.length > 0 ? { genre: { in: levelsArray } } : {},
-          instrumentalness >= 90 ? { instrumentalness: { gte: 90 } } : {},
-        ],
-      },
-      orderBy: {
-        date_added: 'desc',
-      },
+      ...fetchSongsBaseQuery(query, levelsArray, instrumentalness),
       take: ITEMS_PER_PAGE,
       skip: offset,
-      select: {
-        id: true,
-        artist: true,
-        title: true,
-        bpm: true,
-        date_added: true,
-        albumyear: true,
-        genre: true,
-        grouping: true,
-        album: true,
-        instrumentalness: true,
-        info: true,
-        hours_off: true,
-        count_played: true,
-        date_played: true,
-      },
+      select: songSelectFields,
     })
     return songs
   } catch (error) {
@@ -138,19 +107,7 @@ export async function fetchSongsPages(query: string, levels: string, instrumenta
 
   try {
     const count = await db.songlist.count({
-      where: {
-        AND: [
-          {
-            OR: [
-              { artist: { contains: query } },
-              { title: { contains: query } },
-              { albumyear: { contains: query }},
-            ],
-          },
-          levelsArray.length > 0 ? { genre: { in: levelsArray } } : {},
-          instrumentalness >= 90 ? { instrumentalness: { gte: 90 } } : {},
-        ],
-      },
+      ...fetchSongsBaseQuery(query, levelsArray, instrumentalness),
     })
 
     return Math.ceil(count / ITEMS_PER_PAGE)
@@ -215,7 +172,7 @@ export const fetchNowPlaying = async (): Promise<NowPlayingData> => {
   return { currentSong, lastSong, friends: !!friends }
 }
 
-export const calculateUniqueness = async (songId: number) => {
+export const calculatePoolDepth = async (songId: number) => {
   const song = await fetchSongById(songId)
 
   if (!song) throw new Error('Song not found')

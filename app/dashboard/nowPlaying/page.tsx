@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
-import { fetchNowPlaying, calculateUniqueness } from '@/app/lib/data'
+import { fetchNowPlaying, calculatePoolDepth } from '@/app/lib/data'
 import { befriend, defriend } from '@/app/lib/actions'
 import { NowPlayingData } from '@/app/lib/definitions'
 import { SongLink } from '@/app/lib/components/SongLink'
@@ -15,7 +15,7 @@ export default function Page() {
   const fetchNowPlayingData = async () => {
     try {
       const { currentSong, lastSong, friends } = await fetchNowPlaying()
-      const poolDepth = await calculateUniqueness(currentSong.songID)
+      const poolDepth = await calculatePoolDepth(currentSong.songID)
 
       setNowPlayingData({ lastSong, currentSong: { poolDepth, ...currentSong }, friends })
       setIsHeartFilled(friends) // Set initial heart status based on `friends` property
