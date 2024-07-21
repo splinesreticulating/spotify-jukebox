@@ -9,6 +9,7 @@ import { Metadata } from 'next'
 import { LevelFilters } from '@/app/lib/components/LevelFilters'
 import InstrumentalFilter from '@/app/ui/components/InstrumentalFilter'
 import KeyFilter from '@/app/ui/components/KeyFilter'
+import BPMFilter from '@/app/ui/components/BPMFilter'
 
 export const metadata: Metadata = {
   title: 'Songs',
@@ -23,6 +24,7 @@ export default async function Page({
     levels?: string
     instrumental?: string
     keyRef?: string
+    bpmRef?: string
   }
 }) {
   const query = searchParams?.query || ''
@@ -30,11 +32,14 @@ export default async function Page({
   const levels = searchParams?.levels || ''
   const instrumental = Number(searchParams?.instrumental) || 0
 
+  const totalPages = await fetchSongsPages(query, levels, instrumental, searchParams?.keyRef, searchParams?.bpmRef)
+
   const nowPlayingSongId = await fetchNowPlayingSongID()
   const nowPlayingSong = await fetchSongById(nowPlayingSongId!)
-  const nowPlayingKey = nowPlayingSong?.info ?? undefined
-  const totalPages = await fetchSongsPages(query, levels, instrumental, searchParams?.keyRef)
 
+  const nowPlayingKey = nowPlayingSong?.info ?? undefined
+  const nowPlayingBPM = nowPlayingSong?.bpm ?? undefined
+  
   return (
     <div className="w-full">
       <div className="flex w-full items-center justify-between">
@@ -47,9 +52,10 @@ export default async function Page({
         <LevelFilters levels={levels} />
         <InstrumentalFilter initialValue={instrumental} />
         <KeyFilter initialValue={nowPlayingKey} />
+        <BPMFilter initialValue={nowPlayingBPM} />        
       </div>
-      <Suspense key={query + currentPage + levels + instrumental + nowPlayingKey} fallback={<SongsTableSkeleton />}>
-        <Table query={query} currentPage={currentPage} levels={levels} instrumental={instrumental} keyRef={searchParams?.keyRef}/>
+      <Suspense key={query + currentPage + levels + instrumental + nowPlayingKey + nowPlayingBPM} fallback={<SongsTableSkeleton />}>
+        <Table query={query} currentPage={currentPage} levels={levels} instrumental={instrumental} keyRef={searchParams?.keyRef} bpmRef={searchParams?.bpmRef}/>
       </Suspense>
       <div className="mt-5 flex w-full justify-center">
         <Pagination totalPages={totalPages} />
