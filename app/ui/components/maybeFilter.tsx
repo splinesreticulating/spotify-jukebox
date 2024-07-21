@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 interface MaybeFilterProps {
   initialValue: string | undefined
@@ -8,6 +8,11 @@ interface MaybeFilterProps {
 
 const MaybeFilter: React.FC<MaybeFilterProps> = ({ initialValue }) => {
   const [checked, setChecked] = useState(false)
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    setChecked(params.has('keyRef'))
+  }, [])
 
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const isChecked = event.target.checked

@@ -25,7 +25,7 @@ const songSelectFields = {
   date_played: true,
 }
 
-const fetchSongsBaseQuery = (query: string, levelsArray: string[], instrumentalness: number) => ({
+const fetchSongsBaseQuery = (query: string, levelsArray: string[], instrumentalness: number, keyRef?: string) => ({
   where: {
     AND: [
       {
@@ -84,13 +84,13 @@ export async function fetchCardData() {
   }
 }
 
-export async function fetchFilteredSongs(query: string, currentPage: number, levels: string, instrumentalness: number): Promise<Song[]> {
+export async function fetchFilteredSongs(query: string, currentPage: number, levels: string, instrumentalness: number, keyRef?: string): Promise<Song[]> {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE
   const levelsArray = levels ? levels.split(',').map(level => level) : []
 
   try {
     const songs = await db.songlist.findMany({
-      ...fetchSongsBaseQuery(query, levelsArray, instrumentalness),
+      ...fetchSongsBaseQuery(query, levelsArray, instrumentalness, keyRef),
       take: ITEMS_PER_PAGE,
       skip: offset,
       select: songSelectFields,
@@ -102,12 +102,12 @@ export async function fetchFilteredSongs(query: string, currentPage: number, lev
   }
 }
 
-export async function fetchSongsPages(query: string, levels: string, instrumentalness: number): Promise<number> {
+export async function fetchSongsPages(query: string, levels: string, instrumentalness: number, keyRef?: string): Promise<number> {
   const levelsArray = levels ? levels.split(',').map(level => level) : []
 
   try {
     const count = await db.songlist.count({
-      ...fetchSongsBaseQuery(query, levelsArray, instrumentalness),
+      ...fetchSongsBaseQuery(query, levelsArray, instrumentalness, keyRef),
     })
 
     return Math.ceil(count / ITEMS_PER_PAGE)
@@ -172,7 +172,7 @@ export const fetchNowPlaying = async (): Promise<NowPlayingData> => {
   return { currentSong, lastSong, friends: !!friends }
 }
 
-export const calculatePoolDepth = async (songId: number) => {
+export const measurePoolDepth = async (songId: number) => {
   const song = await fetchSongById(songId)
 
   if (!song) throw new Error('Song not found')
@@ -191,4 +191,14 @@ export const calculatePoolDepth = async (songId: number) => {
   })
 
   return similarSongCount
+}
+
+export async function fetchNowPlayingSongID(): Promise<number | null> {
+  try {
+    const nowPlayingData = await fetchNowPlaying()
+    return nowPlayingData.currentSong.songID
+  } catch (error) {
+    console.error('Database Error:', error)
+    throw new Error('Failed to fetch now playing song ID')
+  }
 }
