@@ -6,13 +6,15 @@ export default async function SongsTable({
   currentPage,
   levels,
   instrumental,
+  keyRef,
 }: {
   query: string
   currentPage: number
   levels: string
   instrumental: number
+  keyRef?: string
 }) {
-  const songs = await fetchFilteredSongs(query, currentPage, levels, instrumental)
+  const songs = await fetchFilteredSongs(query, currentPage, levels, instrumental, keyRef)
 
   return (
     <div className="mt-6 flow-root">
