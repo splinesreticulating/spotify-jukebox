@@ -2,11 +2,11 @@
 
 import React, { useState, useEffect } from 'react'
 
-interface MaybeFilterProps {
+interface KeyFilterProps {
   initialValue: string | undefined
 }
 
-const MaybeFilter: React.FC<MaybeFilterProps> = ({ initialValue }) => {
+const KeyFilter: React.FC<KeyFilterProps> = ({ initialValue }) => {
   const [checked, setChecked] = useState(false)
 
   useEffect(() => {
@@ -38,9 +38,9 @@ const MaybeFilter: React.FC<MaybeFilterProps> = ({ initialValue }) => {
         checked={checked}
         onChange={handleCheckboxChange}
       />
-      <span className="ml-2">Maybe</span>
+      <span className="ml-2">Key</span>
     </label>
   )
 }
 
-export default MaybeFilter
+export default KeyFilter

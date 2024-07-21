@@ -7,14 +7,16 @@ export default async function SongsTable({
   levels,
   instrumental,
   keyRef,
+  bpmRef,
 }: {
   query: string
   currentPage: number
   levels: string
   instrumental: number
   keyRef?: string
+  bpmRef?: string
 }) {
-  const songs = await fetchFilteredSongs(query, currentPage, levels, instrumental, keyRef)
+  const songs = await fetchFilteredSongs(query, currentPage, levels, instrumental, keyRef, bpmRef)
 
   return (
     <div className="mt-6 flow-root">
@@ -62,9 +64,6 @@ export default async function SongsTable({
                 <th scope="col" className="px-3 py-5 font-medium">
                   Added
                 </th>
-                <th scope="col" className="px-3 py-5 font-medium">
-                  Instrumental
-                </th>
               </tr>
             </thead>
             <tbody className="bg-white">
@@ -93,9 +92,6 @@ export default async function SongsTable({
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
                     {song.date_added && song.date_added.toDateString()}
-                  </td>
-                  <td className="whitespace-nowrap px-3 py-3">
-                    {(song.instrumentalness ?? 0) >= 90 ? 'Yes' : 'No'}
                   </td>
                 </tr>
               ))}
