@@ -37,12 +37,20 @@ const fetchSongsBaseQuery = (query: string, levelsArray: string[], instrumentaln
       },
       levelsArray.length > 0 ? { genre: { in: levelsArray } } : {},
       instrumentalness >= 90 ? { instrumentalness: { gte: 90 } } : {},
+      keyRef ? { info: { in: compatibleKeys(keyRef) } } : {},
     ],
   },
   orderBy: {
     date_added: 'desc' as const,
   },
 })
+
+const compatibleKeys = (keyRef: string) => {
+  // Here's where we figure out all the compatible
+  // keys. We've got some code for this somewhere
+  // ...else
+  return [keyRef]
+}
 
 export async function fetchLatestSongs() {
   noStore()
