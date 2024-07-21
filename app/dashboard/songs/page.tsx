@@ -32,8 +32,8 @@ export default async function Page({
 
   const nowPlayingSongId = await fetchNowPlayingSongID()
   const nowPlayingSong = await fetchSongById(nowPlayingSongId!)
-  const keyRef = nowPlayingSong?.info ?? undefined
-  const totalPages = await fetchSongsPages(query, levels, instrumental, keyRef)
+  const nowPlayingKey = nowPlayingSong?.info ?? undefined
+  const totalPages = await fetchSongsPages(query, levels, instrumental, searchParams?.keyRef)
 
   return (
     <div className="w-full">
@@ -46,10 +46,10 @@ export default async function Page({
       <div className="flex items-center justify-between gap-2">
         <LevelFilters levels={levels} />
         <InstrumentalFilter initialValue={instrumental} />
-        <MaybeFilter initialValue={keyRef} />
+        <MaybeFilter initialValue={nowPlayingKey} />
       </div>
-      <Suspense key={query + currentPage + levels + instrumental + keyRef} fallback={<SongsTableSkeleton />}>
-        <Table query={query} currentPage={currentPage} levels={levels} instrumental={instrumental} keyRef={keyRef}/>
+      <Suspense key={query + currentPage + levels + instrumental + nowPlayingKey} fallback={<SongsTableSkeleton />}>
+        <Table query={query} currentPage={currentPage} levels={levels} instrumental={instrumental} keyRef={searchParams?.keyRef}/>
       </Suspense>
       <div className="mt-5 flex w-full justify-center">
         <Pagination totalPages={totalPages} />
