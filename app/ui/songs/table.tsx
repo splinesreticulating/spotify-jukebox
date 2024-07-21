@@ -62,9 +62,6 @@ export default async function SongsTable({
                 <th scope="col" className="px-3 py-5 font-medium">
                   Added
                 </th>
-                <th scope="col" className="px-3 py-5 font-medium">
-                  Instrumental
-                </th>
               </tr>
             </thead>
             <tbody className="bg-white">
@@ -93,9 +90,6 @@ export default async function SongsTable({
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
                     {song.date_added && song.date_added.toDateString()}
-                  </td>
-                  <td className="whitespace-nowrap px-3 py-3">
-                    {(song.instrumentalness ?? 0) >= 90 ? 'Yes' : 'No'}
                   </td>
                 </tr>
               ))}
