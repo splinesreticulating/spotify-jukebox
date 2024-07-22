@@ -9,6 +9,7 @@ export default async function SongsTable({
   keyRef,
   bpmRef,
   eighties,
+  nineties
 }: {
   query: string
   currentPage: number
@@ -17,8 +18,9 @@ export default async function SongsTable({
   keyRef?: string
   bpmRef?: string
   eighties?: boolean
+  nineties?: boolean
 }) {
-  const songs = await fetchFilteredSongs(query, currentPage, levels, instrumental, keyRef, bpmRef, eighties)
+  const songs = await fetchFilteredSongs(query, currentPage, levels, instrumental, keyRef, bpmRef, eighties, nineties)
 
   return (
     <div className="mt-6 flow-root">

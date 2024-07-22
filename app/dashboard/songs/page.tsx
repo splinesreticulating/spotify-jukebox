@@ -11,6 +11,7 @@ import InstrumentalFilter from '@/app/ui/components/InstrumentalFilter'
 import KeyFilter from '@/app/ui/components/KeyFilter'
 import BPMFilter from '@/app/ui/components/BPMFilter'
 import EightiesFilter from '@/app/ui/components/EightiesFilter'
+import NinetiesFilter from '@/app/ui/components/NinetiesFilter'
 
 export const metadata: Metadata = {
   title: 'Songs',
@@ -27,6 +28,7 @@ export default async function Page({
     keyRef?: string
     bpmRef?: string
     eighties?: string
+    nineties?: string
   }
 }) {
   const query = searchParams?.query || ''
@@ -34,15 +36,16 @@ export default async function Page({
   const levels = searchParams?.levels || ''
   const instrumental = Number(searchParams?.instrumental) || 0
   const eighties = Boolean(searchParams?.eighties)
+  const nineties = Boolean(searchParams?.nineties)
 
-  const totalPages = await fetchSongsPages(query, levels, instrumental, searchParams?.keyRef, searchParams?.bpmRef, Boolean(searchParams?.eighties))
+  const totalPages = await fetchSongsPages(query, levels, instrumental, searchParams?.keyRef, searchParams?.bpmRef, Boolean(searchParams?.eighties), Boolean(searchParams?.nineties))
 
   const nowPlayingSongId = await fetchNowPlayingSongID()
   const nowPlayingSong = await fetchSongById(nowPlayingSongId!)
 
   const nowPlayingKey = nowPlayingSong?.info ?? undefined
   const nowPlayingBPM = nowPlayingSong?.bpm ?? undefined
-  
+
   return (
     <div className="w-full">
       <div className="flex w-full items-center justify-between">
@@ -55,11 +58,20 @@ export default async function Page({
         <LevelFilters levels={levels} />
         <InstrumentalFilter initialValue={instrumental} />
         <KeyFilter initialValue={nowPlayingKey} />
-        <BPMFilter initialValue={nowPlayingBPM} />   
-        <EightiesFilter initialValue={eighties} />     
+        <BPMFilter initialValue={nowPlayingBPM} />
+        <EightiesFilter initialValue={eighties} />
+        <NinetiesFilter initialValue={nineties} />
       </div>
       <Suspense key={query + currentPage + levels + instrumental + nowPlayingKey + nowPlayingBPM} fallback={<SongsTableSkeleton />}>
-        <Table query={query} currentPage={currentPage} levels={levels} instrumental={instrumental} keyRef={searchParams?.keyRef} bpmRef={searchParams?.bpmRef} eighties={Boolean(searchParams?.eighties)}/>
+        <Table
+          query={query}
+          currentPage={currentPage}
+          levels={levels}
+          instrumental={instrumental}
+          keyRef={searchParams?.keyRef}
+          bpmRef={searchParams?.bpmRef}
+          eighties={Boolean(searchParams?.eighties)}
+          nineties={Boolean(searchParams?.nineties)} />
       </Suspense>
       <div className="mt-5 flex w-full justify-center">
         <Pagination totalPages={totalPages} />

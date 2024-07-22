@@ -28,7 +28,14 @@ const songSelectFields = {
 const MAX_BPM_MULTIPLIER = 1.09
 const MIN_BPM_MULTIPLIER = 0.96
 
-const fetchSongsBaseQuery = (query: string, levelsArray: string[], instrumentalness: number, keyRef?: string, bpmRef?: string, eighties?: boolean) => ({
+const fetchSongsBaseQuery = (
+  query: string,
+  levelsArray: string[],
+  instrumentalness: number,
+  keyRef?: string,
+  bpmRef?: string,
+  eighties?: boolean,
+  nineties?: boolean) => ({
   where: {
     AND: [
       {
@@ -42,7 +49,12 @@ const fetchSongsBaseQuery = (query: string, levelsArray: string[], instrumentaln
       instrumentalness >= 90 ? { instrumentalness: { gte: 90 } } : {},
       keyRef ? { info: { in: compatibleKeys(keyRef) } } : {},
       bpmRef ? { bpm: { gte: Number(bpmRef) * MIN_BPM_MULTIPLIER, lte: Number(bpmRef) * MAX_BPM_MULTIPLIER }} : {},
-      eighties ? { albumyear: { startsWith: '198' }} : {},
+      (eighties || nineties) ? {
+        OR: [
+          eighties ? { albumyear: { startsWith: '198' }} : {},
+          nineties ? { albumyear: { startsWith: '199' }} : {},
+        ]
+      } : {},
     ],
   },
   orderBy: {
@@ -97,13 +109,21 @@ export async function fetchCardData() {
   }
 }
 
-export async function fetchFilteredSongs(query: string, currentPage: number, levels: string, instrumentalness: number, keyRef?: string, bpmRef?: string, eighties?: boolean): Promise<Song[]> {
+export async function fetchFilteredSongs(
+  query: string,
+  currentPage: number,
+  levels: string,
+  instrumentalness: number,
+  keyRef?: string,
+  bpmRef?: string,
+  eighties?: boolean,
+  nineties?: boolean): Promise<Song[]> {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE
   const levelsArray = levels ? levels.split(',').map(level => level) : []
 
   try {
     const songs = await db.songlist.findMany({
-      ...fetchSongsBaseQuery(query, levelsArray, instrumentalness, keyRef, bpmRef, eighties),
+      ...fetchSongsBaseQuery(query, levelsArray, instrumentalness, keyRef, bpmRef, eighties, nineties),
       take: ITEMS_PER_PAGE,
       skip: offset,
       select: songSelectFields,
@@ -115,12 +135,19 @@ export async function fetchFilteredSongs(query: string, currentPage: number, lev
   }
 }
 
-export async function fetchSongsPages(query: string, levels: string, instrumentalness: number, keyRef?: string, bpmRef?: string, eighties?: boolean): Promise<number> {
+export async function fetchSongsPages(
+  query: string,
+  levels: string,
+  instrumentalness: number,
+  keyRef?: string,
+  bpmRef?: string,
+  eighties?: boolean,
+  nineties?: boolean): Promise<number> {
   const levelsArray = levels ? levels.split(',').map(level => level) : []
 
   try {
     const count = await db.songlist.count({
-      ...fetchSongsBaseQuery(query, levelsArray, instrumentalness, keyRef, bpmRef, eighties),
+      ...fetchSongsBaseQuery(query, levelsArray, instrumentalness, keyRef, bpmRef, eighties, nineties),
     })
 
     return Math.ceil(count / ITEMS_PER_PAGE)
