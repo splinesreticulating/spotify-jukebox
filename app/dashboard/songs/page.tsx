@@ -10,6 +10,7 @@ import { LevelFilters } from '@/app/lib/components/LevelFilters'
 import InstrumentalFilter from '@/app/ui/components/InstrumentalFilter'
 import KeyFilter from '@/app/ui/components/KeyFilter'
 import BPMFilter from '@/app/ui/components/BPMFilter'
+import EightiesFilter from '@/app/ui/components/EightiesFilter'
 
 export const metadata: Metadata = {
   title: 'Songs',
@@ -25,14 +26,16 @@ export default async function Page({
     instrumental?: string
     keyRef?: string
     bpmRef?: string
+    eighties?: string
   }
 }) {
   const query = searchParams?.query || ''
   const currentPage = Number(searchParams?.page) || 1
   const levels = searchParams?.levels || ''
   const instrumental = Number(searchParams?.instrumental) || 0
+  const eighties = Boolean(searchParams?.eighties)
 
-  const totalPages = await fetchSongsPages(query, levels, instrumental, searchParams?.keyRef, searchParams?.bpmRef)
+  const totalPages = await fetchSongsPages(query, levels, instrumental, searchParams?.keyRef, searchParams?.bpmRef, Boolean(searchParams?.eighties))
 
   const nowPlayingSongId = await fetchNowPlayingSongID()
   const nowPlayingSong = await fetchSongById(nowPlayingSongId!)
@@ -52,10 +55,11 @@ export default async function Page({
         <LevelFilters levels={levels} />
         <InstrumentalFilter initialValue={instrumental} />
         <KeyFilter initialValue={nowPlayingKey} />
-        <BPMFilter initialValue={nowPlayingBPM} />        
+        <BPMFilter initialValue={nowPlayingBPM} />   
+        <EightiesFilter initialValue={eighties} />     
       </div>
       <Suspense key={query + currentPage + levels + instrumental + nowPlayingKey + nowPlayingBPM} fallback={<SongsTableSkeleton />}>
-        <Table query={query} currentPage={currentPage} levels={levels} instrumental={instrumental} keyRef={searchParams?.keyRef} bpmRef={searchParams?.bpmRef}/>
+        <Table query={query} currentPage={currentPage} levels={levels} instrumental={instrumental} keyRef={searchParams?.keyRef} bpmRef={searchParams?.bpmRef} eighties={Boolean(searchParams?.eighties)}/>
       </Suspense>
       <div className="mt-5 flex w-full justify-center">
         <Pagination totalPages={totalPages} />
