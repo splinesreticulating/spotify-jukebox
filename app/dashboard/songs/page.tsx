@@ -14,7 +14,7 @@ import EightiesFilter from '@/app/ui/components/EightiesFilter'
 import NinetiesFilter from '@/app/ui/components/NinetiesFilter'
 
 export const metadata: Metadata = {
-  title: 'Songs',
+  title: 'Search',
 }
 
 export default async function Page({
@@ -49,10 +49,10 @@ export default async function Page({
   return (
     <div className="w-full">
       <div className="flex w-full items-center justify-between">
-        <h1 className={`${openSans.className} text-2xl`}>Songs</h1>
+        <h1 className={`${openSans.className} text-2xl`}>Search</h1>
       </div>
       <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
-        <Search placeholder="Search..." />
+        <Search placeholder="title, artist, key, year, genre" />
       </div>
       <div className="flex items-center justify-between gap-2">
         <LevelFilters levels={levels} />
