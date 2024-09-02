@@ -43,7 +43,8 @@ const fetchSongsBaseQuery = (
           { artist: { contains: query } },
           { title: { contains: query } },
           { albumyear: { contains: query }},
-          { grouping: { contains: query }}
+          { grouping: { contains: query }},
+          { info: { contains: query }},
         ],
       },
       levelsArray.length > 0 ? { genre: { in: levelsArray } } : {},
