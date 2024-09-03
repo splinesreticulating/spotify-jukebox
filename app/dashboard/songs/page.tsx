@@ -55,12 +55,14 @@ export default async function Page({
         <Search placeholder="title, artist, key, year, genre" />
       </div>
       <div className="flex pt-5 items-center justify-between gap-2">
-        <LevelFilters levels={levels} />
+        <div><LevelFilters levels={levels} /></div>
+        <div>
         <InstrumentalFilter initialValue={instrumental} />
         <KeyFilter initialValue={nowPlayingKey} />
         <BPMFilter initialValue={nowPlayingBPM} />
         <EightiesFilter initialValue={eighties} />
         <NinetiesFilter initialValue={nineties} />
+        </div>
       </div>
       <Suspense key={query + currentPage + levels + instrumental + nowPlayingKey + nowPlayingBPM} fallback={<SongsTableSkeleton />}>
         <Table

@@ -27,7 +27,7 @@ export function LevelFilters({ levels }: { levels: string }) {
   }
 
   return (
-    <div className="mb-4 flex flex-wrap gap-2 justify-end">
+    <div className="mb-4 flex gap-1 justify-end">
       {allLevels.map((level) => (
         <label key={level} className="flex items-center">
           <input
@@ -39,10 +39,10 @@ export function LevelFilters({ levels }: { levels: string }) {
             className="hidden"
           />
           <span
-            className={`px-4 py-2 border rounded cursor-pointer ${
+            className={`px-2 hw-1 rounded cursor-pointer ${
               selectedLevels.includes(level)
-                ? 'bg-blue-500 text-white border-blue-500'
-                : 'bg-white text-blue-500 border-blue-500'
+                ? 'bg-teal-600 text-white border-teal-600'
+                : 'bg-white text-teal-600 border-teal-600'
             }`}
           >
             {level[0]}
