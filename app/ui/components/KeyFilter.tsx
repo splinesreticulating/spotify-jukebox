@@ -38,7 +38,7 @@ const KeyFilter: React.FC<KeyFilterProps> = ({ initialValue }) => {
         checked={checked}
         onChange={handleCheckboxChange}
       />
-      <span className="ml-2">Key</span>
+      <span className="ml-2">Same Key</span>
     </label>
   )
 }

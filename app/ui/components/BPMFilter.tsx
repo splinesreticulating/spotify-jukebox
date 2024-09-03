@@ -38,7 +38,7 @@ const BPMFilter: React.FC<BPMFilterProps> = ({ initialValue }) => {
         checked={checked}
         onChange={handleCheckboxChange}
       />
-      <span className="ml-2">BPM</span>
+      <span className="ml-2">Similar BPM</span>
     </label>
   )
 }
