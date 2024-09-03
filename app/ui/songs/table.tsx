@@ -31,13 +31,12 @@ export default async function SongsTable({
             {songs?.map((song) => (
               <div
                 key={song.id}
-                className="mb-2 w-full rounded-md bg-white p-4"
+                className="mb-2 w-full rounded-md bg-white p-1 text-xs"
               >
                 <div className="flex items-center justify-between pb-1">
-                  <div className="mb-2 flex items-center">
-                    <p className="text-sm text-gray-500">{song.artist} - {song.title}</p>
+                  <div className="flex items-center">
+                  <Link href={`/dashboard/songs/${song.id}/edit`}>{song.artist} - {song.title}</Link>
                   </div>
-                  <p className="text-sm text-gray-500">{song.info} / {song.bpm}</p>
                 </div>
               </div>
             ))}

@@ -54,7 +54,7 @@ export default async function Page({
       <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
         <Search placeholder="title, artist, key, year, genre" />
       </div>
-      <div className="flex items-center justify-between gap-2">
+      <div className="flex pt-5 items-center justify-between gap-2">
         <LevelFilters levels={levels} />
         <InstrumentalFilter initialValue={instrumental} />
         <KeyFilter initialValue={nowPlayingKey} />
