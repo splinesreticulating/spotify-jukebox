@@ -2,7 +2,7 @@
 const shimmer =
   'before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/60 before:to-transparent';
 
-export function CardSkeleton() {
+function CardSkeleton() {
   return (
     <div
       className={`${shimmer} relative overflow-hidden rounded-xl bg-gray-100 p-2 shadow-sm`}
@@ -27,17 +27,16 @@ export function CardsSkeleton() {
   );
 }
 
-export function SongSkeleton() {
+function SongSkeleton() {
   return (
     <div className="flex flex-row items-center justify-between border-b border-gray-100 py-4">
       <div className="flex items-center">
-        <div className="mr-2 h-8 w-8 rounded-full bg-gray-200" />
         <div className="min-w-0">
           <div className="h-5 w-40 rounded-md bg-gray-200" />
           <div className="mt-2 h-4 w-12 rounded-md bg-gray-200" />
         </div>
       </div>
-      <div className="mt-2 h-4 w-12 rounded-md bg-gray-200" />
+      <div className="mt-2 h-4 w-28 rounded-md bg-gray-200" />
     </div>
   );
 }
@@ -55,10 +54,6 @@ export function LatestSongsSkeleton() {
           <SongSkeleton />
           <SongSkeleton />
           <SongSkeleton />
-          <div className="flex items-center pb-2 pt-6">
-            <div className="h-5 w-5 rounded-full bg-gray-200" />
-            <div className="ml-2 h-4 w-20 rounded-md bg-gray-200" />
-          </div>
         </div>
       </div>
     </div>
@@ -84,7 +79,7 @@ export default function DashboardSkeleton() {
   );
 }
 
-export function TableRowSkeleton() {
+function TableRowSkeleton() {
   return (
     <tr className="w-full border-b border-gray-100 last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg">
       {/* Artist */}
@@ -119,7 +114,7 @@ export function TableRowSkeleton() {
   );
 }
 
-export function SongsMobileSkeleton() {
+function SongsMobileSkeleton() {
   return (
     <div className="mb-2 w-full rounded-md bg-white p-4">
       <div className="flex items-center justify-between border-b border-gray-100 pb-8">
@@ -157,7 +152,7 @@ export function SongsTableSkeleton() {
             <SongsMobileSkeleton />
           </div>
           <table className="hidden min-w-full text-gray-900 md:table">
-          <thead className="rounded-lg text-left text-sm font-normal">
+            <thead className="rounded-lg text-left text-sm font-normal">
               <tr>
                 <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
                   Artist
@@ -196,3 +191,34 @@ export function SongsTableSkeleton() {
     </div>
   );
 }
+
+export function NowPlayingSkeleton() {
+  return (
+    <div className="text-center w-full max-w-md">
+      <div className="h-6 w-24 mx-auto bg-gray-100 rounded mb-4"></div>
+      <div className="flex justify-center my-2">
+        <div className="w-20 h-24 bg-gray-100 rounded-full"></div>
+      </div>
+      <br />
+      <table className="w-full table-auto border-collapse">
+        <tbody>
+          <tr>
+            <td className="h-6 w-24 bg-gray-100 rounded"></td>
+          </tr>
+        </tbody>
+      </table>
+      <br />
+      <div className="h-8 w-8 mx-auto bg-red-100 rounded-full"></div>
+      <br />
+      <table className="w-full table-auto border-collapse">
+        <tbody>
+          <tr>
+            <td className="h-6 w-24 bg-gray-100 rounded"></td>
+          </tr>
+        </tbody>
+      </table>
+      <div className="mt-8 h-6 w-24 mx-auto bg-gray-100 rounded"></div>
+    </div>
+  );
+}
+
