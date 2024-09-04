@@ -1,9 +1,9 @@
-import { ArrowPathIcon } from '@heroicons/react/24/outline';
-import clsx from 'clsx';
-import { openSans } from '@/app/ui/fonts';
-import { fetchLatestSongs } from '@/app/lib/data';
-import Link from 'next/link';
-import { daysAgo } from '@/app/lib/utils';
+import { ArrowPathIcon } from "@heroicons/react/24/outline";
+import clsx from "clsx";
+import { openSans } from "@/app/ui/fonts";
+import { fetchLatestSongs } from "@/app/lib/data";
+import Link from "next/link";
+import { daysAgo } from "@/app/lib/utils";
 
 export default async function LatestSongs() {
   const latestSongs = await fetchLatestSongs();
@@ -20,9 +20,9 @@ export default async function LatestSongs() {
               <div
                 key={song.id}
                 className={clsx(
-                  'flex flex-row items-center justify-between py-4',
+                  "flex flex-row items-center justify-between py-4",
                   {
-                    'border-t': i !== 0,
+                    "border-t": i !== 0,
                   },
                 )}
               >

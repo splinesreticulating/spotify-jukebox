@@ -1,6 +1,6 @@
-import React from 'react';
-import Link from 'next/link';
-import { NowPlayingSong } from '../definitions';
+import React from "react";
+import Link from "next/link";
+import { NowPlayingSong } from "../definitions";
 
 export const SongLink: React.FC<{ song: NowPlayingSong }> = ({ song }) => {
   return (

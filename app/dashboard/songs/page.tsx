@@ -1,24 +1,24 @@
-import Pagination from '@/app/ui/songs/pagination';
-import Search from '@/app/ui/search';
-import Table from '@/app/ui/songs/table';
-import { openSans } from '@/app/ui/fonts';
-import { SongsTableSkeleton } from '@/app/ui/skeletons';
-import { Suspense } from 'react';
+import Pagination from "@/app/ui/songs/pagination";
+import Search from "@/app/ui/search";
+import Table from "@/app/ui/songs/table";
+import { openSans } from "@/app/ui/fonts";
+import { SongsTableSkeleton } from "@/app/ui/skeletons";
+import { Suspense } from "react";
 import {
   fetchNowPlayingSongID,
   fetchSongById,
   fetchSongsPages,
-} from '@/app/lib/data';
-import { Metadata } from 'next';
-import { LevelFilters } from '@/app/lib/components/LevelFilters';
-import InstrumentalFilter from '@/app/ui/components/InstrumentalFilter';
-import KeyFilter from '@/app/ui/components/KeyFilter';
-import BPMFilter from '@/app/ui/components/BPMFilter';
-import EightiesFilter from '@/app/ui/components/EightiesFilter';
-import NinetiesFilter from '@/app/ui/components/NinetiesFilter';
+} from "@/app/lib/data";
+import { Metadata } from "next";
+import { LevelFilters } from "@/app/lib/components/LevelFilters";
+import InstrumentalFilter from "@/app/ui/components/InstrumentalFilter";
+import KeyFilter from "@/app/ui/components/KeyFilter";
+import BPMFilter from "@/app/ui/components/BPMFilter";
+import EightiesFilter from "@/app/ui/components/EightiesFilter";
+import NinetiesFilter from "@/app/ui/components/NinetiesFilter";
 
 export const metadata: Metadata = {
-  title: 'Search',
+  title: "Search",
 };
 
 export default async function Page({
@@ -35,9 +35,9 @@ export default async function Page({
     nineties?: string;
   };
 }) {
-  const query = searchParams?.query || '';
+  const query = searchParams?.query || "";
   const currentPage = Number(searchParams?.page) || 1;
-  const levels = searchParams?.levels || '';
+  const levels = searchParams?.levels || "";
   const instrumental = Number(searchParams?.instrumental) || 0;
   const eighties = Boolean(searchParams?.eighties);
   const nineties = Boolean(searchParams?.nineties);

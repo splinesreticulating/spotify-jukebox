@@ -1,14 +1,14 @@
-import '@/app/ui/global.css';
-import { inter } from '@/app/ui/fonts';
-import { Metadata } from 'next';
+import "@/app/ui/global.css";
+import { inter } from "@/app/ui/fonts";
+import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: {
-    template: '%s | Squirrel Radio',
-    default: 'Squirrel Radio',
+    template: "%s | Squirrel Radio",
+    default: "Squirrel Radio",
   },
-  description: 'Complementary mixed nuts',
-  metadataBase: new URL('http://localhost:2309'),
+  description: "Complementary mixed nuts",
+  metadataBase: new URL("http://localhost:2309"),
 };
 
 export default function RootLayout({

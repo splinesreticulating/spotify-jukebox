@@ -1,24 +1,24 @@
-import AcmeLogo from '@/app/ui/jukeBox-logo';
-import { ArrowRightIcon } from '@heroicons/react/24/outline';
-import Link from 'next/link';
-import { openSans } from '@/app/ui/fonts';
-import Image from 'next/image';
+import AcmeLogo from "@/app/ui/jukeBox-logo";
+import { ArrowRightIcon } from "@heroicons/react/24/outline";
+import Link from "next/link";
+import { openSans } from "@/app/ui/fonts";
+import Image from "next/image";
 
 export default function Page() {
   const getFrontPageImages = (): string[] => {
-    const fs = require('fs');
-    const path = require('path');
+    const fs = require("fs");
+    const path = require("path");
 
-    const directoryPath = path.join(__dirname, '../../../public');
+    const directoryPath = path.join(__dirname, "../../../public");
     const files: string[] = fs.readdirSync(directoryPath);
 
     // Filter filenames matching squirrel*(-desktop|-mobile).jpg
     const baseFrontPageImages: string[] = files
       .filter(
-        (file: string) => file.startsWith('squirrel') && file.endsWith('.jpg'),
+        (file: string) => file.startsWith("squirrel") && file.endsWith(".jpg"),
       )
       .map((file: string) =>
-        file.replace(/-desktop|-mobile/, '').replace('.jpg', ''),
+        file.replace(/-desktop|-mobile/, "").replace(".jpg", ""),
       )
       .filter(
         (value: string, index: number, self: string[]) =>

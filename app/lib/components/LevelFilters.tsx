@@ -1,22 +1,22 @@
-'use client';
+"use client";
 
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
-const allLevels = ['1000', '2000', '3000', '4000', '5000'];
+const allLevels = ["1000", "2000", "3000", "4000", "5000"];
 
 export function LevelFilters({ levels }: { levels: string }) {
   const router = useRouter();
   const currentSearchParams = useSearchParams();
-  const initialLevels = levels ? levels.split(',').filter(Boolean) : allLevels;
+  const initialLevels = levels ? levels.split(",").filter(Boolean) : allLevels;
   const [selectedLevels, setSelectedLevels] = useState<string[]>(initialLevels);
 
   useEffect(() => {
-    const levelsQuery = selectedLevels.join(',');
+    const levelsQuery = selectedLevels.join(",");
     const newSearchParams = new URLSearchParams(
       Object.fromEntries(currentSearchParams.entries()),
     );
-    newSearchParams.set('levels', levelsQuery);
+    newSearchParams.set("levels", levelsQuery);
     router.replace(`?${newSearchParams.toString()}`);
   }, [selectedLevels]);
 
@@ -43,8 +43,8 @@ export function LevelFilters({ levels }: { levels: string }) {
           <span
             className={`hw-1 cursor-pointer rounded px-2 ${
               selectedLevels.includes(level)
-                ? 'border-teal-600 bg-teal-600 text-white'
-                : 'border-teal-600 bg-white text-teal-600'
+                ? "border-teal-600 bg-teal-600 text-white"
+                : "border-teal-600 bg-white text-teal-600"
             }`}
           >
             {level[0]}

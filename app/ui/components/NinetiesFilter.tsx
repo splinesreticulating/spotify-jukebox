@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
 interface NinetiesFilterProps {
   initialValue: boolean;
@@ -11,7 +11,7 @@ const NinetiesFilter: React.FC<NinetiesFilterProps> = ({ initialValue }) => {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    setChecked(params.has('nineties'));
+    setChecked(params.has("nineties"));
   }, []);
 
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -21,13 +21,13 @@ const NinetiesFilter: React.FC<NinetiesFilterProps> = ({ initialValue }) => {
     const params = new URLSearchParams(window.location.search);
 
     if (isChecked) {
-      params.set('nineties', 'true');
+      params.set("nineties", "true");
     } else {
-      params.delete('nineties');
+      params.delete("nineties");
     }
 
     const newUrl = `${window.location.pathname}?${params.toString()}`;
-    window.history.pushState({}, '', newUrl);
+    window.history.pushState({}, "", newUrl);
     window.location.reload(); // Reload the page
   };
 

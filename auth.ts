@@ -1,10 +1,10 @@
-import NextAuth from 'next-auth';
-import Credentials from 'next-auth/providers/credentials';
-import bcrypt from 'bcrypt';
-import { z } from 'zod';
-import type { User } from '@/app/lib/definitions';
-import { authConfig } from './auth.config';
-import { db } from '@/app/lib/db';
+import NextAuth from "next-auth";
+import Credentials from "next-auth/providers/credentials";
+import bcrypt from "bcrypt";
+import { z } from "zod";
+import type { User } from "@/app/lib/definitions";
+import { authConfig } from "./auth.config";
+import { db } from "@/app/lib/db";
 
 async function getUser(email: string): Promise<User | null> {
   try {
@@ -12,21 +12,21 @@ async function getUser(email: string): Promise<User | null> {
 
     if (!response) {
       return {
-        id: 'none',
-        name: 'noah body',
-        password: '',
-        email: 'nope@ok.com',
+        id: "none",
+        name: "noah body",
+        password: "",
+        email: "nope@ok.com",
       };
     } else
       return {
         id: `${response.id}`,
-        name: 'no',
+        name: "no",
         password: response.password,
         email: response.email,
       };
   } catch (error) {
-    console.error('Failed to fetch user:', error);
-    throw new Error('Failed to fetch user.');
+    console.error("Failed to fetch user:", error);
+    throw new Error("Failed to fetch user.");
   }
 }
 
@@ -49,7 +49,7 @@ export const { auth, signIn, signOut } = NextAuth({
           if (passwordsMatch) return user;
         }
 
-        console.log('Invalid credentials');
+        console.log("Invalid credentials");
         return null;
       },
     }),

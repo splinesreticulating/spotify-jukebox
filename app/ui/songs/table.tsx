@@ -1,5 +1,5 @@
-import { fetchFilteredSongs } from '@/app/lib/data';
-import Link from 'next/link';
+import { fetchFilteredSongs } from "@/app/lib/data";
+import Link from "next/link";
 
 export default async function SongsTable({
   query,
@@ -100,7 +100,7 @@ export default async function SongsTable({
                   <td className="whitespace-nowrap px-3 py-3">{song.bpm}</td>
                   <td className="whitespace-nowrap px-3 py-3">{song.info}</td>
                   <td className="whitespace-nowrap px-3 py-3">
-                    {Number(song.albumyear) > 1700 ? song.albumyear : ''}
+                    {Number(song.albumyear) > 1700 ? song.albumyear : ""}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
                     {song.date_added && song.date_added.toDateString()}

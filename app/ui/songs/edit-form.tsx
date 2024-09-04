@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { Song } from '@/app/lib/definitions';
-import Link from 'next/link';
-import { Button } from '@/app/ui/button';
-import { updateSong } from '@/app/lib/actions';
-import { useFormState } from 'react-dom';
-import { TimeOffDropdown } from '@/app/lib/components/TimeOffDropdown';
-import { DateAdded } from '@/app/lib/components/DateAdded';
-import { LastPlayed } from '@/app/lib/components/LastPlayed';
+import { Song } from "@/app/lib/definitions";
+import Link from "next/link";
+import { Button } from "@/app/ui/button";
+import { updateSong } from "@/app/lib/actions";
+import { useFormState } from "react-dom";
+import { TimeOffDropdown } from "@/app/lib/components/TimeOffDropdown";
+import { DateAdded } from "@/app/lib/components/DateAdded";
+import { LastPlayed } from "@/app/lib/components/LastPlayed";
 
 export default function EditSongForm({ song }: { song: Song }) {
   const initialState = { message: null, errors: {} };
@@ -113,7 +113,7 @@ export default function EditSongForm({ song }: { song: Song }) {
                 id="grouping"
                 name="grouping"
                 type="string"
-                defaultValue={song.grouping || ''}
+                defaultValue={song.grouping || ""}
               />
             </div>
           </div>
@@ -134,7 +134,7 @@ export default function EditSongForm({ song }: { song: Song }) {
                 name="instrumentalness"
                 type="number"
                 step="1"
-                defaultValue={song.instrumentalness || ''}
+                defaultValue={song.instrumentalness || ""}
               />
             </div>
           </div>
@@ -151,7 +151,7 @@ export default function EditSongForm({ song }: { song: Song }) {
                   name="status"
                   type="radio"
                   value="sleep"
-                  defaultChecked={song.genre === '1000'}
+                  defaultChecked={song.genre === "1000"}
                 />
                 <label
                   htmlFor="sleep"
@@ -166,7 +166,7 @@ export default function EditSongForm({ song }: { song: Song }) {
                   name="status"
                   type="radio"
                   value="morning"
-                  defaultChecked={song.genre === '2000'}
+                  defaultChecked={song.genre === "2000"}
                 />
                 <label
                   htmlFor="morning"
@@ -181,7 +181,7 @@ export default function EditSongForm({ song }: { song: Song }) {
                   name="status"
                   type="radio"
                   value="afternoon"
-                  defaultChecked={song.genre === '3000'}
+                  defaultChecked={song.genre === "3000"}
                 />
                 <label
                   htmlFor="afternoon"
@@ -196,7 +196,7 @@ export default function EditSongForm({ song }: { song: Song }) {
                   name="status"
                   type="radio"
                   value="bar"
-                  defaultChecked={song.genre === '4000'}
+                  defaultChecked={song.genre === "4000"}
                 />
                 <label
                   htmlFor="bar"
@@ -211,7 +211,7 @@ export default function EditSongForm({ song }: { song: Song }) {
                   name="status"
                   type="radio"
                   value="club"
-                  defaultChecked={song.genre === '5000'}
+                  defaultChecked={song.genre === "5000"}
                 />
                 <label
                   htmlFor="club"

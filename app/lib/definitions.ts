@@ -22,7 +22,7 @@ export type Revenue = {
 };
 
 // The database returns a number for amount, but we later format it to a string with the formatCurrency function
-export type LatestSongRaw = Omit<LatestSong, 'amount'> & {
+export type LatestSongRaw = Omit<LatestSong, "amount"> & {
   amount: number;
 };
 
@@ -43,7 +43,7 @@ export type Song = {
   date_played: Date | null;
 };
 
-export type LatestSong = Pick<Song, 'title' | 'id' | 'artist'>;
+export type LatestSong = Pick<Song, "title" | "id" | "artist">;
 
 export type SongsTable = {
   id: string;
@@ -53,7 +53,7 @@ export type SongsTable = {
   image_url: string;
   date: string;
   amount: number;
-  status: 'pending' | 'paid';
+  status: "pending" | "paid";
 };
 
 export type ArtistsTableType = {
@@ -78,22 +78,22 @@ export type ArtistField = {
 
 export type SongForm = Pick<
   Song,
-  | 'id'
-  | 'title'
-  | 'artist'
-  | 'bpm'
-  | 'genre'
-  | 'info'
-  | 'hours_off'
-  | 'albumyear'
-  | 'date_added'
-  | 'grouping'
+  | "id"
+  | "title"
+  | "artist"
+  | "bpm"
+  | "genre"
+  | "info"
+  | "hours_off"
+  | "albumyear"
+  | "date_added"
+  | "grouping"
 >;
 
 export type NowPlayingSong = {
-  songID: Song['id'];
-  artist: Song['artist'];
-  title: Song['title'];
+  songID: Song["id"];
+  artist: Song["artist"];
+  title: Song["title"];
   poolDepth?: number;
   level?: number;
 };

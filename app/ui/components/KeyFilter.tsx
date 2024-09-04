@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
 interface KeyFilterProps {
   initialValue: string | undefined;
@@ -11,7 +11,7 @@ const KeyFilter: React.FC<KeyFilterProps> = ({ initialValue }) => {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    setChecked(params.has('keyRef'));
+    setChecked(params.has("keyRef"));
   }, []);
 
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -21,13 +21,13 @@ const KeyFilter: React.FC<KeyFilterProps> = ({ initialValue }) => {
     const params = new URLSearchParams(window.location.search);
 
     if (isChecked && initialValue) {
-      params.set('keyRef', initialValue);
+      params.set("keyRef", initialValue);
     } else {
-      params.delete('keyRef');
+      params.delete("keyRef");
     }
 
     const newUrl = `${window.location.pathname}?${params.toString()}`;
-    window.history.pushState({}, '', newUrl);
+    window.history.pushState({}, "", newUrl);
     window.location.reload(); // Reload the page
   };
 

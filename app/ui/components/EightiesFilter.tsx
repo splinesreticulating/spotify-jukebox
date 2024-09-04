@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
 interface EightiesFilterProps {
   initialValue: boolean;
@@ -11,7 +11,7 @@ const EightiesFilter: React.FC<EightiesFilterProps> = ({ initialValue }) => {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    setChecked(params.has('eighties'));
+    setChecked(params.has("eighties"));
   }, []);
 
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -21,13 +21,13 @@ const EightiesFilter: React.FC<EightiesFilterProps> = ({ initialValue }) => {
     const params = new URLSearchParams(window.location.search);
 
     if (isChecked) {
-      params.set('eighties', 'true');
+      params.set("eighties", "true");
     } else {
-      params.delete('eighties');
+      params.delete("eighties");
     }
 
     const newUrl = `${window.location.pathname}?${params.toString()}`;
-    window.history.pushState({}, '', newUrl);
+    window.history.pushState({}, "", newUrl);
     window.location.reload(); // Reload the page
   };
 

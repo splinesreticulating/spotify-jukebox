@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
 interface BPMFilterProps {
   initialValue: number | undefined;
@@ -11,7 +11,7 @@ const BPMFilter: React.FC<BPMFilterProps> = ({ initialValue }) => {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    setChecked(params.has('bpmRef'));
+    setChecked(params.has("bpmRef"));
   }, []);
 
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -21,13 +21,13 @@ const BPMFilter: React.FC<BPMFilterProps> = ({ initialValue }) => {
     const params = new URLSearchParams(window.location.search);
 
     if (isChecked && initialValue) {
-      params.set('bpmRef', `${initialValue}`);
+      params.set("bpmRef", `${initialValue}`);
     } else {
-      params.delete('bpmRef');
+      params.delete("bpmRef");
     }
 
     const newUrl = `${window.location.pathname}?${params.toString()}`;
-    window.history.pushState({}, '', newUrl);
+    window.history.pushState({}, "", newUrl);
     window.location.reload(); // Reload the page
   };
 

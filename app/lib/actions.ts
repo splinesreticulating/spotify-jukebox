@@ -1,12 +1,12 @@
-'use server';
+"use server";
 
-import { z } from 'zod';
-import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
-import { signIn } from '@/auth';
-import { AuthError } from 'next-auth';
-import { db } from './db';
-import { NowPlayingData } from './definitions';
+import { z } from "zod";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { signIn } from "@/auth";
+import { AuthError } from "next-auth";
+import { db } from "./db";
+import { NowPlayingData } from "./definitions";
 
 const FormSchema = z.object({
   id: z.number(),
@@ -42,13 +42,13 @@ export async function updateSong(
   formData: FormData,
 ) {
   const fields = {
-    title: formData.get('title')?.toString(),
-    artist: formData.get('artist')?.toString(),
-    grouping: formData.get('grouping')?.toString(),
-    album: formData.get('album')?.toString(),
-    instrumentalness: Number(formData.get('instrumentalness')?.toString()),
-    albumyear: formData.get('albumyear')?.toString(),
-    hours_off: Number(formData.get('hours_off')?.toString()),
+    title: formData.get("title")?.toString(),
+    artist: formData.get("artist")?.toString(),
+    grouping: formData.get("grouping")?.toString(),
+    album: formData.get("album")?.toString(),
+    instrumentalness: Number(formData.get("instrumentalness")?.toString()),
+    albumyear: formData.get("albumyear")?.toString(),
+    hours_off: Number(formData.get("hours_off")?.toString()),
   };
 
   const {
@@ -75,11 +75,11 @@ export async function updateSong(
       },
     });
   } catch (error) {
-    return { message: 'Database Error: Failed to Update Song.' };
+    return { message: "Database Error: Failed to Update Song." };
   }
 
-  revalidatePath('/dashboard/songs');
-  redirect('/dashboard/nowPlaying');
+  revalidatePath("/dashboard/songs");
+  redirect("/dashboard/nowPlaying");
 }
 
 export async function befriend(nowPlayingData: NowPlayingData) {
@@ -95,7 +95,7 @@ export async function befriend(nowPlayingData: NowPlayingData) {
     });
   } catch (error) {
     console.error(error);
-    return { message: 'Database Error: Failed to create friendship', error };
+    return { message: "Database Error: Failed to create friendship", error };
   }
 }
 
@@ -113,7 +113,7 @@ export async function defriend(nowPlayingData: NowPlayingData) {
     });
   } catch (error) {
     console.error(error);
-    return { message: 'Database Error: Failed to remove friendship', error };
+    return { message: "Database Error: Failed to remove friendship", error };
   }
 }
 
@@ -122,14 +122,14 @@ export async function authenticate(
   formData: FormData,
 ) {
   try {
-    await signIn('credentials', formData);
+    await signIn("credentials", formData);
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
-        case 'CredentialsSignin':
-          return 'Invalid credentials.';
+        case "CredentialsSignin":
+          return "Invalid credentials.";
         default:
-          return 'Something went wrong.';
+          return "Something went wrong.";
       }
     }
     throw error;

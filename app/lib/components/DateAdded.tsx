@@ -1,4 +1,4 @@
-import { Song } from '../definitions';
+import { Song } from "../definitions";
 
 export const DateAdded: React.FC<{ song: Song }> = ({ song }) => {
   return (

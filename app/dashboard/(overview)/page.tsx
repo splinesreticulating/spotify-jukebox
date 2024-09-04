@@ -1,8 +1,8 @@
-import CardWrapper from '@/app/ui/dashboard/cards';
-import LatestSongs from '@/app/ui/dashboard/latest-songs';
-import { openSans } from '@/app/ui/fonts';
-import { Suspense } from 'react';
-import { LatestSongsSkeleton, CardsSkeleton } from '@/app/ui/skeletons';
+import CardWrapper from "@/app/ui/dashboard/cards";
+import LatestSongs from "@/app/ui/dashboard/latest-songs";
+import { openSans } from "@/app/ui/fonts";
+import { Suspense } from "react";
+import { LatestSongsSkeleton, CardsSkeleton } from "@/app/ui/skeletons";
 
 export default async function Page() {
   return (

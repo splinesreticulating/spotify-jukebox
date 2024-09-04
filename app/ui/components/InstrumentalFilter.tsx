@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 interface InstrumentalnessFilterProps {
   initialValue: number;
@@ -17,12 +17,12 @@ const InstrumentalFilter: React.FC<InstrumentalnessFilterProps> = ({
 
     const params = new URLSearchParams(window.location.search);
     if (isChecked) {
-      params.set('instrumental', '90');
+      params.set("instrumental", "90");
     } else {
-      params.delete('instrumental');
+      params.delete("instrumental");
     }
     const newUrl = `${window.location.pathname}?${params.toString()}`;
-    window.history.pushState({}, '', newUrl);
+    window.history.pushState({}, "", newUrl);
     window.location.reload(); // Reload the page
   };
 

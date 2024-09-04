@@ -1,8 +1,8 @@
-'use server';
+"use server";
 
-import { ITEMS_PER_PAGE, db } from './db';
-import { NowPlayingData, NowPlayingSong, Song } from './definitions';
-import { unstable_noStore as noStore } from 'next/cache';
+import { ITEMS_PER_PAGE, db } from "./db";
+import { NowPlayingData, NowPlayingSong, Song } from "./definitions";
+import { unstable_noStore as noStore } from "next/cache";
 
 const songSelectFields = {
   id: true,
@@ -58,15 +58,15 @@ const fetchSongsBaseQuery = (
       eighties || nineties
         ? {
             OR: [
-              eighties ? { albumyear: { startsWith: '198' } } : {},
-              nineties ? { albumyear: { startsWith: '199' } } : {},
+              eighties ? { albumyear: { startsWith: "198" } } : {},
+              nineties ? { albumyear: { startsWith: "199" } } : {},
             ],
           }
         : {},
     ],
   },
   orderBy: {
-    date_added: 'desc' as const,
+    date_added: "desc" as const,
   },
 });
 
@@ -84,7 +84,7 @@ export async function fetchLatestSongs() {
     const songs = await db.songlist.findMany({
       select: songSelectFields,
       orderBy: {
-        date_added: 'desc' as const,
+        date_added: "desc" as const,
       },
       take: 5,
     });
@@ -99,9 +99,9 @@ export async function fetchLatestSongs() {
 export async function fetchCardData() {
   noStore();
   try {
-    const songCountPromise = db.songlist.count({ where: { songtype: 'S' } });
+    const songCountPromise = db.songlist.count({ where: { songtype: "S" } });
     const artistCountPromise = db.songlist.findMany({
-      distinct: ['artist'],
+      distinct: ["artist"],
       select: { artist: true },
     });
 
@@ -112,8 +112,8 @@ export async function fetchCardData() {
       numberOfArtists: data[1].length,
     };
   } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch card data.');
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch card data.");
   }
 }
 
@@ -128,7 +128,7 @@ export async function fetchFilteredSongs(
   nineties?: boolean,
 ): Promise<Song[]> {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
-  const levelsArray = levels ? levels.split(',').map((level) => level) : [];
+  const levelsArray = levels ? levels.split(",").map((level) => level) : [];
 
   try {
     const songs = await db.songlist.findMany({
@@ -147,8 +147,8 @@ export async function fetchFilteredSongs(
     });
     return songs;
   } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch filtered songs');
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch filtered songs");
   }
 }
 
@@ -161,7 +161,7 @@ export async function fetchSongsPages(
   eighties?: boolean,
   nineties?: boolean,
 ): Promise<number> {
-  const levelsArray = levels ? levels.split(',').map((level) => level) : [];
+  const levelsArray = levels ? levels.split(",").map((level) => level) : [];
 
   try {
     const count = await db.songlist.count({
@@ -178,8 +178,8 @@ export async function fetchSongsPages(
 
     return Math.ceil(count / ITEMS_PER_PAGE);
   } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch total number of songs.');
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch total number of songs.");
   }
 }
 
@@ -193,7 +193,7 @@ export async function fetchSongById(id: number): Promise<Song | null> {
 
     return song;
   } catch (error) {
-    console.error('Database Error:', error);
+    console.error("Database Error:", error);
     throw new Error(`Failed to fetch song with ID: ${id}`);
   }
 }
@@ -215,15 +215,15 @@ export async function fetchFilteredArtists(query: string) {
 
     return uniqueArtists;
   } catch (err) {
-    console.error('Database Error:', err);
-    throw new Error('Failed to fetch artist table.');
+    console.error("Database Error:", err);
+    throw new Error("Failed to fetch artist table.");
   }
 }
 
 export const fetchNowPlaying = async (): Promise<NowPlayingData> => {
   const nowPlaying = await db.historylist.findMany({
     select: { title: true, artist: true, songID: true },
-    orderBy: { date_played: 'desc' as const },
+    orderBy: { date_played: "desc" as const },
     take: 2,
   });
 
@@ -245,7 +245,7 @@ export const fetchNowPlaying = async (): Promise<NowPlayingData> => {
 export const measurePoolDepth = async (songId: number) => {
   const song = await fetchSongById(songId);
 
-  if (!song) throw new Error('Song not found');
+  if (!song) throw new Error("Song not found");
 
   const { bpm, info, genre } = song;
 
@@ -268,7 +268,7 @@ export async function fetchNowPlayingSongID(): Promise<number | null> {
     const nowPlayingData = await fetchNowPlaying();
     return nowPlayingData.currentSong.songID;
   } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch now playing song ID');
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch now playing song ID");
   }
 }

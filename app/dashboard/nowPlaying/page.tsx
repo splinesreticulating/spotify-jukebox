@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
-import { fetchNowPlaying, measurePoolDepth } from '@/app/lib/data';
-import { befriend, defriend } from '@/app/lib/actions';
-import { NowPlayingData } from '@/app/lib/definitions';
-import { SongLink } from '@/app/lib/components/SongLink';
-import { Heart } from '@/app/lib/components/Heart';
-import { NowPlayingSkeleton } from '@/app/ui/skeletons';
+import React, { useState, useEffect } from "react";
+import Image from "next/image";
+import { fetchNowPlaying, measurePoolDepth } from "@/app/lib/data";
+import { befriend, defriend } from "@/app/lib/actions";
+import { NowPlayingData } from "@/app/lib/definitions";
+import { SongLink } from "@/app/lib/components/SongLink";
+import { Heart } from "@/app/lib/components/Heart";
+import { NowPlayingSkeleton } from "@/app/ui/skeletons";
 
 export default function Page() {
   const [nowPlayingData, setNowPlayingData] = useState<NowPlayingData | null>(
@@ -29,7 +29,7 @@ export default function Page() {
       });
       setIsHeartFilled(friends); // Set initial heart status based on `friends` property
     } catch (err) {
-      console.error('error getting now playing info', err);
+      console.error("error getting now playing info", err);
     } finally {
       setIsLoading(false); // End loading
     }
@@ -88,7 +88,7 @@ export default function Page() {
                     />
                   </td>
                 </tr>
-                now:{' '}
+                now:{" "}
                 <strong>
                   <SongLink song={nowPlayingData.currentSong} />
                 </strong>

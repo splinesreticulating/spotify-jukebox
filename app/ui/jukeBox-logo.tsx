@@ -1,5 +1,5 @@
-import { RadioIcon } from '@heroicons/react/24/outline'; // Assuming there is a radio icon
-import { openSans } from '@/app/ui/fonts';
+import { RadioIcon } from "@heroicons/react/24/outline"; // Assuming there is a radio icon
+import { openSans } from "@/app/ui/fonts";
 
 export default function JukeBoxLogo() {
   return (

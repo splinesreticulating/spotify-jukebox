@@ -1,5 +1,5 @@
-import { Song } from '../definitions';
-import { daysAgo } from '../utils';
+import { Song } from "../definitions";
+import { daysAgo } from "../utils";
 
 export const LastPlayed: React.FC<{ song: Song }> = ({ song }) => {
   // const lastPlayedDate = await checkHistorylists(song)

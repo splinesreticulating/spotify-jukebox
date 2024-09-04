@@ -3,9 +3,9 @@ import {
   ClockIcon,
   UserGroupIcon,
   InboxIcon,
-} from '@heroicons/react/24/outline';
-import { openSans } from '@/app/ui/fonts';
-import { fetchCardData } from '@/app/lib/data';
+} from "@heroicons/react/24/outline";
+import { openSans } from "@/app/ui/fonts";
+import { fetchCardData } from "@/app/lib/data";
 
 const iconMap = {
   collected: BanknotesIcon,
@@ -40,7 +40,7 @@ export function Card({
 }: {
   title: string;
   value: number | string;
-  type: 'songs' | 'artists';
+  type: "songs" | "artists";
 }) {
   const Icon = iconMap[type];
 

@@ -1,5 +1,5 @@
-import { HeartIcon as FullHeart } from '@heroicons/react/24/solid';
-import { HeartIcon as EmptyHeart } from '@heroicons/react/24/outline';
+import { HeartIcon as FullHeart } from "@heroicons/react/24/solid";
+import { HeartIcon as EmptyHeart } from "@heroicons/react/24/outline";
 
 export const Heart: React.FC<{
   onHeartClick: () => void;
