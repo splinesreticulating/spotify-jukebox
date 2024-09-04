@@ -5,24 +5,26 @@ import Link from 'next/link';
 import { Button } from '@/app/ui/button';
 import { updateSong } from '@/app/lib/actions';
 import { useFormState } from 'react-dom';
-import { TimeOffDropdown } from '@/app/lib/components/TimeOffDropdown'
+import { TimeOffDropdown } from '@/app/lib/components/TimeOffDropdown';
 import { DateAdded } from '@/app/lib/components/DateAdded';
 import { LastPlayed } from '@/app/lib/components/LastPlayed';
 
-export default function EditSongForm({
-  song,
-}: {
-  song: Song;
-}) {
+export default function EditSongForm({ song }: { song: Song }) {
   const initialState = { message: null, errors: {} };
   const updateSongWithId = updateSong.bind(null, `${song.id}`);
   const [state, dispatch] = useFormState(updateSongWithId, initialState);
 
   return (
     <form action={dispatch}>
-      <div className="text-2xl">{song.artist} - {song.title}</div>
-      <p><LastPlayed song={song}></LastPlayed></p>
-      <p><DateAdded song={song}></DateAdded></p>
+      <div className="text-2xl">
+        {song.artist} - {song.title}
+      </div>
+      <p>
+        <LastPlayed song={song}></LastPlayed>
+      </p>
+      <p>
+        <DateAdded song={song}></DateAdded>
+      </p>
       <div className="rounded-md bg-gray-50 p-4 md:p-6">
         {/* Song title */}
         <div className="mb-4">
@@ -95,7 +97,10 @@ export default function EditSongForm({
         </div>
 
         {/* Time off */}
-          <TimeOffDropdown initialValue={song.hours_off} onChange={(value: number) => console.log(value)} />
+        <TimeOffDropdown
+          initialValue={song.hours_off}
+          onChange={(value: number) => console.log(value)}
+        />
 
         {/* tags */}
         <div className="mb-4">
@@ -116,7 +121,10 @@ export default function EditSongForm({
 
         {/* Instrumentalness */}
         <div className="mb-4">
-          <label htmlFor="instrumentalness" className="mb-2 block text-sm font-medium">
+          <label
+            htmlFor="instrumentalness"
+            className="mb-2 block text-sm font-medium"
+          >
             Instrumentalness
           </label>
           <div className="relative mt-2 rounded-md">
@@ -134,9 +142,7 @@ export default function EditSongForm({
 
         {/* Song level */}
         <fieldset>
-          <legend className="mb-2 block text-sm font-medium">
-            Level
-          </legend>
+          <legend className="mb-2 block text-sm font-medium">Level</legend>
           <div className="rounded-md border border-gray-200 bg-white px-[14px] py-3">
             <div className="flex gap-4">
               <div className="flex items-center">
@@ -214,7 +220,6 @@ export default function EditSongForm({
                   Club
                 </label>
               </div>
-
             </div>
           </div>
         </fieldset>

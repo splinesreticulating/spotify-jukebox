@@ -29,7 +29,9 @@ export default async function LatestSongs() {
                 <div className="flex items-center">
                   <div className="min-w-0">
                     <p className="truncate text-sm font-semibold md:text-base">
-                    <Link href={`/dashboard/songs/${song.id}/edit`}>{song.title}</Link>
+                      <Link href={`/dashboard/songs/${song.id}/edit`}>
+                        {song.title}
+                      </Link>
                     </p>
                     <p className="hidden text-sm text-gray-500 sm:block">
                       {song.artist}

@@ -1,35 +1,35 @@
-'use client'
+'use client';
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
 
 interface KeyFilterProps {
-  initialValue: string | undefined
+  initialValue: string | undefined;
 }
 
 const KeyFilter: React.FC<KeyFilterProps> = ({ initialValue }) => {
-  const [checked, setChecked] = useState(false)
+  const [checked, setChecked] = useState(false);
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    setChecked(params.has('keyRef'))
-  }, [])
+    const params = new URLSearchParams(window.location.search);
+    setChecked(params.has('keyRef'));
+  }, []);
 
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const isChecked = event.target.checked
-    setChecked(isChecked)
+    const isChecked = event.target.checked;
+    setChecked(isChecked);
 
-    const params = new URLSearchParams(window.location.search)
-    
+    const params = new URLSearchParams(window.location.search);
+
     if (isChecked && initialValue) {
-      params.set('keyRef', initialValue)
+      params.set('keyRef', initialValue);
     } else {
-      params.delete('keyRef')
+      params.delete('keyRef');
     }
 
-    const newUrl = `${window.location.pathname}?${params.toString()}`
-    window.history.pushState({}, '', newUrl)
-    window.location.reload() // Reload the page
-  }
+    const newUrl = `${window.location.pathname}?${params.toString()}`;
+    window.history.pushState({}, '', newUrl);
+    window.location.reload(); // Reload the page
+  };
 
   return (
     <label className="flex items-center">
@@ -40,7 +40,7 @@ const KeyFilter: React.FC<KeyFilterProps> = ({ initialValue }) => {
       />
       <span className="ml-2">Same Key</span>
     </label>
-  )
-}
+  );
+};
 
-export default KeyFilter
+export default KeyFilter;

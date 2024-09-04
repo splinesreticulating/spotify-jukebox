@@ -15,15 +15,20 @@ const iconMap = {
 };
 
 export default async function CardWrapper() {
-  const {
-    numberOfSongs,
-    numberOfArtists,
-  } = await fetchCardData();
+  const { numberOfSongs, numberOfArtists } = await fetchCardData();
 
   return (
     <>
-      <Card title="Total Songs" value={numberOfSongs.toLocaleString()} type="songs" />
-      <Card title="Total Artists" value={numberOfArtists.toLocaleString()} type="artists" />
+      <Card
+        title="Total Songs"
+        value={numberOfSongs.toLocaleString()}
+        type="songs"
+      />
+      <Card
+        title="Total Artists"
+        value={numberOfArtists.toLocaleString()}
+        type="artists"
+      />
     </>
   );
 }

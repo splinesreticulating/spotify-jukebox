@@ -16,7 +16,7 @@ const links = [
   { name: 'Home', href: '/dashboard', icon: HomeIcon },
   { name: 'Search', href: '/dashboard/songs', icon: MagnifyingGlassIcon },
   { name: 'Artists', href: '/dashboard/artists', icon: UserGroupIcon },
-  { name: 'Now playing', href: '/dashboard/nowPlaying', icon: PlayCircleIcon }
+  { name: 'Now playing', href: '/dashboard/nowPlaying', icon: PlayCircleIcon },
 ];
 
 export default function NavLinks() {

@@ -4,16 +4,26 @@ import bcrypt from 'bcrypt';
 import { z } from 'zod';
 import type { User } from '@/app/lib/definitions';
 import { authConfig } from './auth.config';
-import { db } from '@/app/lib/db'
+import { db } from '@/app/lib/db';
 
 async function getUser(email: string): Promise<User | null> {
   try {
-    const response = await db.users.findFirst({ where: { email } })
+    const response = await db.users.findFirst({ where: { email } });
 
     if (!response) {
-      return { id: 'none', name: 'noah body', password: '', email: 'nope@ok.com' }
+      return {
+        id: 'none',
+        name: 'noah body',
+        password: '',
+        email: 'nope@ok.com',
+      };
     } else
-      return { id: `${response.id}`, name: 'no', password: response.password, email: response.email }
+      return {
+        id: `${response.id}`,
+        name: 'no',
+        password: response.password,
+        email: response.email,
+      };
   } catch (error) {
     console.error('Failed to fetch user:', error);
     throw new Error('Failed to fetch user.');

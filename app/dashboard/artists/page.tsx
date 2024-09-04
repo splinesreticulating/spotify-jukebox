@@ -6,8 +6,10 @@ export const metadata: Metadata = {
   title: 'Artists',
 };
 
-export default async function Page({ searchParams }: {
-  searchParams?: { query?: string, page?: string };
+export default async function Page({
+  searchParams,
+}: {
+  searchParams?: { query?: string; page?: string };
 }) {
   const query = searchParams?.query || '';
 

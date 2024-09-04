@@ -1,35 +1,35 @@
-'use client'
+'use client';
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
 
 interface EightiesFilterProps {
-  initialValue: boolean
+  initialValue: boolean;
 }
 
 const EightiesFilter: React.FC<EightiesFilterProps> = ({ initialValue }) => {
-  const [checked, setChecked] = useState(initialValue)
+  const [checked, setChecked] = useState(initialValue);
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    setChecked(params.has('eighties'))
-  }, [])
+    const params = new URLSearchParams(window.location.search);
+    setChecked(params.has('eighties'));
+  }, []);
 
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const isChecked = event.target.checked
-    setChecked(isChecked)
+    const isChecked = event.target.checked;
+    setChecked(isChecked);
 
-    const params = new URLSearchParams(window.location.search)
-    
+    const params = new URLSearchParams(window.location.search);
+
     if (isChecked) {
-      params.set('eighties', 'true')
+      params.set('eighties', 'true');
     } else {
-      params.delete('eighties')
+      params.delete('eighties');
     }
 
-    const newUrl = `${window.location.pathname}?${params.toString()}`
-    window.history.pushState({}, '', newUrl)
-    window.location.reload() // Reload the page
-  }
+    const newUrl = `${window.location.pathname}?${params.toString()}`;
+    window.history.pushState({}, '', newUrl);
+    window.location.reload(); // Reload the page
+  };
 
   return (
     <label className="flex items-center">
@@ -40,7 +40,7 @@ const EightiesFilter: React.FC<EightiesFilterProps> = ({ initialValue }) => {
       />
       <span className="ml-2">80's</span>
     </label>
-  )
-}
+  );
+};
 
-export default EightiesFilter
+export default EightiesFilter;

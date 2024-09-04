@@ -194,31 +194,30 @@ export function SongsTableSkeleton() {
 
 export function NowPlayingSkeleton() {
   return (
-    <div className="text-center w-full max-w-md">
-      <div className="h-6 w-24 mx-auto bg-gray-100 rounded mb-4"></div>
-      <div className="flex justify-center my-2">
-        <div className="w-20 h-24 bg-gray-100 rounded-full"></div>
+    <div className="w-full max-w-md text-center">
+      <div className="mx-auto mb-4 h-6 w-24 rounded bg-gray-100"></div>
+      <div className="my-2 flex justify-center">
+        <div className="h-24 w-20 rounded-full bg-gray-100"></div>
       </div>
       <br />
       <table className="w-full table-auto border-collapse">
         <tbody>
           <tr>
-            <td className="h-6 w-24 bg-gray-100 rounded"></td>
+            <td className="h-6 w-24 rounded bg-gray-100"></td>
           </tr>
         </tbody>
       </table>
       <br />
-      <div className="h-8 w-8 mx-auto bg-red-100 rounded-full"></div>
+      <div className="mx-auto h-8 w-8 rounded-full bg-red-100"></div>
       <br />
       <table className="w-full table-auto border-collapse">
         <tbody>
           <tr>
-            <td className="h-6 w-24 bg-gray-100 rounded"></td>
+            <td className="h-6 w-24 rounded bg-gray-100"></td>
           </tr>
         </tbody>
       </table>
-      <div className="mt-8 h-6 w-24 mx-auto bg-gray-100 rounded"></div>
+      <div className="mx-auto mt-8 h-6 w-24 rounded bg-gray-100"></div>
     </div>
   );
 }
-

@@ -1,8 +1,6 @@
 import { openSans } from '@/app/ui/fonts';
 import Search from '@/app/ui/search';
-import {
-  FormattedArtistsTable,
-} from '@/app/lib/definitions';
+import { FormattedArtistsTable } from '@/app/lib/definitions';
 
 export default async function ArtistsTable({
   artists,

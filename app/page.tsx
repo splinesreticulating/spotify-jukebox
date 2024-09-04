@@ -1,28 +1,36 @@
-import AcmeLogo from '@/app/ui/jukeBox-logo'
-import { ArrowRightIcon } from '@heroicons/react/24/outline'
-import Link from 'next/link'
-import { openSans } from '@/app/ui/fonts'
-import Image from 'next/image'
+import AcmeLogo from '@/app/ui/jukeBox-logo';
+import { ArrowRightIcon } from '@heroicons/react/24/outline';
+import Link from 'next/link';
+import { openSans } from '@/app/ui/fonts';
+import Image from 'next/image';
 
 export default function Page() {
-const getFrontPageImages = (): string[] => {
-  const fs = require('fs')
-  const path = require('path')
+  const getFrontPageImages = (): string[] => {
+    const fs = require('fs');
+    const path = require('path');
 
-  const directoryPath = path.join(__dirname, '../../../public')
-  const files: string[] = fs.readdirSync(directoryPath)
+    const directoryPath = path.join(__dirname, '../../../public');
+    const files: string[] = fs.readdirSync(directoryPath);
 
-  // Filter filenames matching squirrel*(-desktop|-mobile).jpg
-  const baseFrontPageImages: string[] = files
-    .filter((file: string) => file.startsWith('squirrel') && file.endsWith('.jpg'))
-    .map((file: string) => file.replace(/-desktop|-mobile/, '').replace('.jpg', ''))
-    .filter((value: string, index: number, self: string[]) => self.indexOf(value) === index)
+    // Filter filenames matching squirrel*(-desktop|-mobile).jpg
+    const baseFrontPageImages: string[] = files
+      .filter(
+        (file: string) => file.startsWith('squirrel') && file.endsWith('.jpg'),
+      )
+      .map((file: string) =>
+        file.replace(/-desktop|-mobile/, '').replace('.jpg', ''),
+      )
+      .filter(
+        (value: string, index: number, self: string[]) =>
+          self.indexOf(value) === index,
+      );
 
-  return baseFrontPageImages
-}
+    return baseFrontPageImages;
+  };
 
-  const frontPageImages = getFrontPageImages()
-  const randomImage = frontPageImages[Math.floor(Math.random() * frontPageImages.length)]
+  const frontPageImages = getFrontPageImages();
+  const randomImage =
+    frontPageImages[Math.floor(Math.random() * frontPageImages.length)];
 
   return (
     <main className="flex min-h-screen flex-col p-6">
@@ -61,5 +69,5 @@ const getFrontPageImages = (): string[] => {
         </div>
       </div>
     </main>
-  )
+  );
 }

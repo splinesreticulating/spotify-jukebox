@@ -1,33 +1,35 @@
-'use client'
+'use client';
 
-import { useRouter, useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
-const allLevels = ['1000', '2000', '3000', '4000', '5000']
+const allLevels = ['1000', '2000', '3000', '4000', '5000'];
 
 export function LevelFilters({ levels }: { levels: string }) {
-  const router = useRouter()
-  const currentSearchParams = useSearchParams()
-  const initialLevels = levels ? levels.split(',').filter(Boolean) : allLevels
-  const [selectedLevels, setSelectedLevels] = useState<string[]>(initialLevels)
+  const router = useRouter();
+  const currentSearchParams = useSearchParams();
+  const initialLevels = levels ? levels.split(',').filter(Boolean) : allLevels;
+  const [selectedLevels, setSelectedLevels] = useState<string[]>(initialLevels);
 
   useEffect(() => {
-    const levelsQuery = selectedLevels.join(',')
-    const newSearchParams = new URLSearchParams(Object.fromEntries(currentSearchParams.entries()))
-    newSearchParams.set('levels', levelsQuery)
-    router.replace(`?${newSearchParams.toString()}`)
-  }, [selectedLevels])
+    const levelsQuery = selectedLevels.join(',');
+    const newSearchParams = new URLSearchParams(
+      Object.fromEntries(currentSearchParams.entries()),
+    );
+    newSearchParams.set('levels', levelsQuery);
+    router.replace(`?${newSearchParams.toString()}`);
+  }, [selectedLevels]);
 
   const handleCheckboxChange = (level: string) => {
     setSelectedLevels((prevLevels) =>
       prevLevels.includes(level)
         ? prevLevels.filter((l) => l !== level)
-        : [...prevLevels, level]
-    )
-  }
+        : [...prevLevels, level],
+    );
+  };
 
   return (
-    <div className="mb-4 flex gap-1 justify-end">
+    <div className="mb-4 flex justify-end gap-1">
       {allLevels.map((level) => (
         <label key={level} className="flex items-center">
           <input
@@ -39,10 +41,10 @@ export function LevelFilters({ levels }: { levels: string }) {
             className="hidden"
           />
           <span
-            className={`px-2 hw-1 rounded cursor-pointer ${
+            className={`hw-1 cursor-pointer rounded px-2 ${
               selectedLevels.includes(level)
-                ? 'bg-teal-600 text-white border-teal-600'
-                : 'bg-white text-teal-600 border-teal-600'
+                ? 'border-teal-600 bg-teal-600 text-white'
+                : 'border-teal-600 bg-white text-teal-600'
             }`}
           >
             {level[0]}
@@ -50,5 +52,5 @@ export function LevelFilters({ levels }: { levels: string }) {
         </label>
       ))}
     </div>
-  )
+  );
 }

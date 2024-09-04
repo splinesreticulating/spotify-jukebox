@@ -1,28 +1,30 @@
-'use client'
+'use client';
 
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 
 interface InstrumentalnessFilterProps {
-  initialValue: number
+  initialValue: number;
 }
 
-const InstrumentalFilter: React.FC<InstrumentalnessFilterProps> = ({ initialValue }) => {
-  const [checked, setChecked] = useState(initialValue >= 90)
+const InstrumentalFilter: React.FC<InstrumentalnessFilterProps> = ({
+  initialValue,
+}) => {
+  const [checked, setChecked] = useState(initialValue >= 90);
 
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const isChecked = event.target.checked
-    setChecked(isChecked)
+    const isChecked = event.target.checked;
+    setChecked(isChecked);
 
-    const params = new URLSearchParams(window.location.search)
+    const params = new URLSearchParams(window.location.search);
     if (isChecked) {
-      params.set('instrumental', '90')
+      params.set('instrumental', '90');
     } else {
-      params.delete('instrumental')
+      params.delete('instrumental');
     }
-    const newUrl = `${window.location.pathname}?${params.toString()}`
-    window.history.pushState({}, '', newUrl)
-    window.location.reload() // Reload the page
-  }
+    const newUrl = `${window.location.pathname}?${params.toString()}`;
+    window.history.pushState({}, '', newUrl);
+    window.location.reload(); // Reload the page
+  };
 
   return (
     <label className="flex items-center">
@@ -33,7 +35,7 @@ const InstrumentalFilter: React.FC<InstrumentalnessFilterProps> = ({ initialValu
       />
       <span className="ml-2">Instrumental</span>
     </label>
-  )
-}
+  );
+};
 
-export default InstrumentalFilter
+export default InstrumentalFilter;

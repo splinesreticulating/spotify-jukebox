@@ -1,5 +1,5 @@
-import { fetchFilteredSongs } from '@/app/lib/data'
-import Link from 'next/link'
+import { fetchFilteredSongs } from '@/app/lib/data';
+import Link from 'next/link';
 
 export default async function SongsTable({
   query,
@@ -9,18 +9,27 @@ export default async function SongsTable({
   keyRef,
   bpmRef,
   eighties,
-  nineties
+  nineties,
 }: {
-  query: string
-  currentPage: number
-  levels: string
-  instrumental: number
-  keyRef?: string
-  bpmRef?: string
-  eighties?: boolean
-  nineties?: boolean
+  query: string;
+  currentPage: number;
+  levels: string;
+  instrumental: number;
+  keyRef?: string;
+  bpmRef?: string;
+  eighties?: boolean;
+  nineties?: boolean;
 }) {
-  const songs = await fetchFilteredSongs(query, currentPage, levels, instrumental, keyRef, bpmRef, eighties, nineties)
+  const songs = await fetchFilteredSongs(
+    query,
+    currentPage,
+    levels,
+    instrumental,
+    keyRef,
+    bpmRef,
+    eighties,
+    nineties,
+  );
 
   return (
     <div className="mt-6 flow-root">
@@ -35,7 +44,9 @@ export default async function SongsTable({
               >
                 <div className="flex items-center justify-between pb-1">
                   <div className="flex items-center">
-                  <Link href={`/dashboard/songs/${song.id}/edit`}>{song.artist} - {song.title}</Link>
+                    <Link href={`/dashboard/songs/${song.id}/edit`}>
+                      {song.artist} - {song.title}
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -79,17 +90,15 @@ export default async function SongsTable({
                     {song.artist}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
-                    <Link href={`/dashboard/songs/${song.id}/edit`}><strong>{song.title}</strong></Link>
+                    <Link href={`/dashboard/songs/${song.id}/edit`}>
+                      <strong>{song.title}</strong>
+                    </Link>
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
                     <p>{Number(song.genre) / 1000}</p>
                   </td>
-                  <td className="whitespace-nowrap px-3 py-3">
-                    {song.bpm}
-                  </td>
-                  <td className="whitespace-nowrap px-3 py-3">
-                    {song.info}
-                  </td>
+                  <td className="whitespace-nowrap px-3 py-3">{song.bpm}</td>
+                  <td className="whitespace-nowrap px-3 py-3">{song.info}</td>
                   <td className="whitespace-nowrap px-3 py-3">
                     {Number(song.albumyear) > 1700 ? song.albumyear : ''}
                   </td>
@@ -103,5 +112,5 @@ export default async function SongsTable({
         </div>
       </div>
     </div>
-  )
+  );
 }
