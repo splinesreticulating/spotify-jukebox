@@ -49,6 +49,7 @@ export async function updateSong(
     instrumentalness: Number(formData.get("instrumentalness")?.toString()),
     albumyear: formData.get("albumyear")?.toString(),
     hours_off: Number(formData.get("hours_off")?.toString()),
+    genre: formData.get("level")?.toString(),
   };
 
   const {
@@ -59,6 +60,7 @@ export async function updateSong(
     instrumentalness,
     albumyear,
     hours_off,
+    genre,
   } = fields;
 
   try {
@@ -72,6 +74,7 @@ export async function updateSong(
         instrumentalness,
         albumyear,
         hours_off,
+        genre,
       },
     });
   } catch (error) {
