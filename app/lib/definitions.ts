@@ -38,7 +38,7 @@ export type Song = {
   genre: string;
   date_added: Date | null;
   albumyear: string;
-  hours_off: number;
+  hours_off: number | null;
   count_played: number;
   date_played: Date | null;
 };
