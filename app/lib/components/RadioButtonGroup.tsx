@@ -3,13 +3,15 @@ import React from "react";
 interface RadioButtonGroupProps {
   name: string;
   options: { id: string; value: string; label: string; checked: boolean }[];
+  className?: string; // Add a className prop to make the component customizable
 }
 
 export const RadioButtonGroup: React.FC<RadioButtonGroupProps> = ({
   name,
   options,
+  className,
 }) => (
-  <fieldset>
+  <fieldset className={className}>
     <legend className="mb-2 block text-sm font-medium">Level</legend>
     <div className="rounded-md border border-gray-200 bg-white px-[14px] py-3">
       <div className="flex gap-4">

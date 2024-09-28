@@ -8,6 +8,7 @@ interface InputFieldProps {
   defaultValue?: string | number;
   step?: string;
   placeholder?: string;
+  className?: string;
 }
 
 export const InputField: React.FC<InputFieldProps> = ({
@@ -18,8 +19,9 @@ export const InputField: React.FC<InputFieldProps> = ({
   defaultValue,
   step,
   placeholder,
+  className,
 }) => (
-  <div className="mb-4">
+  <div className={`mb-4 ${className}`}>
     <label htmlFor={id} className="mb-2 block text-sm font-medium">
       {label}
     </label>

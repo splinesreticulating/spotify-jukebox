@@ -74,21 +74,30 @@ export default function EditSongForm({ song }: { song: Song }) {
   const [state, dispatch] = useFormState(updateSongWithId, initialState);
 
   return (
-    <form action={dispatch}>
-      <div className="text-2xl">
+    <form action={dispatch} className="p-4">
+      <div className="text-lg md:text-2xl mb-4">
         {song.artist} - {song.title}
       </div>
-      <p>
-        <LastPlayed song={song}></LastPlayed>
-      </p>
-      <p>
-        <DateAdded song={song}></DateAdded>
-      </p>
-      <div className="rounded-md bg-gray-50 p-4 md:p-6">
+
+      <details className="bg-gray-100 p-2 mb-4 rounded-md">
+        <summary className="cursor-pointer text-sm font-medium">
+          Additional Details
+        </summary>
+        <p className="text-sm mt-2">
+          <LastPlayed song={song} />
+        </p>
+        <p className="text-sm">
+          <DateAdded song={song} />
+        </p>
+      </details>
+
+      <div className="bg-gray-50 p-2 md:p-4 rounded-md">
         {/* Render Input Fields */}
-        {state.message && <p className="text-green-500">{state.message}</p>}
+        {state.message && (
+          <p className="text-green-500 mb-4">{state.message}</p>
+        )}
         {inputFieldsData.map((field) => (
-          <div key={field.id}>
+          <div key={field.id} className="mb-4">
             <InputField
               id={field.id}
               name={field.name}
@@ -104,10 +113,11 @@ export default function EditSongForm({ song }: { song: Song }) {
               }
               step={field.step}
               placeholder={field.placeholder}
+              className="w-full"
             />
             {state.errors?.[field.name as keyof typeof state.errors]?.map(
               (error, index) => (
-                <p key={index} className="text-red-500">
+                <p key={index} className="text-red-500 text-sm">
                   {error}
                 </p>
               ),
@@ -118,6 +128,7 @@ export default function EditSongForm({ song }: { song: Song }) {
         <TimeOffDropdown
           initialValue={song.hours_off}
           onChange={(value: number) => console.log(value)}
+          className="w-full mb-4"
         />
 
         {/* Render Radio Button Group */}
@@ -127,11 +138,12 @@ export default function EditSongForm({ song }: { song: Song }) {
             ...option,
             checked: song.genre === option.genre,
           }))}
+          className="w-full flex flex-wrap gap-2 mb-4"
         />
       </div>
 
       {/* Render Form Actions */}
-      <FormActions songId={song.id} />
+      <FormActions songId={song.id} className="mt-4" />
     </form>
   );
 }
