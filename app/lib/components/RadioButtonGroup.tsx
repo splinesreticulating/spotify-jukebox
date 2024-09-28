@@ -3,7 +3,7 @@ import React from "react";
 interface RadioButtonGroupProps {
   name: string;
   options: { id: string; value: string; label: string; checked: boolean }[];
-  className?: string; // Add a className prop to make the component customizable
+  className?: string;
 }
 
 export const RadioButtonGroup: React.FC<RadioButtonGroupProps> = ({

@@ -12,13 +12,12 @@ import {
   RadioButtonGroup,
 } from "@/app/lib/components";
 
-const radioOptions = [
-  { id: "sleep", value: "sleep", label: "Sleep", genre: "1000" },
-  { id: "morning", value: "morning", label: "Morning", genre: "2000" },
-  { id: "afternoon", value: "afternoon", label: "Afternoon", genre: "3000" },
-  { id: "bar", value: "bar", label: "Bar", genre: "4000" },
-  { id: "club", value: "club", label: "Club", genre: "5000" },
-];
+const labels = ["Sleep", "Morning", "Afternoon", "Bar", "Club"];
+const radioOptions = labels.map((label, index) => ({
+  id: label,
+  value: `${(index + 1) * 1000}`,
+  label,
+}));
 
 const inputFieldsData = [
   {
@@ -92,10 +91,10 @@ export default function EditSongForm({ song }: { song: Song }) {
       </details>
 
       <div className="bg-gray-50 p-2 md:p-4 rounded-md">
-        {/* Render Input Fields */}
         {state.message && (
           <p className="text-green-500 mb-4">{state.message}</p>
         )}
+
         {inputFieldsData.map((field) => (
           <div key={field.id} className="mb-4">
             <InputField
@@ -115,6 +114,7 @@ export default function EditSongForm({ song }: { song: Song }) {
               placeholder={field.placeholder}
               className="w-full"
             />
+
             {state.errors?.[field.name as keyof typeof state.errors]?.map(
               (error, index) => (
                 <p key={index} className="text-red-500 text-sm">
@@ -126,23 +126,20 @@ export default function EditSongForm({ song }: { song: Song }) {
         ))}
 
         <TimeOffDropdown
-          initialValue={song.hours_off}
-          onChange={(value: number) => console.log(value)}
+          initialValue={song.hours_off || 48}
           className="w-full mb-4"
         />
 
-        {/* Render Radio Button Group */}
         <RadioButtonGroup
-          name="status"
+          name="level"
           options={radioOptions.map((option) => ({
             ...option,
-            checked: song.genre === option.genre,
+            checked: song.genre === option.value,
           }))}
           className="w-full flex flex-wrap gap-2 mb-4"
         />
       </div>
 
-      {/* Render Form Actions */}
       <FormActions songId={song.id} className="mt-4" />
     </form>
   );

@@ -2,13 +2,11 @@ import { useState } from "react";
 
 interface TimeOffDropdownProps {
   initialValue: number;
-  onChange: (value: number) => void;
-  className?: string; // Add a className prop to make the component customizable
+  className?: string;
 }
 
 export function TimeOffDropdown({
   initialValue,
-  onChange,
   className,
 }: TimeOffDropdownProps) {
   const options = [
@@ -36,7 +34,6 @@ export function TimeOffDropdown({
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = Number(e.target.value);
     setSelectedValue(value);
-    if (onChange) onChange(value);
   };
 
   return (
