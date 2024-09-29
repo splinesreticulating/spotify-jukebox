@@ -10,6 +10,7 @@ import {
   TimeOffDropdown,
   FormActions,
   RadioButtonGroup,
+  NumericalDropDown,
 } from "@/app/lib/components";
 
 const labels = ["Sleep", "Morning", "Afternoon", "Bar", "Club"];
@@ -42,28 +43,11 @@ const inputFieldsData = [
     valueKey: "album",
   },
   {
-    id: "albumyear",
-    name: "albumyear",
-    label: "Year",
-    type: "number",
-    step: "1",
-    valueKey: "albumyear",
-    placeholder: "Enter song year",
-  },
-  {
     id: "grouping",
     name: "grouping",
     label: "Tags",
     type: "text",
     valueKey: "grouping",
-  },
-  {
-    id: "instrumentalness",
-    name: "instrumentalness",
-    label: "Instrumentalness",
-    type: "number",
-    step: "1",
-    valueKey: "instrumentalness",
   },
 ];
 
@@ -79,9 +63,7 @@ export default function EditSongForm({ song }: { song: Song }) {
       </div>
 
       <details className="bg-gray-100 p-2 mb-4 rounded-md">
-        <summary className="cursor-pointer text-sm font-medium">
-          Additional Details
-        </summary>
+        <summary className="cursor-pointer text-sm font-medium"></summary>
         <p className="text-sm mt-2">
           <LastPlayed song={song} />
         </p>
@@ -94,7 +76,6 @@ export default function EditSongForm({ song }: { song: Song }) {
         {state.message && (
           <p className="text-green-500 mb-4">{state.message}</p>
         )}
-
         {inputFieldsData.map((field) => (
           <div key={field.id} className="mb-4">
             <InputField
@@ -103,15 +84,11 @@ export default function EditSongForm({ song }: { song: Song }) {
               label={field.label}
               type={field.type}
               defaultValue={
-                song[field.valueKey as keyof Song] instanceof Date
-                  ? (song[field.valueKey as keyof Song] as Date).toISOString()
-                  : (song[field.valueKey as keyof Song] as
-                      | string
-                      | number
-                      | undefined) || ""
+                (song[field.valueKey as keyof Song] as
+                  | string
+                  | number
+                  | undefined) || ""
               }
-              step={field.step}
-              placeholder={field.placeholder}
               className="w-full"
             />
 
@@ -125,10 +102,45 @@ export default function EditSongForm({ song }: { song: Song }) {
           </div>
         ))}
 
-        <TimeOffDropdown
-          initialValue={song.hours_off || 48}
-          className="w-full mb-4"
-        />
+        <div className="mb-4">
+          <label
+            htmlFor="year"
+            className="mb-2 block text-sm font-medium text-gray-700"
+          >
+            Year
+          </label>
+          <div>
+            <NumericalDropDown
+              className="rounded-md border-gray-300"
+              name="year"
+              defaultValue={Number(song.albumyear || "1700")}
+              lowerValue={1700}
+              upperValue={2024}
+              nullOptionLabel="Select a year"
+            ></NumericalDropDown>
+          </div>
+        </div>
+
+        <div className="mb-4">
+          <label
+            htmlFor="instrumentalness"
+            className="mb-2 block text-sm font-medium text-gray-700"
+          >
+            Instrumentalness
+          </label>
+          <div>
+            <NumericalDropDown
+              className="rounded-md border-gray-300"
+              name="instrumentalness"
+              defaultValue={song.instrumentalness}
+              lowerValue={0}
+              upperValue={100}
+              nullOptionLabel="(not set)"
+            ></NumericalDropDown>
+          </div>
+        </div>
+
+        <TimeOffDropdown initialValue={song.hours_off || 48} />
 
         <RadioButtonGroup
           name="level"

@@ -47,8 +47,8 @@ export async function updateSong(
     grouping: formData.get("grouping")?.toString(),
     album: formData.get("album")?.toString(),
     instrumentalness: Number(formData.get("instrumentalness")?.toString()),
-    albumyear: formData.get("albumyear")?.toString(),
-    hours_off: Number(formData.get("hours_off")?.toString()),
+    albumyear: formData.get("year")?.toString(),
+    hours_off: Number(formData.get("hoursOff")?.toString()),
     genre: formData.get("level")?.toString(),
   };
 

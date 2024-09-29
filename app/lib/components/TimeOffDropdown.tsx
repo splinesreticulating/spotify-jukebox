@@ -10,24 +10,24 @@ export function TimeOffDropdown({
   className,
 }: TimeOffDropdownProps) {
   const options = [
-    { label: "12 hours", value: 12 },
-    { label: "1 day", value: 24 },
-    { label: "2 days", value: 48 },
-    { label: "3 days", value: 72 },
-    { label: "4 days", value: 96 },
-    { label: "5 days", value: 120 },
-    { label: "1 week", value: 168 },
-    { label: "2 weeks", value: 336 },
-    { label: "3 weeks", value: 504 },
-    { label: "1 month", value: 730 },
-    { label: "2 months", value: 1460 },
-    { label: "3 months", value: 2190 },
-    { label: "4 months", value: 2920 },
-    { label: "5 months", value: 3650 },
-    { label: "6 months", value: 4368 },
-    { label: "1 year", value: 8760 },
-    { label: "<abandon this nut>", value: 9999 },
-  ];
+    ["12 hours", 12],
+    ["1 day", 24],
+    ["2 days", 48],
+    ["3 days", 72],
+    ["4 days", 96],
+    ["5 days", 120],
+    ["1 week", 168],
+    ["2 weeks", 336],
+    ["3 weeks", 504],
+    ["1 month", 730],
+    ["2 months", 1460],
+    ["3 months", 2190],
+    ["4 months", 2920],
+    ["5 months", 3650],
+    ["6 months", 4368],
+    ["1 year", 8760],
+    ["longer", 9999],
+  ].map(([label, value]) => ({ label, value }));
 
   const [selectedValue, setSelectedValue] = useState(initialValue || "");
 
@@ -39,18 +39,18 @@ export function TimeOffDropdown({
   return (
     <div className={`mb-4 ${className}`}>
       <label
-        htmlFor="hours_off"
+        htmlFor="hoursOff"
         className="mb-2 block text-sm font-medium text-gray-700"
       >
-        Hours off
+        Time off
       </label>
-      <div className="relative mt-2 rounded-md shadow-sm">
+      <div className="relative mt-2 rounded-md">
         <select
-          id="hours_off"
-          name="hours_off"
+          id="hoursOff"
+          name="hoursOff"
           value={selectedValue}
           onChange={handleChange}
-          className="form-select block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
+          className="form-select block rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
         >
           <option value="" disabled>
             Select time off
