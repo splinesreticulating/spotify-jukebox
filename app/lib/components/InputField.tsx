@@ -1,5 +1,3 @@
-import React from "react";
-
 interface InputFieldProps {
   id: string;
   name: string;

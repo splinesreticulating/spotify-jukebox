@@ -19,6 +19,7 @@ const songSelectFields = {
   instrumentalness: true,
   count_played: true,
   date_played: true,
+  roboticness: true,
 };
 
 const MAX_BPM_MULTIPLIER = 1.09;

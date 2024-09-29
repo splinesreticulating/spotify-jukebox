@@ -41,6 +41,7 @@ export type Song = {
   hours_off: number | null;
   count_played: number;
   date_played: Date | null;
+  roboticness: number | null;
 };
 
 export type LatestSong = Pick<Song, "title" | "id" | "artist">;

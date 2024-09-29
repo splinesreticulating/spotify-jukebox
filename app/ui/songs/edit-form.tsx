@@ -13,12 +13,18 @@ import {
   NumericalDropDown,
 } from "@/app/lib/components";
 
-const labels = ["Sleep", "Morning", "Afternoon", "Bar", "Club"];
-const radioOptions = labels.map((label, index) => ({
-  id: label,
+const levels = ["Sleep", "Morning", "Afternoon", "Bar", "Club"];
+const levelOptions = levels.map((level, index) => ({
+  id: level,
   value: `${(index + 1) * 1000}`,
-  label,
+  label: level,
 }));
+
+const roboticnessOptions = [
+  { id: "1", value: "1", label: "Organic" },
+  { id: "2", value: "2", label: "Mixed" },
+  { id: "3", value: "3", label: "Electronic" },
+];
 
 const inputFieldsData = [
   {
@@ -144,11 +150,22 @@ export default function EditSongForm({ song }: { song: Song }) {
 
         <RadioButtonGroup
           name="level"
-          options={radioOptions.map((option) => ({
-            ...option,
-            checked: song.genre === option.value,
+          label="Level"
+          options={levelOptions.map((level) => ({
+            ...level,
+            checked: song.genre === level.value,
           }))}
-          className="w-full flex flex-wrap gap-2 mb-4"
+          className="flex flex-wrap gap-2 mb-4"
+        />
+
+        <RadioButtonGroup
+          name="roboticness"
+          label="Roboticness"
+          options={roboticnessOptions.map((roboticness) => ({
+            ...roboticness,
+            checked: song.roboticness === Number(roboticness.value),
+          }))}
+          className="flex flex-wrap gap-2 mb-4"
         />
       </div>
 
