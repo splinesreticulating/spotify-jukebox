@@ -150,7 +150,6 @@ export default function EditSongForm({ song }: { song: Song }) {
 
         <RadioButtonGroup
           name="level"
-          label="Level"
           options={levelOptions.map((level) => ({
             ...level,
             checked: song.genre === level.value,
@@ -160,7 +159,6 @@ export default function EditSongForm({ song }: { song: Song }) {
 
         <RadioButtonGroup
           name="roboticness"
-          label="Roboticness"
           options={roboticnessOptions.map((roboticness) => ({
             ...roboticness,
             checked: song.roboticness === Number(roboticness.value),
