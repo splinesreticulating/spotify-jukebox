@@ -14,11 +14,11 @@ export default function Page() {
     null,
   );
   const [isHeartFilled, setIsHeartFilled] = useState(false);
-  const [isLoading, setIsLoading] = useState(true); // New loading state
+  const [isLoading, setIsLoading] = useState(true);
 
   const fetchNowPlayingData = async () => {
     try {
-      setIsLoading(true); // Start loading
+      setIsLoading(true);
       const { currentSong, lastSong, friends } = await fetchNowPlaying();
       const poolDepth = await measurePoolDepth(currentSong.songID);
 
@@ -27,11 +27,11 @@ export default function Page() {
         currentSong: { poolDepth, ...currentSong },
         friends,
       });
-      setIsHeartFilled(friends); // Set initial heart status based on `friends` property
+      setIsHeartFilled(friends);
     } catch (err) {
       console.error("error getting now playing info", err);
     } finally {
-      setIsLoading(false); // End loading
+      setIsLoading(false);
     }
   };
 
@@ -42,13 +42,12 @@ export default function Page() {
       ? await defriend(nowPlayingData)
       : await befriend(nowPlayingData);
 
-    // update the friendship and the heart
     setNowPlayingData({ ...nowPlayingData, friends: !nowPlayingData.friends });
     setIsHeartFilled((prevState) => !prevState);
   };
 
   useEffect(() => {
-    fetchNowPlayingData(); // Initial data fetch
+    fetchNowPlayingData();
 
     const interval = setInterval(() => {
       fetchNowPlayingData();
@@ -64,38 +63,47 @@ export default function Page() {
       ) : (
         nowPlayingData && (
           <div className="w-full max-w-md text-center">
-            <pre className="text-sm sm:text-base">
-              <strong>Now Playing:</strong>
-            </pre>
             <div className="my-2 flex justify-center">
               <Image
                 src="/squirrelGuitarButton.png"
-                width={82}
-                height={87}
+                width={92}
+                height={95}
                 alt="Squirrel button"
-                className="h-auto max-w-full sm:h-24 sm:w-20"
               />
             </div>
-            <br />
             <table className="w-full table-auto border-collapse">
               <tbody>
-                last: <SongLink song={nowPlayingData.lastSong} />
                 <tr>
-                  <td colSpan={2} className="py-2">
+                  <td>
+                    <span>
+                      last played:
+                      <SongLink song={nowPlayingData.lastSong} />
+                    </span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
                     <Heart
                       onHeartClick={setFriendship}
                       isHeartFilled={isHeartFilled}
                     />
                   </td>
                 </tr>
-                now:{" "}
-                <strong>
-                  <SongLink song={nowPlayingData.currentSong} />
-                </strong>
+                <tr>
+                  <td>
+                    now playing:
+                    <strong>
+                      <SongLink song={nowPlayingData.currentSong} />
+                    </strong>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    {`pool depth: ${nowPlayingData.currentSong.poolDepth}`}
+                  </td>
+                </tr>
               </tbody>
             </table>
-            <br />
-            <pre className="text-sm sm:text-base">{`pool depth: ${nowPlayingData.currentSong.poolDepth}`}</pre>
           </div>
         )
       )}
