@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { fetchNowPlaying, measurePoolDepth } from "@/app/lib/data";
+import { fetchNowPlaying } from "@/app/lib/data";
 import { befriend, defriend } from "@/app/lib/actions";
 import { NowPlayingData } from "@/app/lib/definitions";
 import { SongLink } from "@/app/lib/components/SongLink";
@@ -19,12 +19,13 @@ export default function Page() {
   const fetchNowPlayingData = async () => {
     try {
       setIsLoading(true);
-      const { currentSong, lastSong, friends } = await fetchNowPlaying();
-      const poolDepth = await measurePoolDepth(currentSong.songID);
+      const { currentSong, lastSong, nextSong, friends } =
+        await fetchNowPlaying();
 
       setNowPlayingData({
         lastSong,
-        currentSong: { poolDepth, ...currentSong },
+        currentSong,
+        nextSong,
         friends,
       });
       setIsHeartFilled(friends);
@@ -98,9 +99,7 @@ export default function Page() {
                   </td>
                 </tr>
                 <tr>
-                  <td>
-                    {`pool depth: ${nowPlayingData.currentSong.poolDepth}`}
-                  </td>
+                  <td>{`next: ${nowPlayingData.nextSong.artist} - ${nowPlayingData.nextSong.title}`}</td>
                 </tr>
               </tbody>
             </table>

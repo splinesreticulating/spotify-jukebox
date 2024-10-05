@@ -95,12 +95,12 @@ export type NowPlayingSong = {
   songID: Song["id"];
   artist: Song["artist"];
   title: Song["title"];
-  poolDepth?: number;
   level?: number;
 };
 
 export type NowPlayingData = {
   currentSong: NowPlayingSong;
   lastSong: NowPlayingSong;
+  nextSong: NowPlayingSong;
   friends: boolean;
 };

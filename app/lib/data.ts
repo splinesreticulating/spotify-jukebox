@@ -228,8 +228,18 @@ export const fetchNowPlaying = async (): Promise<NowPlayingData> => {
     take: 2,
   });
 
+  const next = await fetchNextSong();
+
   const currentSong: NowPlayingSong = nowPlaying[0];
   const lastSong: NowPlayingSong = nowPlaying[1];
+  const nextTrack = await fetchSongById(next?.songID!);
+
+  console.log({ nextTrack });
+  const nextSong: NowPlayingSong = {
+    artist: nextTrack?.artist!,
+    title: nextTrack?.title!,
+    songID: nextTrack?.id!,
+  };
 
   const [friends, currentSongData] = await Promise.all([
     db.tblbranches.findFirst({
@@ -240,7 +250,7 @@ export const fetchNowPlaying = async (): Promise<NowPlayingData> => {
 
   currentSong.level = Number(currentSongData!.genre);
 
-  return { currentSong, lastSong, friends: !!friends };
+  return { currentSong, lastSong, nextSong, friends: !!friends };
 };
 
 export const measurePoolDepth = async (songId: number) => {
@@ -273,3 +283,5 @@ export async function fetchNowPlayingSongID(): Promise<number | null> {
     throw new Error("Failed to fetch now playing song ID");
   }
 }
+
+const fetchNextSong = async () => await db.queuelist.findFirst();
