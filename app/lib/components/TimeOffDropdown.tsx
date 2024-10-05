@@ -26,7 +26,7 @@ export function TimeOffDropdown({
     ["5 months", 3650],
     ["6 months", 4368],
     ["1 year", 8760],
-    ["longer", 9999],
+    ["longer...", 9999],
   ].map(([label, value]) => ({ label, value }));
 
   const [selectedValue, setSelectedValue] = useState(initialValue || "");
