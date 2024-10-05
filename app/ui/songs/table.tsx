@@ -1,6 +1,7 @@
 import { fetchFilteredSongs } from "@/app/lib/data";
 import Link from "next/link";
 import { PlayIcon } from "@heroicons/react/16/solid";
+import { PLAY_NEXT_URL } from "@/app/lib/utils";
 
 export default async function SongsTable({
   query,
@@ -32,8 +33,6 @@ export default async function SongsTable({
     nineties,
   );
 
-  const PLAY_NEXT_URL = "http://192.168.193.76:6969/songs/queue_it_up?id=";
-
   return (
     <div className="mt-6 flow-root">
       <div className="inline-block min-w-full align-middle">
@@ -47,7 +46,7 @@ export default async function SongsTable({
               >
                 <div className="flex items-center justify-between pb-1">
                   <div className="flex items-center">
-                    <Link href={PLAY_NEXT_URL + song.id}>
+                    <Link href={PLAY_NEXT_URL + `${song.id}`}>
                       <PlayIcon
                         className="inline h-3 w-3 text-gray-500 hover:text-red-800 mr-1"
                         aria-hidden="true"
@@ -99,7 +98,7 @@ export default async function SongsTable({
                     {song.artist}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
-                    <Link href={PLAY_NEXT_URL + song.id}>
+                    <Link href={PLAY_NEXT_URL + `${song.id}`}>
                       <PlayIcon
                         className="inline h-3 w-3 text-gray-500 hover:text-red-800 mr-1"
                         aria-hidden="true"

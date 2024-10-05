@@ -47,3 +47,5 @@ export const generatePagination = (currentPage: number, totalPages: number) => {
     totalPages,
   ];
 };
+
+export const PLAY_NEXT_URL = "http://192.168.193.76:6969/songs/queue_it_up?id=";

@@ -1,9 +1,9 @@
-import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import { openSans } from "@/app/ui/fonts";
 import { fetchLatestSongs } from "@/app/lib/data";
 import Link from "next/link";
-import { daysAgo } from "@/app/lib/utils";
+import { daysAgo, PLAY_NEXT_URL } from "@/app/lib/utils";
+import { PlayIcon } from "@heroicons/react/16/solid";
 
 export default async function LatestSongs() {
   const latestSongs = await fetchLatestSongs();
@@ -29,6 +29,12 @@ export default async function LatestSongs() {
                 <div className="flex items-center">
                   <div className="min-w-0">
                     <p className="truncate text-sm font-semibold md:text-base">
+                      <Link href={PLAY_NEXT_URL + `${song.id}`}>
+                        <PlayIcon
+                          className="inline h-3 w-3 text-gray-500 hover:text-red-800 mr-1"
+                          aria-hidden="true"
+                        />
+                      </Link>
                       <Link href={`/dashboard/songs/${song.id}/edit`}>
                         {song.title}
                       </Link>
