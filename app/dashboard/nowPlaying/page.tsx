@@ -99,7 +99,9 @@ export default function Page() {
                   </td>
                 </tr>
                 <tr>
-                  <td>{`next: ${nowPlayingData.nextSong.artist} - ${nowPlayingData.nextSong.title}`}</td>
+                  <td>
+                    {`next: ${nowPlayingData.nextSong.artist} - ${nowPlayingData.nextSong.title}`.toLowerCase()}
+                  </td>
                 </tr>
               </tbody>
             </table>
