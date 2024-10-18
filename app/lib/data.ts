@@ -186,6 +186,7 @@ export async function fetchSongsPages(
 
 export const fetchSongById = async (id: number): Promise<Song | null> => {
   noStore();
+
   try {
     const song = await db.songlist.findUnique({
       where: { id },
@@ -201,6 +202,7 @@ export const fetchSongById = async (id: number): Promise<Song | null> => {
 
 export async function fetchFilteredArtists(query: string) {
   noStore();
+
   try {
     const artists = await db.songlist.findMany({
       where: { artist: { contains: query } },
@@ -234,7 +236,6 @@ export const fetchNowPlaying = async (): Promise<NowPlayingData> => {
   const lastSong: NowPlayingSong = nowPlaying[1];
   const nextTrack = next ? await fetchSongById(next?.songID) : null;
 
-  console.log({ nextTrack });
   const nextSong: NowPlayingSong = {
     artist: nextTrack?.artist!,
     title: nextTrack?.title!,
