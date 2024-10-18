@@ -9,6 +9,8 @@ import { SongLink } from "@/app/lib/components/SongLink";
 import { Heart } from "@/app/lib/components/Heart";
 import { NowPlayingSkeleton } from "@/app/ui/skeletons";
 
+const REFRESH_INTERVAL_MS = 30_000; // 30 seconds
+
 export default function NowPlayingPage() {
   const [nowPlayingData, setNowPlayingData] = useState<NowPlayingData | null>(
     null,
@@ -38,7 +40,7 @@ export default function NowPlayingPage() {
 
   useEffect(() => {
     fetchNowPlayingData();
-    const interval = setInterval(fetchNowPlayingData, 30000);
+    const interval = setInterval(fetchNowPlayingData, REFRESH_INTERVAL_MS);
     return () => clearInterval(interval);
   }, []);
 
@@ -65,10 +67,7 @@ export default function NowPlayingPage() {
             <Heart onHeartClick={toggleFriendship} isHeartFilled={friends} />
           </li>
           <li>
-            now:{" "}
-            <strong>
-              <SongLink song={currentSong} />
-            </strong>
+            now: <SongLink song={currentSong} className="font-bold" />
           </li>
           <li>
             next:{" "}
