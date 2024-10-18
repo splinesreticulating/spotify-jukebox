@@ -9,97 +9,73 @@ import { SongLink } from "@/app/lib/components/SongLink";
 import { Heart } from "@/app/lib/components/Heart";
 import { NowPlayingSkeleton } from "@/app/ui/skeletons";
 
-export default function Page() {
+export default function NowPlayingPage() {
   const [nowPlayingData, setNowPlayingData] = useState<NowPlayingData | null>(
     null,
   );
-  const [isHeartFilled, setIsHeartFilled] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchNowPlayingData = async () => {
     try {
       setIsLoading(true);
-      const { currentSong, lastSong, nextSong, friends } =
-        await fetchNowPlaying();
-
-      setNowPlayingData({
-        lastSong,
-        currentSong,
-        nextSong,
-        friends,
-      });
-      setIsHeartFilled(friends);
+      const data = await fetchNowPlaying();
+      setNowPlayingData(data);
     } catch (err) {
-      console.error("error getting now playing info", err);
+      console.error("Error fetching now playing info:", err);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const setFriendship = async () => {
-    if (!nowPlayingData) throw new Error();
+  const toggleFriendship = async () => {
+    if (!nowPlayingData) return;
 
-    nowPlayingData.friends
-      ? await defriend(nowPlayingData)
-      : await befriend(nowPlayingData);
+    const action = nowPlayingData.friends ? defriend : befriend;
+    await action(nowPlayingData);
 
-    setNowPlayingData({ ...nowPlayingData, friends: !nowPlayingData.friends });
-    setIsHeartFilled((prevState) => !prevState);
+    setNowPlayingData((prev) => ({ ...prev!, friends: !prev!.friends }));
   };
 
   useEffect(() => {
     fetchNowPlayingData();
-
-    const interval = setInterval(() => {
-      fetchNowPlayingData();
-    }, 30000);
-
+    const interval = setInterval(fetchNowPlayingData, 30000);
     return () => clearInterval(interval);
   }, []);
 
+  if (isLoading) return <NowPlayingSkeleton />;
+  if (!nowPlayingData) return null;
+
+  const { lastSong, currentSong, nextSong, friends } = nowPlayingData;
+
   return (
     <main className="flex flex-col items-center justify-center p-4 sm:p-6">
-      {isLoading ? (
-        <NowPlayingSkeleton />
-      ) : (
-        nowPlayingData && (
-          <section className="w-full max-w-md text-center">
-            <Image
-              src="/squirrelGuitarButton.png"
-              width={92}
-              height={95}
-              alt="Squirrel button"
-              className="mx-auto my-2"
-            />
-            <ul className="w-full flex flex-col items-center space-y-4">
-              <li>
-                last:
-                <SongLink song={nowPlayingData.lastSong} />
-              </li>
-              <li>
-                <Heart
-                  onHeartClick={setFriendship}
-                  isHeartFilled={isHeartFilled}
-                />
-              </li>
-              <li>
-                now:
-                <strong>
-                  <SongLink song={nowPlayingData.currentSong} />
-                </strong>
-              </li>
-              <li>
-                next:{" "}
-                {nowPlayingData.nextSong.songID ? (
-                  <SongLink song={nowPlayingData.nextSong} />
-                ) : (
-                  "selecting..."
-                )}
-              </li>
-            </ul>
-          </section>
-        )
-      )}
+      <section className="w-full max-w-md text-center">
+        <Image
+          src="/squirrelGuitarButton.png"
+          width={92}
+          height={95}
+          alt="Squirrel button"
+          className="mx-auto my-2"
+        />
+        <ul className="w-full flex flex-col items-center space-y-4">
+          <li>
+            last: <SongLink song={lastSong} />
+          </li>
+          <li>
+            <Heart onHeartClick={toggleFriendship} isHeartFilled={friends} />
+          </li>
+          <li>
+            now:{" "}
+            <strong>
+              <SongLink song={currentSong} />
+            </strong>
+          </li>
+          <li>
+            next:{" "}
+            {nextSong.songID ? <SongLink song={nextSong} /> : "selecting..."}
+          </li>
+        </ul>
+      </section>
     </main>
   );
 }
