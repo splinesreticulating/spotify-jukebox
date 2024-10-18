@@ -184,7 +184,7 @@ export async function fetchSongsPages(
   }
 }
 
-export async function fetchSongById(id: number): Promise<Song | null> {
+export const fetchSongById = async (id: number): Promise<Song | null> => {
   noStore();
   try {
     const song = await db.songlist.findUnique({
@@ -197,7 +197,7 @@ export async function fetchSongById(id: number): Promise<Song | null> {
     console.error("Database Error:", error);
     throw new Error(`Failed to fetch song with ID: ${id}`);
   }
-}
+};
 
 export async function fetchFilteredArtists(query: string) {
   noStore();
@@ -232,7 +232,7 @@ export const fetchNowPlaying = async (): Promise<NowPlayingData> => {
 
   const currentSong: NowPlayingSong = nowPlaying[0];
   const lastSong: NowPlayingSong = nowPlaying[1];
-  const nextTrack = await fetchSongById(next?.songID!);
+  const nextTrack = next ? await fetchSongById(next?.songID) : null;
 
   console.log({ nextTrack });
   const nextSong: NowPlayingSong = {

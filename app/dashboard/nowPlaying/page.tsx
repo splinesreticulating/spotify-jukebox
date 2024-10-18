@@ -73,7 +73,7 @@ export default function Page() {
             />
             <ul className="w-full flex flex-col items-center space-y-4">
               <li>
-                last played:
+                last:
                 <SongLink song={nowPlayingData.lastSong} />
               </li>
               <li>
@@ -83,13 +83,18 @@ export default function Page() {
                 />
               </li>
               <li>
-                now playing:
+                now:
                 <strong>
                   <SongLink song={nowPlayingData.currentSong} />
                 </strong>
               </li>
               <li>
-                next: <SongLink song={nowPlayingData.nextSong} />
+                next:{" "}
+                {nowPlayingData.nextSong.songID ? (
+                  <SongLink song={nowPlayingData.nextSong} />
+                ) : (
+                  "selecting..."
+                )}
               </li>
             </ul>
           </section>
