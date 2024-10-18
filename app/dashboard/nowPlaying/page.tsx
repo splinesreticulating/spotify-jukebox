@@ -72,39 +72,31 @@ export default function Page() {
                 alt="Squirrel button"
               />
             </div>
-            <table className="w-full table-auto border-collapse">
-              <tbody>
-                <tr>
-                  <td>
-                    <span>
-                      last played:
-                      <SongLink song={nowPlayingData.lastSong} />
-                    </span>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <Heart
-                      onHeartClick={setFriendship}
-                      isHeartFilled={isHeartFilled}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    now playing:
-                    <strong>
-                      <SongLink song={nowPlayingData.currentSong} />
-                    </strong>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    {`next: ${nowPlayingData.nextSong.artist} - ${nowPlayingData.nextSong.title}`.toLowerCase()}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+            <div className="w-full flex flex-col items-center space-y-4">
+              <div>
+                <span>
+                  last played:
+                  <SongLink song={nowPlayingData.lastSong} />
+                </span>
+              </div>
+              <div>
+                <Heart
+                  onHeartClick={setFriendship}
+                  isHeartFilled={isHeartFilled}
+                />
+              </div>
+              <div>
+                now playing:
+                <strong>
+                  <SongLink song={nowPlayingData.currentSong} />
+                </strong>
+              </div>
+              <div>
+                <span>
+                  next: <SongLink song={nowPlayingData.nextSong} />
+                </span>
+              </div>
+            </div>
           </div>
         )
       )}
