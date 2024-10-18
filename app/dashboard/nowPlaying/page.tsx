@@ -33,12 +33,7 @@ export default function NowPlayingPage() {
     const action = nowPlayingData.friends ? defriend : befriend;
     await action(nowPlayingData);
 
-    setNowPlayingData((prev) => {
-      if (prev) {
-        return { ...prev, friends: !prev.friends };
-      }
-      return prev;
-    });
+    setNowPlayingData((prev) => prev && { ...prev, friends: !prev.friends });
   };
 
   useEffect(() => {
