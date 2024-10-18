@@ -58,48 +58,43 @@ export default function Page() {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center p-4 sm:p-6">
+    <main className="flex flex-col items-center justify-center p-4 sm:p-6">
       {isLoading ? (
         <NowPlayingSkeleton />
       ) : (
         nowPlayingData && (
-          <div className="w-full max-w-md text-center">
-            <div className="my-2 flex justify-center">
-              <Image
-                src="/squirrelGuitarButton.png"
-                width={92}
-                height={95}
-                alt="Squirrel button"
-              />
-            </div>
-            <div className="w-full flex flex-col items-center space-y-4">
-              <div>
-                <span>
-                  last played:
-                  <SongLink song={nowPlayingData.lastSong} />
-                </span>
-              </div>
-              <div>
+          <section className="w-full max-w-md text-center">
+            <Image
+              src="/squirrelGuitarButton.png"
+              width={92}
+              height={95}
+              alt="Squirrel button"
+              className="mx-auto my-2"
+            />
+            <ul className="w-full flex flex-col items-center space-y-4">
+              <li>
+                last played:
+                <SongLink song={nowPlayingData.lastSong} />
+              </li>
+              <li>
                 <Heart
                   onHeartClick={setFriendship}
                   isHeartFilled={isHeartFilled}
                 />
-              </div>
-              <div>
+              </li>
+              <li>
                 now playing:
                 <strong>
                   <SongLink song={nowPlayingData.currentSong} />
                 </strong>
-              </div>
-              <div>
-                <span>
-                  next: <SongLink song={nowPlayingData.nextSong} />
-                </span>
-              </div>
-            </div>
-          </div>
+              </li>
+              <li>
+                next: <SongLink song={nowPlayingData.nextSong} />
+              </li>
+            </ul>
+          </section>
         )
       )}
-    </div>
+    </main>
   );
 }
