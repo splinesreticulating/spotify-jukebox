@@ -1,20 +1,17 @@
-import { HeartIcon as FullHeart } from "@heroicons/react/24/solid";
-import { HeartIcon as EmptyHeart } from "@heroicons/react/24/outline";
+import { HeartIcon as FullHeart } from '@heroicons/react/24/solid';
+import { HeartIcon as EmptyHeart } from '@heroicons/react/24/outline';
 
-export const Heart: React.FC<{
+interface HeartProps {
   onHeartClick: () => void;
   isHeartFilled: boolean;
-}> = ({ onHeartClick, isHeartFilled }) => {
+}
+
+export const Heart: React.FC<HeartProps> = ({ onHeartClick, isHeartFilled }) => {
+  const HeartIcon = isHeartFilled ? FullHeart : EmptyHeart;
+
   return (
-    <div
-      className="mx-auto flex h-10 w-10 cursor-pointer items-center justify-center p-2 sm:h-16 sm:w-16 sm:p-4"
-      onClick={onHeartClick}
-    >
-      {isHeartFilled ? (
-        <FullHeart className="h-5 w-5 text-red-500 sm:h-8 sm:w-8" />
-      ) : (
-        <EmptyHeart className="h-5 w-5 text-red-500 sm:h-8 sm:w-8" />
-      )}
-    </div>
+    <button onClick={onHeartClick} className="flex items-center justify-center">
+      <HeartIcon className="h-6 w-6 text-red-500" />
+    </button>
   );
 };
