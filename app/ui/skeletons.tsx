@@ -1,12 +1,10 @@
 // Loading animation
 const shimmer =
-  "before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/60 before:to-transparent";
+  'before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/60 before:to-transparent';
 
 function CardSkeleton() {
   return (
-    <div
-      className={`${shimmer} relative overflow-hidden rounded-xl bg-gray-100 p-2 shadow-sm`}
-    >
+    <div className={`${shimmer} relative overflow-hidden rounded-xl bg-gray-100 p-2 shadow-sm`}>
       <div className="flex p-4">
         <div className="h-5 w-5 rounded-md bg-gray-200" />
         <div className="ml-2 h-6 w-16 rounded-md bg-gray-200 text-sm font-medium" />
@@ -43,9 +41,7 @@ function SongSkeleton() {
 
 export function LatestSongsSkeleton() {
   return (
-    <div
-      className={`${shimmer} relative flex w-full flex-col overflow-hidden md:col-span-4`}
-    >
+    <div className={`${shimmer} relative flex w-full flex-col overflow-hidden md:col-span-4`}>
       <div className="mb-4 h-8 w-36 rounded-md bg-gray-100" />
       <div className="flex grow flex-col justify-between rounded-xl bg-gray-100 p-4">
         <div className="bg-white px-6">
@@ -63,9 +59,7 @@ export function LatestSongsSkeleton() {
 export default function DashboardSkeleton() {
   return (
     <>
-      <div
-        className={`${shimmer} relative mb-4 h-8 w-36 overflow-hidden rounded-md bg-gray-100`}
-      />
+      <div className={`${shimmer} relative mb-4 h-8 w-36 overflow-hidden rounded-md bg-gray-100`} />
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <CardSkeleton />
         <CardSkeleton />
@@ -194,26 +188,16 @@ export function SongsTableSkeleton() {
 
 export function NowPlayingSkeleton() {
   return (
-    <div className="w-full max-w-md text-center">
-      <div className="my-2 flex justify-center">
-        <div className="h-24 w-24 rounded-full bg-gray-100"></div>
-      </div>
-      <table className="w-full table-auto border-collapse">
-        <tbody>
-          <tr>
-            <td className="h-6 w-24 rounded bg-gray-100"></td>
-          </tr>
-        </tbody>
-      </table>
-      <div className="mx-auto h-8 w-8 rounded-full bg-red-100 mb-5 mt-5"></div>
-      <table className="w-full table-auto border-collapse">
-        <tbody>
-          <tr>
-            <td className="h-6 w-24 rounded bg-gray-100"></td>
-          </tr>
-        </tbody>
-      </table>
-      <div className="mx-auto mt-4 h-6 w-24 rounded bg-gray-100"></div>
-    </div>
+    <main className="flex flex-col items-center justify-center p-4 sm:p-6">
+      <section className="w-full max-w-md text-center">
+        <div className="mx-auto my-2 h-[95px] w-[92px] animate-pulse rounded-full bg-gray-200" />
+        <ul className="flex w-full flex-col items-center space-y-4">
+          <li className="h-6 w-3/4 animate-pulse rounded bg-gray-200" />
+          <li className="h-8 w-8 animate-pulse rounded-full bg-gray-200" />
+          <li className="h-6 w-3/4 animate-pulse rounded bg-gray-200" />
+          <li className="h-6 w-3/4 animate-pulse rounded bg-gray-200" />
+        </ul>
+      </section>
+    </main>
   );
 }

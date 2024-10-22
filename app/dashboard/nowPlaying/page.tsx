@@ -2,30 +2,54 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { fetchNowPlaying } from '@/app/lib/data';
 import { befriend, defriend } from '@/app/lib/actions';
 import { NowPlayingData } from '@/app/lib/definitions';
 import { SongLink } from '@/app/lib/components/SongLink';
 import { Heart } from '@/app/lib/components/Heart';
 import { NowPlayingSkeleton } from '@/app/ui/skeletons';
 
-const REFRESH_INTERVAL_MS = 30_000; // 30 seconds
-
 export default function NowPlayingPage() {
   const [nowPlayingData, setNowPlayingData] = useState<NowPlayingData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchNowPlayingData = async () => {
-    try {
-      setIsLoading(true);
-      const data = await fetchNowPlaying();
-      setNowPlayingData(data);
-    } catch (err) {
-      console.error('Error fetching now playing info:', err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  useEffect(() => {
+    let eventSource: EventSource | null = null;
+
+    const setupEventSource = () => {
+      eventSource = new EventSource('/api/nowPlaying');
+
+      eventSource.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        setNowPlayingData(data);
+        setIsLoading(false);
+      };
+
+      eventSource.onerror = (error) => {
+        console.error('EventSource failed:', error);
+        eventSource?.close();
+      };
+    };
+
+    setupEventSource();
+
+    // Handle visibility change
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        // Reconnect EventSource when tab becomes visible
+        if (eventSource) {
+          eventSource.close();
+        }
+        setupEventSource();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      eventSource?.close();
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
 
   const toggleFriendship = async () => {
     if (!nowPlayingData) return;
@@ -35,12 +59,6 @@ export default function NowPlayingPage() {
 
     setNowPlayingData((prev) => prev && { ...prev, friends: !prev.friends });
   };
-
-  useEffect(() => {
-    fetchNowPlayingData();
-    const interval = setInterval(fetchNowPlayingData, REFRESH_INTERVAL_MS);
-    return () => clearInterval(interval);
-  }, []);
 
   if (isLoading) return <NowPlayingSkeleton />;
   if (!nowPlayingData) return null;
