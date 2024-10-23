@@ -3,7 +3,7 @@ import Search from '@/app/ui/search'
 import Table from '@/app/ui/songs/table'
 import { openSans } from '@/app/ui/fonts'
 import { SongsTableSkeleton } from '@/app/ui/skeletons'
-import { Suspense } from 'react'
+import { Suspense, useMemo } from 'react'
 import { fetchNowPlayingSongID, fetchSongById, fetchSongsPages } from '@/app/lib/data'
 import { Metadata } from 'next'
 import { LevelFilters } from '@/app/lib/components/LevelFilters'
@@ -38,14 +38,35 @@ export default async function Page({
   const eighties = Boolean(searchParams?.eighties)
   const nineties = Boolean(searchParams?.nineties)
 
+  const filterParams = useMemo(
+    () => ({
+      query,
+      levels,
+      instrumental,
+      keyRef: searchParams?.keyRef,
+      bpmRef: searchParams?.bpmRef,
+      eighties: Boolean(searchParams?.eighties),
+      nineties: Boolean(searchParams?.nineties),
+    }),
+    [
+      query,
+      levels,
+      instrumental,
+      searchParams?.keyRef,
+      searchParams?.bpmRef,
+      searchParams?.eighties,
+      searchParams?.nineties,
+    ],
+  )
+
   const totalPages = await fetchSongsPages(
-    query,
-    levels,
-    instrumental,
-    searchParams?.keyRef,
-    searchParams?.bpmRef,
-    Boolean(searchParams?.eighties),
-    Boolean(searchParams?.nineties),
+    filterParams.query,
+    filterParams.levels,
+    filterParams.instrumental,
+    filterParams.keyRef,
+    filterParams.bpmRef,
+    filterParams.eighties,
+    filterParams.nineties,
   )
 
   const nowPlayingSongId = await fetchNowPlayingSongID()
@@ -75,19 +96,10 @@ export default async function Page({
         </div>
       </div>
       <Suspense
-        key={query + currentPage + levels + instrumental + nowPlayingKey + nowPlayingBPM}
+        key={Object.values(filterParams).join('|') + currentPage + nowPlayingKey + nowPlayingBPM}
         fallback={<SongsTableSkeleton />}
       >
-        <Table
-          query={query}
-          currentPage={currentPage}
-          levels={levels}
-          instrumental={instrumental}
-          keyRef={searchParams?.keyRef}
-          bpmRef={searchParams?.bpmRef}
-          eighties={Boolean(searchParams?.eighties)}
-          nineties={Boolean(searchParams?.nineties)}
-        />
+        <Table {...filterParams} currentPage={currentPage} />
       </Suspense>
       <div className="mt-5 flex w-full justify-center">
         <Pagination totalPages={totalPages} />
