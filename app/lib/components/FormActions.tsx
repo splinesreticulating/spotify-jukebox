@@ -1,15 +1,12 @@
-import Link from "next/link";
-import { Button } from "@/app/ui/button";
+import Link from 'next/link'
+import { Button } from '@/app/ui/button'
 
 interface FormActionsProps {
-  songId: number;
-  className?: string;
+  songId: number
+  className?: string
 }
 
-export const FormActions: React.FC<FormActionsProps> = ({
-  songId,
-  className,
-}) => (
+export const FormActions: React.FC<FormActionsProps> = ({ songId, className }) => (
   <div className={`mt-6 flex justify-end gap-4 ${className}`}>
     <Link
       href={`http://192.168.193.76:6969/songs/${songId}/edit`}
@@ -25,4 +22,4 @@ export const FormActions: React.FC<FormActionsProps> = ({
     </Link>
     <Button type="submit">Update</Button>
   </div>
-);
+)

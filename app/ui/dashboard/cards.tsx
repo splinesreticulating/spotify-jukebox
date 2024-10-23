@@ -1,48 +1,27 @@
-import {
-  BanknotesIcon,
-  ClockIcon,
-  UserGroupIcon,
-  InboxIcon,
-} from "@heroicons/react/24/outline";
-import { openSans } from "@/app/ui/fonts";
-import { fetchCardData } from "@/app/lib/data";
+import { BanknotesIcon, ClockIcon, UserGroupIcon, InboxIcon } from '@heroicons/react/24/outline'
+import { openSans } from '@/app/ui/fonts'
+import { fetchCardData } from '@/app/lib/data'
 
 const iconMap = {
   collected: BanknotesIcon,
   artists: UserGroupIcon,
   pending: ClockIcon,
   songs: InboxIcon,
-};
+}
 
 export default async function CardWrapper() {
-  const { numberOfSongs, numberOfArtists } = await fetchCardData();
+  const { numberOfSongs, numberOfArtists } = await fetchCardData()
 
   return (
     <>
-      <Card
-        title="Total Songs"
-        value={numberOfSongs.toLocaleString()}
-        type="songs"
-      />
-      <Card
-        title="Total Artists"
-        value={numberOfArtists.toLocaleString()}
-        type="artists"
-      />
+      <Card title="Total Songs" value={numberOfSongs.toLocaleString()} type="songs" />
+      <Card title="Total Artists" value={numberOfArtists.toLocaleString()} type="artists" />
     </>
-  );
+  )
 }
 
-export function Card({
-  title,
-  value,
-  type,
-}: {
-  title: string;
-  value: number | string;
-  type: "songs" | "artists";
-}) {
-  const Icon = iconMap[type];
+export function Card({ title, value, type }: { title: string; value: number | string; type: 'songs' | 'artists' }) {
+  const Icon = iconMap[type]
 
   return (
     <div className="rounded-xl bg-gray-50 p-2 shadow-sm">
@@ -57,5 +36,5 @@ export function Card({
         {value}
       </p>
     </div>
-  );
+  )
 }

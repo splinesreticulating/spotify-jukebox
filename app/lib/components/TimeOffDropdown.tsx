@@ -1,47 +1,41 @@
-import { useState } from "react";
+import { useState } from 'react'
 
 interface TimeOffDropdownProps {
-  initialValue: number;
-  className?: string;
+  initialValue: number
+  className?: string
 }
 
-export function TimeOffDropdown({
-  initialValue,
-  className,
-}: TimeOffDropdownProps) {
+export function TimeOffDropdown({ initialValue, className }: TimeOffDropdownProps) {
   const options = [
-    ["12 hours", 12],
-    ["1 day", 24],
-    ["2 days", 48],
-    ["3 days", 72],
-    ["4 days", 96],
-    ["5 days", 120],
-    ["1 week", 168],
-    ["2 weeks", 336],
-    ["3 weeks", 504],
-    ["1 month", 730],
-    ["2 months", 1460],
-    ["3 months", 2190],
-    ["4 months", 2920],
-    ["5 months", 3650],
-    ["6 months", 4368],
-    ["1 year", 8760],
-    ["longer...", 9999],
-  ].map(([label, value]) => ({ label, value }));
+    ['12 hours', 12],
+    ['1 day', 24],
+    ['2 days', 48],
+    ['3 days', 72],
+    ['4 days', 96],
+    ['5 days', 120],
+    ['1 week', 168],
+    ['2 weeks', 336],
+    ['3 weeks', 504],
+    ['1 month', 730],
+    ['2 months', 1460],
+    ['3 months', 2190],
+    ['4 months', 2920],
+    ['5 months', 3650],
+    ['6 months', 4368],
+    ['1 year', 8760],
+    ['longer...', 9999],
+  ].map(([label, value]) => ({ label, value }))
 
-  const [selectedValue, setSelectedValue] = useState(initialValue || "");
+  const [selectedValue, setSelectedValue] = useState(initialValue || '')
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = Number(e.target.value);
-    setSelectedValue(value);
-  };
+    const value = Number(e.target.value)
+    setSelectedValue(value)
+  }
 
   return (
     <div className={`mb-4 ${className}`}>
-      <label
-        htmlFor="hoursOff"
-        className="mb-2 block text-sm font-medium text-gray-700"
-      >
+      <label htmlFor="hoursOff" className="mb-2 block text-sm font-medium text-gray-700">
         Time off
       </label>
       <div className="relative mt-2 rounded-md">
@@ -63,5 +57,5 @@ export function TimeOffDropdown({
         </select>
       </div>
     </div>
-  );
+  )
 }

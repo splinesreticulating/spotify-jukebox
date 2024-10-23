@@ -1,17 +1,11 @@
-import { openSans } from "@/app/ui/fonts";
-import Search from "@/app/ui/search";
-import { FormattedArtistsTable } from "@/app/lib/definitions";
+import { openSans } from '@/app/ui/fonts'
+import Search from '@/app/ui/search'
+import { FormattedArtistsTable } from '@/app/lib/definitions'
 
-export default async function ArtistsTable({
-  artists,
-}: {
-  artists: FormattedArtistsTable[];
-}) {
+export default async function ArtistsTable({ artists }: { artists: FormattedArtistsTable[] }) {
   return (
     <div className="w-full">
-      <h1 className={`${openSans.className} mb-8 text-xl md:text-2xl`}>
-        Artists
-      </h1>
+      <h1 className={`${openSans.className} mb-8 text-xl md:text-2xl`}>Artists</h1>
       <Search placeholder="Search artists..." />
       <div className="mt-6 flow-root">
         <div className="overflow-x-auto">
@@ -19,10 +13,7 @@ export default async function ArtistsTable({
             <div className="overflow-hidden rounded-md bg-gray-50 p-2 md:pt-0">
               <div className="md:hidden">
                 {artists?.map((artist) => (
-                  <div
-                    key={artist.id}
-                    className="mb-2 w-full rounded-md bg-white p-4"
-                  >
+                  <div key={artist.id} className="mb-2 w-full rounded-md bg-white p-4">
                     <div className="flex items-center justify-between border-b pb-4">
                       <div className="mb-2 flex items-center">
                         <div className="flex items-center gap-3">
@@ -59,5 +50,5 @@ export default async function ArtistsTable({
         </div>
       </div>
     </div>
-  );
+  )
 }

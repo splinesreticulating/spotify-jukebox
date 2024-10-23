@@ -1,14 +1,10 @@
 interface RadioButtonGroupProps {
-  name: string;
-  options: { id: string; value: string; label: string; checked: boolean }[];
-  className?: string;
+  name: string
+  options: { id: string; value: string; label: string; checked: boolean }[]
+  className?: string
 }
 
-export const RadioButtonGroup: React.FC<RadioButtonGroupProps> = ({
-  name,
-  options,
-  className,
-}) => (
+export const RadioButtonGroup: React.FC<RadioButtonGroupProps> = ({ name, options, className }) => (
   <fieldset className={className}>
     <div className="rounded-md border border-gray-200 bg-white px-[14px] py-3">
       <div className="flex gap-4">
@@ -33,4 +29,4 @@ export const RadioButtonGroup: React.FC<RadioButtonGroupProps> = ({
       </div>
     </div>
   </fieldset>
-);
+)

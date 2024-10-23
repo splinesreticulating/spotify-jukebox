@@ -1,69 +1,69 @@
-'use client';
+'use client'
 
-import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
-import { befriend, defriend } from '@/app/lib/actions';
-import { NowPlayingData } from '@/app/lib/definitions';
-import { SongLink } from '@/app/lib/components/SongLink';
-import { Heart } from '@/app/lib/components/Heart';
-import { NowPlayingSkeleton } from '@/app/ui/skeletons';
+import React, { useState, useEffect } from 'react'
+import Image from 'next/image'
+import { befriend, defriend } from '@/app/lib/actions'
+import { NowPlayingData } from '@/app/lib/definitions'
+import { SongLink } from '@/app/lib/components/SongLink'
+import { Heart } from '@/app/lib/components/Heart'
+import { NowPlayingSkeleton } from '@/app/ui/skeletons'
 
 export default function NowPlayingPage() {
-  const [nowPlayingData, setNowPlayingData] = useState<NowPlayingData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [nowPlayingData, setNowPlayingData] = useState<NowPlayingData | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    let eventSource: EventSource | null = null;
+    let eventSource: EventSource | null = null
 
     const setupEventSource = () => {
-      eventSource = new EventSource('/api/nowPlaying');
+      eventSource = new EventSource('/api/nowPlaying')
 
       eventSource.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        setNowPlayingData(data);
-        setIsLoading(false);
-      };
+        const data = JSON.parse(event.data)
+        setNowPlayingData(data)
+        setIsLoading(false)
+      }
 
       eventSource.onerror = (error) => {
-        console.error('EventSource failed:', error);
-        eventSource?.close();
-      };
-    };
+        console.error('EventSource failed:', error)
+        eventSource?.close()
+      }
+    }
 
-    setupEventSource();
+    setupEventSource()
 
     // Handle visibility change
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
         // Reconnect EventSource when tab becomes visible
         if (eventSource) {
-          eventSource.close();
+          eventSource.close()
         }
-        setupEventSource();
+        setupEventSource()
       }
-    };
+    }
 
-    document.addEventListener('visibilitychange', handleVisibilityChange);
+    document.addEventListener('visibilitychange', handleVisibilityChange)
 
     return () => {
-      eventSource?.close();
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
-  }, []);
+      eventSource?.close()
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }
+  }, [])
 
   const toggleFriendship = async () => {
-    if (!nowPlayingData) return;
+    if (!nowPlayingData) return
 
-    const action = nowPlayingData.friends ? defriend : befriend;
-    await action(nowPlayingData);
+    const action = nowPlayingData.friends ? defriend : befriend
+    await action(nowPlayingData)
 
-    setNowPlayingData((prev) => prev && { ...prev, friends: !prev.friends });
-  };
+    setNowPlayingData((prev) => prev && { ...prev, friends: !prev.friends })
+  }
 
-  if (isLoading) return <NowPlayingSkeleton />;
-  if (!nowPlayingData) return null;
+  if (isLoading) return <NowPlayingSkeleton />
+  if (!nowPlayingData) return null
 
-  const { lastSong, currentSong, nextSong, friends } = nowPlayingData;
+  const { lastSong, currentSong, nextSong, friends } = nowPlayingData
 
   return (
     <main className="flex flex-col items-center justify-center p-4 sm:p-6">
@@ -83,5 +83,5 @@ export default function NowPlayingPage() {
         </ul>
       </section>
     </main>
-  );
+  )
 }

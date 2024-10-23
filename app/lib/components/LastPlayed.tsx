@@ -1,13 +1,13 @@
-import { Song } from "../definitions";
-import { daysAgo } from "../utils";
+import { Song } from '../definitions'
+import { daysAgo } from '../utils'
 
 export const LastPlayed: React.FC<{ song: Song }> = ({ song }) => {
   // const lastPlayedDate = await checkHistorylists(song)
-  const lastPlayedDate = song.date_played!;
-  const days = daysAgo(lastPlayedDate);
+  const lastPlayedDate = song.date_played!
+  const days = daysAgo(lastPlayedDate)
 
-  return <em>last played {days} days ago</em>;
-};
+  return <em>last played {days} days ago</em>
+}
 
 // :thinkface:
 // const checkHistorylists = async (song: Song) => {
