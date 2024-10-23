@@ -1,12 +1,12 @@
 interface InputFieldProps {
-  id: string;
-  name: string;
-  label: string;
-  type: string;
-  defaultValue?: string | number;
-  step?: string;
-  placeholder?: string;
-  className?: string;
+  id: string
+  name: string
+  label: string
+  type: string
+  defaultValue?: string | number
+  step?: string
+  placeholder?: string
+  className?: string
 }
 
 export const InputField: React.FC<InputFieldProps> = ({
@@ -31,8 +31,8 @@ export const InputField: React.FC<InputFieldProps> = ({
         defaultValue={defaultValue}
         step={step}
         placeholder={placeholder}
-        className="w-full border border-gray-300 rounded-md p-2"
+        className="w-full rounded-md border border-gray-300 p-2"
       />
     </div>
   </div>
-);
+)

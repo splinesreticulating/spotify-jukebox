@@ -1,7 +1,7 @@
-import { fetchFilteredSongs } from "@/app/lib/data";
-import Link from "next/link";
-import { PlayIcon } from "@heroicons/react/16/solid";
-import { PLAY_NEXT_URL } from "@/app/lib/utils";
+import { fetchFilteredSongs } from '@/app/lib/data'
+import Link from 'next/link'
+import { PlayIcon } from '@heroicons/react/16/solid'
+import { PLAY_NEXT_URL } from '@/app/lib/utils'
 
 export default async function SongsTable({
   query,
@@ -13,25 +13,16 @@ export default async function SongsTable({
   eighties,
   nineties,
 }: {
-  query: string;
-  currentPage: number;
-  levels: string;
-  instrumental: number;
-  keyRef?: string;
-  bpmRef?: string;
-  eighties?: boolean;
-  nineties?: boolean;
+  query: string
+  currentPage: number
+  levels: string
+  instrumental: number
+  keyRef?: string
+  bpmRef?: string
+  eighties?: boolean
+  nineties?: boolean
 }) {
-  const songs = await fetchFilteredSongs(
-    query,
-    currentPage,
-    levels,
-    instrumental,
-    keyRef,
-    bpmRef,
-    eighties,
-    nineties,
-  );
+  const songs = await fetchFilteredSongs(query, currentPage, levels, instrumental, keyRef, bpmRef, eighties, nineties)
 
   return (
     <div className="mt-6 flow-root">
@@ -40,17 +31,11 @@ export default async function SongsTable({
           {/* MOBILE */}
           <div className="md:hidden">
             {songs?.map((song) => (
-              <div
-                key={song.id}
-                className="mb-2 w-full rounded-md bg-white p-1 text-xs"
-              >
+              <div key={song.id} className="mb-2 w-full rounded-md bg-white p-1 text-xs">
                 <div className="flex items-center justify-between pb-1">
                   <div className="flex items-center">
                     <Link href={PLAY_NEXT_URL + `${song.id}`}>
-                      <PlayIcon
-                        className="inline h-3 w-3 text-gray-500 hover:text-red-800 mr-1"
-                        aria-hidden="true"
-                      />
+                      <PlayIcon className="mr-1 inline h-3 w-3 text-gray-500 hover:text-red-800" aria-hidden="true" />
                     </Link>
                     <Link href={`/dashboard/songs/${song.id}/edit`}>
                       {song.artist} - {song.title}
@@ -92,17 +77,18 @@ export default async function SongsTable({
               {songs?.map((song) => (
                 <tr
                   key={song.id}
-                  className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
+                  className="
+                    w-full border-b py-3 text-sm last-of-type:border-none
+                    [&:first-child>td:first-child]:rounded-tl-lg
+                    [&:first-child>td:last-child]:rounded-tr-lg
+                    [&:last-child>td:first-child]:rounded-bl-lg
+                    [&:last-child>td:last-child]:rounded-br-lg
+                  "
                 >
-                  <td className="whitespace-nowrap py-3 pl-6 pr-3">
-                    {song.artist}
-                  </td>
+                  <td className="whitespace-nowrap py-3 pl-6 pr-3">{song.artist}</td>
                   <td className="whitespace-nowrap px-3 py-3">
                     <Link href={PLAY_NEXT_URL + `${song.id}`}>
-                      <PlayIcon
-                        className="inline h-3 w-3 text-gray-500 hover:text-red-800 mr-1"
-                        aria-hidden="true"
-                      />
+                      <PlayIcon className="mr-1 inline h-3 w-3 text-gray-500 hover:text-red-800" aria-hidden="true" />
                     </Link>
                     <Link href={`/dashboard/songs/${song.id}/edit`}>
                       <strong>{song.title}</strong>
@@ -113,12 +99,8 @@ export default async function SongsTable({
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">{song.bpm}</td>
                   <td className="whitespace-nowrap px-3 py-3">{song.info}</td>
-                  <td className="whitespace-nowrap px-3 py-3">
-                    {Number(song.albumyear) > 1700 ? song.albumyear : ""}
-                  </td>
-                  <td className="whitespace-nowrap px-3 py-3">
-                    {song.date_added && song.date_added.toDateString()}
-                  </td>
+                  <td className="whitespace-nowrap px-3 py-3">{Number(song.albumyear) > 1700 ? song.albumyear : ''}</td>
+                  <td className="whitespace-nowrap px-3 py-3">{song.date_added && song.date_added.toDateString()}</td>
                 </tr>
               ))}
             </tbody>
@@ -126,5 +108,5 @@ export default async function SongsTable({
         </div>
       </div>
     </div>
-  );
+  )
 }

@@ -1,12 +1,12 @@
-"use server";
+'use server'
 
-import { z } from "zod";
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-import { signIn } from "@/auth";
-import { AuthError } from "next-auth";
-import { db } from "./db";
-import { NowPlayingData } from "./definitions";
+import { z } from 'zod'
+import { revalidatePath } from 'next/cache'
+import { redirect } from 'next/navigation'
+import { signIn } from '@/auth'
+import { AuthError } from 'next-auth'
+import { db } from './db'
+import { NowPlayingData } from './definitions'
 
 const FormSchema = z.object({
   id: z.number(),
@@ -21,49 +21,35 @@ const FormSchema = z.object({
   date_added: z.date().optional(),
   albumyear: z.string(),
   hours_off: z.number().optional(),
-});
+})
 
 // const CreateSong = FormSchema.omit({ id: true, date_added: true })
-const UpdateSong = FormSchema.omit({ date_added: true, id: true });
+const UpdateSong = FormSchema.omit({ date_added: true, id: true })
 
 // This is temporary
 export type State = {
   errors?: {
-    artist?: string[];
-    title?: string[];
+    artist?: string[]
+    title?: string[]
     // do we really need these? Or should we add more?
-  };
-  message?: string | null;
-};
+  }
+  message?: string | null
+}
 
-export async function updateSong(
-  id: string,
-  prevState: State,
-  formData: FormData,
-) {
+export async function updateSong(id: string, prevState: State, formData: FormData) {
   const fields = {
-    title: formData.get("title")?.toString(),
-    artist: formData.get("artist")?.toString(),
-    grouping: formData.get("grouping")?.toString(),
-    album: formData.get("album")?.toString(),
-    instrumentalness: Number(formData.get("instrumentalness")?.toString()),
-    albumyear: formData.get("year")?.toString(),
-    hours_off: Number(formData.get("hoursOff")?.toString()),
-    genre: formData.get("level")?.toString(),
-    roboticness: Number(formData.get("roboticness")),
-  };
+    title: formData.get('title')?.toString(),
+    artist: formData.get('artist')?.toString(),
+    grouping: formData.get('grouping')?.toString(),
+    album: formData.get('album')?.toString(),
+    instrumentalness: Number(formData.get('instrumentalness')?.toString()),
+    albumyear: formData.get('year')?.toString(),
+    hours_off: Number(formData.get('hoursOff')?.toString()),
+    genre: formData.get('level')?.toString(),
+    roboticness: Number(formData.get('roboticness')),
+  }
 
-  const {
-    artist,
-    title,
-    album,
-    grouping,
-    instrumentalness,
-    albumyear,
-    hours_off,
-    genre,
-    roboticness,
-  } = fields;
+  const { artist, title, album, grouping, instrumentalness, albumyear, hours_off, genre, roboticness } = fields
 
   try {
     await db.songlist.update({
@@ -79,17 +65,17 @@ export async function updateSong(
         genre,
         roboticness,
       },
-    });
+    })
   } catch (error) {
-    return { message: "Database Error: Failed to Update Song." };
+    return { message: 'Database Error: Failed to Update Song.' }
   }
 
-  revalidatePath("/dashboard/songs");
-  redirect("/dashboard/nowPlaying");
+  revalidatePath('/dashboard/songs')
+  redirect('/dashboard/nowPlaying')
 }
 
 export async function befriend(nowPlayingData: NowPlayingData) {
-  const { lastSong, currentSong } = nowPlayingData;
+  const { lastSong, currentSong } = nowPlayingData
 
   try {
     await db.tblbranches.create({
@@ -98,15 +84,15 @@ export async function befriend(nowPlayingData: NowPlayingData) {
         branch: currentSong.songID,
         level: currentSong.level,
       },
-    });
+    })
   } catch (error) {
-    console.error(error);
-    return { message: "Database Error: Failed to create friendship", error };
+    console.error(error)
+    return { message: 'Database Error: Failed to create friendship', error }
   }
 }
 
 export async function defriend(nowPlayingData: NowPlayingData) {
-  const { lastSong, currentSong } = nowPlayingData;
+  const { lastSong, currentSong } = nowPlayingData
 
   try {
     await db.tblbranches.delete({
@@ -116,28 +102,25 @@ export async function defriend(nowPlayingData: NowPlayingData) {
           branch: currentSong.songID,
         },
       },
-    });
+    })
   } catch (error) {
-    console.error(error);
-    return { message: "Database Error: Failed to remove friendship", error };
+    console.error(error)
+    return { message: 'Database Error: Failed to remove friendship', error }
   }
 }
 
-export async function authenticate(
-  prevState: string | undefined,
-  formData: FormData,
-) {
+export async function authenticate(prevState: string | undefined, formData: FormData) {
   try {
-    await signIn("credentials", formData);
+    await signIn('credentials', formData)
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
-        case "CredentialsSignin":
-          return "Invalid credentials.";
+        case 'CredentialsSignin':
+          return 'Invalid credentials.'
         default:
-          return "Something went wrong.";
+          return 'Something went wrong.'
       }
     }
-    throw error;
+    throw error
   }
 }

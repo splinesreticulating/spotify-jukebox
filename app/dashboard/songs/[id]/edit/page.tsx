@@ -1,28 +1,28 @@
-import Form from "@/app/ui/songs/edit-form";
-import Breadcrumbs from "@/app/ui/songs/breadcrumbs";
-import { fetchSongById } from "@/app/lib/data";
-import { notFound } from "next/navigation";
-import { Metadata } from "next";
+import Form from '@/app/ui/songs/edit-form'
+import Breadcrumbs from '@/app/ui/songs/breadcrumbs'
+import { fetchSongById } from '@/app/lib/data'
+import { notFound } from 'next/navigation'
+import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: "Edit Song",
-};
+  title: 'Edit Song',
+}
 
 export default async function Page({ params }: { params: { id: string } }) {
-  const id = params.id;
-  const song = await fetchSongById(Number(id));
+  const id = params.id
+  const song = await fetchSongById(Number(id))
 
   if (!song) {
-    notFound();
+    notFound()
   }
 
   return (
     <main>
       <Breadcrumbs
         breadcrumbs={[
-          { label: "Songs", href: "/dashboard/songs" },
+          { label: 'Songs', href: '/dashboard/songs' },
           {
-            label: "Edit Song",
+            label: 'Edit Song',
             href: `/dashboard/songs/${id}/edit`,
             active: true,
           },
@@ -30,5 +30,5 @@ export default async function Page({ params }: { params: { id: string } }) {
       />
       <Form song={song} />
     </main>
-  );
+  )
 }

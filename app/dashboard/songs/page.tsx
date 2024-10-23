@@ -1,46 +1,42 @@
-import Pagination from "@/app/ui/songs/pagination";
-import Search from "@/app/ui/search";
-import Table from "@/app/ui/songs/table";
-import { openSans } from "@/app/ui/fonts";
-import { SongsTableSkeleton } from "@/app/ui/skeletons";
-import { Suspense } from "react";
-import {
-  fetchNowPlayingSongID,
-  fetchSongById,
-  fetchSongsPages,
-} from "@/app/lib/data";
-import { Metadata } from "next";
-import { LevelFilters } from "@/app/lib/components/LevelFilters";
-import InstrumentalFilter from "@/app/ui/components/InstrumentalFilter";
-import KeyFilter from "@/app/ui/components/KeyFilter";
-import BPMFilter from "@/app/ui/components/BPMFilter";
-import EightiesFilter from "@/app/ui/components/EightiesFilter";
-import NinetiesFilter from "@/app/ui/components/NinetiesFilter";
+import Pagination from '@/app/ui/songs/pagination'
+import Search from '@/app/ui/search'
+import Table from '@/app/ui/songs/table'
+import { openSans } from '@/app/ui/fonts'
+import { SongsTableSkeleton } from '@/app/ui/skeletons'
+import { Suspense } from 'react'
+import { fetchNowPlayingSongID, fetchSongById, fetchSongsPages } from '@/app/lib/data'
+import { Metadata } from 'next'
+import { LevelFilters } from '@/app/lib/components/LevelFilters'
+import InstrumentalFilter from '@/app/ui/components/InstrumentalFilter'
+import KeyFilter from '@/app/ui/components/KeyFilter'
+import BPMFilter from '@/app/ui/components/BPMFilter'
+import EightiesFilter from '@/app/ui/components/EightiesFilter'
+import NinetiesFilter from '@/app/ui/components/NinetiesFilter'
 
 export const metadata: Metadata = {
-  title: "Search",
-};
+  title: 'Search',
+}
 
 export default async function Page({
   searchParams,
 }: {
   searchParams?: {
-    query?: string;
-    page?: string;
-    levels?: string;
-    instrumental?: string;
-    keyRef?: string;
-    bpmRef?: string;
-    eighties?: string;
-    nineties?: string;
-  };
+    query?: string
+    page?: string
+    levels?: string
+    instrumental?: string
+    keyRef?: string
+    bpmRef?: string
+    eighties?: string
+    nineties?: string
+  }
 }) {
-  const query = searchParams?.query || "";
-  const currentPage = Number(searchParams?.page) || 1;
-  const levels = searchParams?.levels || "";
-  const instrumental = Number(searchParams?.instrumental) || 0;
-  const eighties = Boolean(searchParams?.eighties);
-  const nineties = Boolean(searchParams?.nineties);
+  const query = searchParams?.query || ''
+  const currentPage = Number(searchParams?.page) || 1
+  const levels = searchParams?.levels || ''
+  const instrumental = Number(searchParams?.instrumental) || 0
+  const eighties = Boolean(searchParams?.eighties)
+  const nineties = Boolean(searchParams?.nineties)
 
   const totalPages = await fetchSongsPages(
     query,
@@ -50,13 +46,13 @@ export default async function Page({
     searchParams?.bpmRef,
     Boolean(searchParams?.eighties),
     Boolean(searchParams?.nineties),
-  );
+  )
 
-  const nowPlayingSongId = await fetchNowPlayingSongID();
-  const nowPlayingSong = await fetchSongById(nowPlayingSongId!);
+  const nowPlayingSongId = await fetchNowPlayingSongID()
+  const nowPlayingSong = await fetchSongById(nowPlayingSongId!)
 
-  const nowPlayingKey = nowPlayingSong?.info ?? undefined;
-  const nowPlayingBPM = nowPlayingSong?.bpm ?? undefined;
+  const nowPlayingKey = nowPlayingSong?.info ?? undefined
+  const nowPlayingBPM = nowPlayingSong?.bpm ?? undefined
 
   return (
     <div className="w-full">
@@ -79,14 +75,7 @@ export default async function Page({
         </div>
       </div>
       <Suspense
-        key={
-          query +
-          currentPage +
-          levels +
-          instrumental +
-          nowPlayingKey +
-          nowPlayingBPM
-        }
+        key={query + currentPage + levels + instrumental + nowPlayingKey + nowPlayingBPM}
         fallback={<SongsTableSkeleton />}
       >
         <Table
@@ -104,5 +93,5 @@ export default async function Page({
         <Pagination totalPages={totalPages} />
       </div>
     </div>
-  );
+  )
 }

@@ -1,6 +1,14 @@
 // Loading animation
-const shimmer =
-  'before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/60 before:to-transparent';
+const shimmer = `
+  before:absolute
+  before:inset-0
+  before:-translate-x-full
+  before:animate-[shimmer_2s_infinite]
+  before:bg-gradient-to-r
+  before:from-transparent
+  before:via-white/60
+  before:to-transparent
+`
 
 function CardSkeleton() {
   return (
@@ -13,7 +21,7 @@ function CardSkeleton() {
         <div className="h-7 w-20 rounded-md bg-gray-200" />
       </div>
     </div>
-  );
+  )
 }
 
 export function CardsSkeleton() {
@@ -22,7 +30,7 @@ export function CardsSkeleton() {
       <CardSkeleton />
       <CardSkeleton />
     </>
-  );
+  )
 }
 
 function SongSkeleton() {
@@ -36,7 +44,7 @@ function SongSkeleton() {
       </div>
       <div className="mt-2 h-4 w-28 rounded-md bg-gray-200" />
     </div>
-  );
+  )
 }
 
 export function LatestSongsSkeleton() {
@@ -53,7 +61,7 @@ export function LatestSongsSkeleton() {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 export default function DashboardSkeleton() {
@@ -70,12 +78,16 @@ export default function DashboardSkeleton() {
         <LatestSongsSkeleton />
       </div>
     </>
-  );
+  )
 }
 
 function TableRowSkeleton() {
   return (
-    <tr className="w-full border-b border-gray-100 last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg">
+    <tr
+      className="w-full border-b border-gray-100 last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg
+      [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg
+      [&:last-child>td:last-child]:rounded-br-lg"
+    >
       {/* Artist */}
       <td className="whitespace-nowrap px-3 py-3">
         <div className="h-6 w-16 rounded bg-gray-100"></div>
@@ -105,7 +117,7 @@ function TableRowSkeleton() {
         <div className="h-6 w-16 rounded bg-gray-100"></div>
       </td>
     </tr>
-  );
+  )
 }
 
 function SongsMobileSkeleton() {
@@ -129,7 +141,7 @@ function SongsMobileSkeleton() {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 export function SongsTableSkeleton() {
@@ -183,21 +195,23 @@ export function SongsTableSkeleton() {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 export function NowPlayingSkeleton() {
   return (
     <main className="flex flex-col items-center justify-center p-4 sm:p-6">
-      <section className="w-full max-w-md text-center">
-        <div className="mx-auto my-2 h-[95px] w-[92px] animate-pulse rounded-full bg-gray-200" />
+      <div className="w-full max-w-md text-center">
+        <div className="my-2 flex justify-center">
+          <div className="h-24 w-24 animate-pulse rounded-full bg-gray-100"></div>
+        </div>
         <ul className="flex w-full flex-col items-center space-y-4">
-          <li className="h-6 w-3/4 animate-pulse rounded bg-gray-200" />
-          <li className="h-8 w-8 animate-pulse rounded-full bg-gray-200" />
-          <li className="h-6 w-3/4 animate-pulse rounded bg-gray-200" />
-          <li className="h-6 w-3/4 animate-pulse rounded bg-gray-200" />
+          <li className="h-8 w-32 animate-pulse rounded bg-gray-100"></li>
+          <li className="h-8 w-8 animate-pulse rounded-full bg-red-100"></li>
+          <li className="h-8 w-32 animate-pulse rounded bg-gray-100"></li>
+          <li className="h-8 w-32 animate-pulse rounded bg-gray-100"></li>
         </ul>
-      </section>
+      </div>
     </main>
-  );
+  )
 }
