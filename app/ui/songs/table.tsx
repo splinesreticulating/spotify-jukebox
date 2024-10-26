@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { PlayIcon } from '@heroicons/react/16/solid'
 import { PLAY_NEXT_URL } from '@/app/lib/utils'
 
-export default async function SongsTable({
+export default async function Table({
   query,
   currentPage,
   levels,
