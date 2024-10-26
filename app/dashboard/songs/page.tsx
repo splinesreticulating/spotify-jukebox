@@ -1,109 +1,47 @@
-import Pagination from '@/app/ui/songs/pagination'
-import Search from '@/app/ui/search'
-import Table from '@/app/ui/songs/table'
-import { openSans } from '@/app/ui/fonts'
-import { SongsTableSkeleton } from '@/app/ui/skeletons'
-import { Suspense, useMemo } from 'react'
+import { Suspense } from 'react'
 import { fetchNowPlayingSongID, fetchSongById, fetchSongsPages } from '@/app/lib/data'
 import { Metadata } from 'next'
-import { LevelFilters } from '@/app/lib/components/LevelFilters'
-import InstrumentalFilter from '@/app/ui/components/InstrumentalFilter'
-import KeyFilter from '@/app/ui/components/KeyFilter'
-import BPMFilter from '@/app/ui/components/BPMFilter'
-import EightiesFilter from '@/app/ui/components/EightiesFilter'
-import NinetiesFilter from '@/app/ui/components/NinetiesFilter'
+import { SongsTableSkeleton } from '@/app/ui/skeletons'
+import SearchFilters from '@/app/ui/songs/SearchFilters'
+import SearchResults from '@/app/ui/songs/SearchResults'
 
 export const metadata: Metadata = {
   title: 'Search',
 }
 
-export default async function Page({
-  searchParams,
-}: {
-  searchParams?: {
-    query?: string
-    page?: string
-    levels?: string
-    instrumental?: string
-    keyRef?: string
-    bpmRef?: string
-    eighties?: string
-    nineties?: string
-  }
-}) {
-  const query = searchParams?.query || ''
-  const currentPage = Number(searchParams?.page) || 1
-  const levels = searchParams?.levels || ''
-  const instrumental = Number(searchParams?.instrumental) || 0
-  const eighties = Boolean(searchParams?.eighties)
-  const nineties = Boolean(searchParams?.nineties)
-
-  const filterParams = useMemo(
-    () => ({
-      query,
-      levels,
-      instrumental,
-      keyRef: searchParams?.keyRef,
-      bpmRef: searchParams?.bpmRef,
-      eighties: Boolean(searchParams?.eighties),
-      nineties: Boolean(searchParams?.nineties),
-    }),
-    [
-      query,
-      levels,
-      instrumental,
-      searchParams?.keyRef,
-      searchParams?.bpmRef,
-      searchParams?.eighties,
-      searchParams?.nineties,
-    ],
-  )
-
-  const totalPages = await fetchSongsPages(
-    filterParams.query,
-    filterParams.levels,
-    filterParams.instrumental,
-    filterParams.keyRef,
-    filterParams.bpmRef,
-    filterParams.eighties,
-    filterParams.nineties,
-  )
+async function getData(searchParams: Record<string, string>) {
+  const query = searchParams.query || ''
+  const levels = searchParams.levels || ''
+  const instrumental = Number(searchParams.instrumental) || 0
+  const keyRef = searchParams.keyRef
+  const bpmRef = searchParams.bpmRef
+  const eighties = Boolean(searchParams.eighties)
+  const nineties = Boolean(searchParams.nineties)
 
   const nowPlayingSongId = await fetchNowPlayingSongID()
   const nowPlayingSong = await fetchSongById(nowPlayingSongId!)
+  const totalPages = await fetchSongsPages(query, levels, instrumental, keyRef, bpmRef, eighties, nineties)
 
-  const nowPlayingKey = nowPlayingSong?.info ?? undefined
-  const nowPlayingBPM = nowPlayingSong?.bpm ?? undefined
+  return {
+    nowPlayingSong,
+    totalPages,
+  }
+}
+
+export default async function Page({ searchParams }: { searchParams: Record<string, string> }) {
+  const { nowPlayingSong, totalPages } = await getData(searchParams)
 
   return (
     <div className="w-full">
-      <div className="flex w-full items-center justify-between">
-        <h1 className={`${openSans.className} text-2xl`}>Search</h1>
-      </div>
-      <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
-        <Search placeholder="title, artist, key, year, genre" />
-      </div>
-      <div className="flex items-center justify-between gap-2 pt-5">
-        <div>
-          <LevelFilters levels={levels} />
-        </div>
-        <div>
-          <InstrumentalFilter initialValue={instrumental} />
-          <KeyFilter initialValue={nowPlayingKey} />
-          <BPMFilter initialValue={nowPlayingBPM} />
-          <EightiesFilter initialValue={eighties} />
-          <NinetiesFilter initialValue={nineties} />
-        </div>
-      </div>
-      <Suspense
-        key={Object.values(filterParams).join('|') + currentPage + nowPlayingKey + nowPlayingBPM}
-        fallback={<SongsTableSkeleton />}
-      >
-        <Table {...filterParams} currentPage={currentPage} />
+      <h1 className="text-2xl">Search</h1>
+      <SearchFilters
+        initialValues={searchParams}
+        nowPlayingKey={nowPlayingSong?.info || ''}
+        nowPlayingBPM={nowPlayingSong?.bpm}
+      />
+      <Suspense fallback={<SongsTableSkeleton />}>
+        <SearchResults searchParams={{ ...searchParams, totalPages }} />
       </Suspense>
-      <div className="mt-5 flex w-full justify-center">
-        <Pagination totalPages={totalPages} />
-      </div>
     </div>
   )
 }
