@@ -109,16 +109,16 @@ export async function defriend(nowPlayingData: NowPlayingData) {
   }
 }
 
-export async function authenticate(prevState: string | undefined, formData: FormData) {
+export async function authenticate(prevState: any, formData: FormData) {
   try {
     await signIn('credentials', formData)
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
         case 'CredentialsSignin':
-          return 'Invalid credentials.'
+          return { errorMessage: 'Invalid credentials' }
         default:
-          return 'Something went wrong.'
+          return { errorMessage: 'Something went wrong' }
       }
     }
     throw error
