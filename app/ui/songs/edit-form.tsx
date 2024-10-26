@@ -2,7 +2,6 @@
 
 import { Song } from '@/app/lib/definitions'
 import { updateSong } from '@/app/lib/actions'
-import { useFormState } from 'react-dom'
 import {
   DateAdded,
   LastPlayed,
@@ -12,6 +11,7 @@ import {
   RadioButtonGroup,
   NumericalDropDown,
 } from '@/app/lib/components'
+import { useActionState } from 'react'
 
 const levels = ['Sleep', 'Morning', 'Afternoon', 'Bar', 'Club']
 const levelOptions = levels.map((level, index) => ({
@@ -57,10 +57,14 @@ const inputFieldsData = [
   },
 ]
 
+interface ActionState {
+  message: string
+}
+
 export default function EditSongForm({ song }: { song: Song }) {
-  const initialState = { message: null, errors: {} }
+  const initialState: ActionState = { message: '' }
   const updateSongWithId = updateSong.bind(null, `${song.id}`)
-  const [state, dispatch] = useFormState(updateSongWithId, initialState)
+  const [state, dispatch] = useActionState<ActionState, FormData>(updateSongWithId, initialState)
 
   return (
     <form action={dispatch} className="p-4">
@@ -90,12 +94,6 @@ export default function EditSongForm({ song }: { song: Song }) {
               defaultValue={(song[field.valueKey as keyof Song] as string | number | undefined) || ''}
               className="w-full"
             />
-
-            {state.errors?.[field.name as keyof typeof state.errors]?.map((error, index) => (
-              <p key={index} className="text-sm text-red-500">
-                {error}
-              </p>
-            ))}
           </div>
         ))}
 
