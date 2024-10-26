@@ -3,6 +3,7 @@
     "target": "es6",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
+    "types": ["json-schema"],
     "skipLibCheck": true,
     "strict": true,
     "noEmit": true,
