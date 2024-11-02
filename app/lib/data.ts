@@ -28,7 +28,7 @@ const MIN_BPM_MULTIPLIER = 0.96
 const fetchSongsBaseQuery = (
   query: string,
   levelsArray: string[],
-  instrumentalness: number,
+  instrumentalness: number | undefined,
   keyRef?: string,
   bpmRef?: string,
   eighties?: boolean,
@@ -46,7 +46,7 @@ const fetchSongsBaseQuery = (
         ],
       },
       levelsArray.length > 0 ? { genre: { in: levelsArray } } : {},
-      instrumentalness >= 90 ? { instrumentalness: { gte: 90 } } : {},
+      instrumentalness && instrumentalness >= 90 ? { instrumentalness: { gte: 90 } } : {},
       keyRef ? { info: { in: compatibleKeys(keyRef) } } : {},
       bpmRef
         ? {
@@ -148,17 +148,25 @@ export async function fetchFilteredSongs(
 export async function fetchSongsPages(
   query: string,
   levels: string,
-  instrumentalness: number,
+  instrumentalness: string | undefined,
   keyRef?: string,
   bpmRef?: string,
-  eighties?: boolean,
-  nineties?: boolean,
+  eighties?: string,
+  nineties?: string,
 ): Promise<number> {
   const levelsArray = levels ? levels.split(',').map((level) => level) : []
 
   try {
     const count = await db.songlist.count({
-      ...fetchSongsBaseQuery(query, levelsArray, instrumentalness, keyRef, bpmRef, eighties, nineties),
+      ...fetchSongsBaseQuery(
+        query,
+        levelsArray,
+        Number(instrumentalness),
+        keyRef,
+        bpmRef,
+        eighties === 'true',
+        nineties === 'true',
+      ),
     })
 
     return Math.ceil(count / ITEMS_PER_PAGE)
@@ -188,12 +196,12 @@ export async function fetchFilteredArtists(query: string) {
   noStore()
 
   try {
-    const artists = await db.songlist.findMany({
+    const songs = await db.songlist.findMany({
       where: { artist: { contains: query } },
       select: { artist: true },
     })
 
-    const uniqueArtists = [...new Set(artists.map((artist) => artist.artist))].map((name, index) => ({
+    const uniqueArtists = [...new Set(songs.map((song) => song.artist))].map((name, index) => ({
       name,
       id: index + 1,
     }))

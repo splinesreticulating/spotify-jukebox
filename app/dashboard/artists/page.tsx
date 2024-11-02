@@ -6,8 +6,12 @@ export const metadata: Metadata = {
   title: 'Artists',
 }
 
-export default async function Page({ searchParams }: { searchParams?: { query?: string; page?: string } }) {
-  const query = searchParams?.query || ''
+export default async function ArtistsPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ query?: string; page?: string }>
+}) {
+  const query = (await searchParams)?.query || ''
 
   const artists = await fetchFilteredArtists(query)
 

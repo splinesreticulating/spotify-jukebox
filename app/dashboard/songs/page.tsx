@@ -9,18 +9,12 @@ export const metadata: Metadata = {
   title: 'Search',
 }
 
-async function getData(searchParams: Record<string, string>) {
-  const query = searchParams.query || ''
-  const levels = searchParams.levels || ''
-  const instrumental = Number(searchParams.instrumental) || 0
-  const keyRef = searchParams.keyRef
-  const bpmRef = searchParams.bpmRef
-  const eighties = Boolean(searchParams.eighties)
-  const nineties = Boolean(searchParams.nineties)
+async function getData(searchParams: Promise<Record<string, string>>) {
+  const { query, levels, instrumentalness, keyRef, bpmRef, eighties, nineties } = await searchParams
 
   const nowPlayingSongId = await fetchNowPlayingSongID()
   const nowPlayingSong = await fetchSongById(nowPlayingSongId!)
-  const totalPages = await fetchSongsPages(query, levels, instrumental, keyRef, bpmRef, eighties, nineties)
+  const totalPages = await fetchSongsPages(query, levels, instrumentalness, keyRef, bpmRef, eighties, nineties)
 
   return {
     nowPlayingSong,
@@ -28,19 +22,19 @@ async function getData(searchParams: Record<string, string>) {
   }
 }
 
-export default async function Page({ searchParams }: { searchParams: Record<string, string> }) {
+export default async function Page({ searchParams }: { searchParams: Promise<Record<string, string>> }) {
   const { nowPlayingSong, totalPages } = await getData(searchParams)
 
   return (
     <div className="w-full">
       <h1 className="text-2xl">Search</h1>
       <SearchFilters
-        initialValues={searchParams}
+        initialValues={await searchParams}
         nowPlayingKey={nowPlayingSong?.info || ''}
         nowPlayingBPM={nowPlayingSong?.bpm}
       />
       <Suspense fallback={<SongsTableSkeleton />}>
-        <SearchResults searchParams={{ ...searchParams, totalPages }} />
+        <SearchResults searchParams={{ ...(await searchParams), totalPages }} />
       </Suspense>
     </div>
   )
