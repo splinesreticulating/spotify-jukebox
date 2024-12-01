@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { fetchNowPlaying } from '@/app/lib/data'
 
-const REFRESH_INTERVAL_MS = 10_000
+const NOW_PLAYING_REFRESH_INTERVAL_MS = 10_000
 
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason)
@@ -41,7 +41,7 @@ export async function GET() {
       }
 
       if (!isStreamClosed) {
-        await new Promise((resolve) => setTimeout(resolve, REFRESH_INTERVAL_MS))
+        await new Promise((resolve) => setTimeout(resolve, NOW_PLAYING_REFRESH_INTERVAL_MS))
       }
     }
 
