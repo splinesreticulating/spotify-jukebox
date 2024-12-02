@@ -1,18 +1,25 @@
+export type User = {
+  id: string
+  name: string
+  email: string
+  password: string
+}
+
 // Figure out how to get prisma to auto-generate the Song type, or how to reference it if it already exists
 export type Song = {
   id: number
-  artist: string
-  title: string
-  album: string
-  grouping: string | null
+  artists: string[]
+  title: string | null
+  album: string | null
+  tags: string[]
   instrumentalness: number | null
-  bpm: number
-  info: string | null
-  genre: string
+  bpm: number | null
+  key: string | null
+  level: number | null
   date_added: Date | null
-  albumyear: string
+  year: number | null
   hours_off: number | null
-  count_played: number
+  count_played: number | null
   date_played: Date | null
   roboticness: number | null
 }
@@ -57,7 +64,7 @@ export type FormattedArtistsTable = {
 
 export type NowPlayingSong = {
   songID: Song['id']
-  artist: Song['artist']
+  artists: Song['artists']
   title: Song['title']
   level?: number
 }

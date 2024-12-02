@@ -7,14 +7,14 @@ import { unstable_noStore as noStore } from 'next/cache'
 const songSelectFields = {
   id: true,
   title: true,
-  artist: true,
-  genre: true,
-  info: true,
+  artists: true,
+  tags: true,
+  key: true,
+  level: true,
   bpm: true,
   date_added: true,
-  albumyear: true,
+  year: true,
   hours_off: true,
-  grouping: true,
   album: true,
   instrumentalness: true,
   count_played: true,
@@ -38,16 +38,14 @@ const fetchSongsBaseQuery = (
     AND: [
       {
         OR: [
-          { artist: { contains: query } },
+          { artists: { has: query } },
           { title: { contains: query } },
-          { albumyear: { contains: query } },
-          { grouping: { contains: query } },
-          { info: { contains: query } },
+          { tags: { has: query } },
         ],
       },
-      levelsArray.length > 0 ? { genre: { in: levelsArray } } : {},
+      levelsArray.length > 0 ? { level: { in: levelsArray.map(Number) } } : {},
       instrumentalness && instrumentalness >= 90 ? { instrumentalness: { gte: 90 } } : {},
-      keyRef ? { info: { in: compatibleKeys(keyRef) } } : {},
+      keyRef ? { key: keyRef } : {},
       bpmRef
         ? {
             bpm: {
@@ -59,8 +57,8 @@ const fetchSongsBaseQuery = (
       eighties || nineties
         ? {
             OR: [
-              eighties ? { albumyear: { startsWith: '198' } } : {},
-              nineties ? { albumyear: { startsWith: '199' } } : {},
+              eighties ? { year: { gte: 1980, lt: 1990 } } : {},
+              nineties ? { year: { gte: 1990, lt: 2000 } } : {},
             ],
           }
         : {},
@@ -82,7 +80,7 @@ export async function fetchLatestSongs() {
   noStore()
 
   try {
-    const songs = await db.songlist.findMany({
+    const songs = await db.nuts.findMany({
       select: songSelectFields,
       orderBy: {
         date_added: 'desc' as const,
@@ -100,17 +98,20 @@ export async function fetchLatestSongs() {
 export async function fetchCardData() {
   noStore()
   try {
-    const songCountPromise = db.songlist.count({ where: { songtype: 'S' } })
-    const artistCountPromise = db.songlist.findMany({
-      distinct: ['artist'],
-      select: { artist: true },
+    const songCountPromise = db.nuts.count()
+    const artistsPromise = db.nuts.findMany({
+      select: { artists: true },
     })
 
-    const data = await Promise.all([songCountPromise, artistCountPromise])
+    const data = await Promise.all([songCountPromise, artistsPromise])
+    
+    // Get unique artists by flattening and deduplicating the arrays
+    const allArtists = data[1].flatMap(song => song.artists)
+    const uniqueArtists = new Set(allArtists)
 
     return {
       numberOfSongs: data[0],
-      numberOfArtists: data[1].length,
+      numberOfArtists: uniqueArtists.size,
     }
   } catch (error) {
     console.error('Database Error:', error)
@@ -132,7 +133,7 @@ export async function fetchFilteredSongs(
   const levelsArray = levels ? levels.split(',').map((level) => level) : []
 
   try {
-    const songs = await db.songlist.findMany({
+    const songs = await db.nuts.findMany({
       ...fetchSongsBaseQuery(query, levelsArray, instrumentalness, keyRef, bpmRef, eighties, nineties),
       take: ITEMS_PER_PAGE,
       skip: offset,
@@ -157,7 +158,7 @@ export async function fetchSongsPages(
   const levelsArray = levels ? levels.split(',').map((level) => level) : []
 
   try {
-    const count = await db.songlist.count({
+    const count = await db.nuts.count({
       ...fetchSongsBaseQuery(
         query,
         levelsArray,
@@ -180,7 +181,7 @@ export const fetchSongById = async (id: number): Promise<Song | null> => {
   noStore()
 
   try {
-    const song = await db.songlist.findUnique({
+    const song = await db.nuts.findUnique({
       where: { id },
       select: songSelectFields,
     })
@@ -196,12 +197,13 @@ export async function fetchFilteredArtists(query: string) {
   noStore()
 
   try {
-    const songs = await db.songlist.findMany({
-      where: { artist: { contains: query } },
-      select: { artist: true },
+    const songs = await db.nuts.findMany({
+      where: { artists: { has: query } },
+      select: { artists: true },
     })
 
-    const uniqueArtists = [...new Set(songs.map((song) => song.artist))].map((name, index) => ({
+    const allArtists = songs.flatMap(song => song.artists)
+    const uniqueArtists = [...new Set(allArtists)].map((name, index) => ({
       name,
       id: index + 1,
     }))
@@ -209,37 +211,48 @@ export async function fetchFilteredArtists(query: string) {
     return uniqueArtists
   } catch (err) {
     console.error('Database Error:', err)
-    throw new Error('Failed to fetch artist table.')
+    throw new Error('Failed to fetch artists list.')
   }
 }
 
 export const fetchNowPlaying = async (): Promise<NowPlayingData> => {
-  const nowPlaying = await db.historylist.findMany({
-    select: { title: true, artist: true, songID: true },
-    orderBy: { date_played: 'desc' as const },
+  const nowPlaying = await db.history.findMany({
+    select: { 
+      nut_id: true, 
+      played_at: true,
+    },
+    orderBy: { played_at: 'desc' as const },
     take: 2,
   })
 
+  const currentSong: NowPlayingSong = {
+    songID: nowPlaying[0].nut_id,
+    artists: ['lookup not implemented'],
+    title: 'lookup not implemented',
+  }
+  
+  const lastSong: NowPlayingSong = {
+    songID: nowPlaying[1].nut_id,
+    artists: ['lookup not implemented'],
+    title: 'lookup not implemented'
+  }
+
   const next = await fetchNextSong()
-
-  const currentSong: NowPlayingSong = nowPlaying[0]
-  const lastSong: NowPlayingSong = nowPlaying[1]
-  const nextTrack = next ? await fetchSongById(next?.songID) : null
-
+  
   const nextSong: NowPlayingSong = {
-    artist: nextTrack?.artist!,
-    title: nextTrack?.title!,
-    songID: nextTrack?.id!,
+    artists: [],
+    title: '',
+    songID: 0,
   }
 
   const [friends, currentSongData] = await Promise.all([
-    db.tblbranches.findFirst({
-      where: { branch: currentSong.songID, root: lastSong.songID },
+    db.compatibility_tree.findFirst({
+      where: { branch_id: currentSong.songID, root_id: lastSong.songID },
     }),
     fetchSongById(currentSong.songID),
   ])
 
-  currentSong.level = Number(currentSongData!.genre)
+  currentSong.level = Number(currentSongData!.level)
 
   return { currentSong, lastSong, nextSong, friends: !!friends }
 }
@@ -249,16 +262,18 @@ export const measurePoolDepth = async (songId: number) => {
 
   if (!song) throw new Error('Song not found')
 
-  const { bpm, info, genre } = song
+  const { bpm, key, level } = song
 
-  const lowerBpm = bpm * 0.96
-  const upperBpm = bpm * 1.09
+  if (!bpm) throw new Error('BPM not found')
 
-  const similarSongCount = await db.songlist.count({
+  const lowerBpm = bpm * MIN_BPM_MULTIPLIER
+  const upperBpm = bpm * MAX_BPM_MULTIPLIER
+
+  const similarSongCount = await db.nuts.count({
     where: {
       bpm: { gte: lowerBpm, lte: upperBpm },
-      info,
-      genre,
+      key,
+      level,
     },
   })
 
@@ -275,4 +290,6 @@ export async function fetchNowPlayingSongID(): Promise<number | null> {
   }
 }
 
-const fetchNextSong = async () => await db.queuelist.findFirst()
+const fetchNextSong = async () => {
+  return null
+}

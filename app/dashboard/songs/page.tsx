@@ -30,8 +30,8 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
       <h1 className="text-2xl">Search</h1>
       <SearchFilters
         initialValues={await searchParams}
-        nowPlayingKey={nowPlayingSong?.info || ''}
-        nowPlayingBPM={nowPlayingSong?.bpm}
+        nowPlayingKey={nowPlayingSong?.key || ''}
+        nowPlayingBPM={nowPlayingSong?.bpm || undefined}
       />
       <Suspense fallback={<SongsTableSkeleton />}>
         <SearchResults searchParams={{ ...(await searchParams), totalPages }} />

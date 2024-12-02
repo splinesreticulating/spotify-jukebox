@@ -38,7 +38,7 @@ export default async function Table({
                       <PlayIcon className="mr-1 inline h-3 w-3 text-gray-500 hover:text-red-800" aria-hidden="true" />
                     </Link>
                     <Link href={`/dashboard/songs/${song.id}/edit`}>
-                      {song.artist} - {song.title}
+                      {song.artists?.join(', ') || ''} - {song.title || ''}
                     </Link>
                   </div>
                 </div>
@@ -85,22 +85,28 @@ export default async function Table({
                     [&:last-child>td:last-child]:rounded-br-lg
                   "
                 >
-                  <td className="whitespace-nowrap py-3 pl-6 pr-3">{song.artist}</td>
+                  <td className="whitespace-nowrap py-3 pl-6 pr-3">
+                    {song.artists?.join(', ') || ''}
+                  </td>
                   <td className="whitespace-nowrap px-3 py-3">
                     <Link href={PLAY_NEXT_URL + `${song.id}`}>
                       <PlayIcon className="mr-1 inline h-3 w-3 text-gray-500 hover:text-red-800" aria-hidden="true" />
                     </Link>
                     <Link href={`/dashboard/songs/${song.id}/edit`}>
-                      <strong>{song.title}</strong>
+                      <strong>{song.title || ''}</strong>
                     </Link>
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
-                    <p>{Number(song.genre) / 1000}</p>
+                    <p>{song.level ? Number(song.level) / 1000 : ''}</p>
                   </td>
-                  <td className="whitespace-nowrap px-3 py-3">{song.bpm}</td>
-                  <td className="whitespace-nowrap px-3 py-3">{song.info}</td>
-                  <td className="whitespace-nowrap px-3 py-3">{Number(song.albumyear) > 1700 ? song.albumyear : ''}</td>
-                  <td className="whitespace-nowrap px-3 py-3">{song.date_added && song.date_added.toDateString()}</td>
+                  <td className="whitespace-nowrap px-3 py-3">{song.bpm || ''}</td>
+                  <td className="whitespace-nowrap px-3 py-3">{song.key || ''}</td>
+                  <td className="whitespace-nowrap px-3 py-3">
+                    {song.year && Number(song.year) > 1700 ? song.year : ''}
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-3">
+                    {song.date_added?.toDateString() || ''}
+                  </td>
                 </tr>
               ))}
             </tbody>

@@ -26,7 +26,17 @@ const roboticnessOptions = [
   { id: '3', value: '3', label: 'Electronic' },
 ]
 
-const inputFieldsData = [
+type InputFieldData = {
+  id: string
+  name: string
+  label: string
+  type: string
+  valueKey: keyof Song
+  placeholder?: string
+  defaultValueTransform?: (value: any) => string
+}
+
+const inputFieldsData: InputFieldData[] = [
   {
     id: 'title',
     name: 'title',
@@ -35,11 +45,13 @@ const inputFieldsData = [
     valueKey: 'title',
   },
   {
-    id: 'artist',
-    name: 'artist',
-    label: 'Artist',
+    id: 'artists',
+    name: 'artists',
+    label: 'Artists',
     type: 'text',
-    valueKey: 'artist',
+    valueKey: 'artists',
+    placeholder: 'Separate multiple artists with commas',
+    defaultValueTransform: (value: string[] | null) => value?.join(', ') || '',
   },
   {
     id: 'album',
@@ -49,11 +61,13 @@ const inputFieldsData = [
     valueKey: 'album',
   },
   {
-    id: 'grouping',
-    name: 'grouping',
+    id: 'tags',
+    name: 'tags',
     label: 'Tags',
     type: 'text',
-    valueKey: 'grouping',
+    valueKey: 'tags',
+    placeholder: 'Separate multiple tags with commas',
+    defaultValueTransform: (value: string[] | null) => value?.join(', ') || '',
   },
 ]
 
@@ -69,7 +83,7 @@ export default function EditSongForm({ song }: { song: Song }) {
   return (
     <form action={dispatch} className="p-4">
       <div className="mb-4 text-lg md:text-2xl">
-        {song.artist} - {song.title}
+        {song.artists?.join(', ') || ''} - {song.title || ''}
       </div>
 
       <details className="mb-4 rounded-md bg-gray-100 p-2">
@@ -91,7 +105,11 @@ export default function EditSongForm({ song }: { song: Song }) {
               name={field.name}
               label={field.label}
               type={field.type}
-              defaultValue={(song[field.valueKey as keyof Song] as string | number | undefined) || ''}
+              defaultValue={
+                field.defaultValueTransform
+                  ? field.defaultValueTransform(song[field.valueKey])
+                  : (song[field.valueKey] as string | number | null)?.toString() || ''
+              }
               className="w-full"
             />
           </div>
@@ -105,7 +123,7 @@ export default function EditSongForm({ song }: { song: Song }) {
             <NumericalDropDown
               className="rounded-md border-gray-300"
               name="year"
-              defaultValue={Number(song.albumyear || '1700')}
+              defaultValue={song.year}
               lowerValue={1700}
               upperValue={2024}
               nullOptionLabel="Select a year"
@@ -135,7 +153,7 @@ export default function EditSongForm({ song }: { song: Song }) {
           name="level"
           options={levelOptions.map((level) => ({
             ...level,
-            checked: song.genre === level.value,
+            checked: song.level === Number(level.value),
           }))}
           className="mb-4 flex flex-wrap gap-2"
         />
