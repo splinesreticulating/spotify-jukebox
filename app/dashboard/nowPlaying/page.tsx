@@ -63,7 +63,7 @@ export default function NowPlayingPage() {
   if (isLoading) return <NowPlayingSkeleton />
   if (!nowPlayingData) return null
 
-  const { lastSong, currentSong, nextSong, friends } = nowPlayingData
+  const { lastSong, currentSong, friends } = nowPlayingData
 
   return (
     <main className="flex flex-col items-center justify-center p-4 sm:p-6">
@@ -79,7 +79,6 @@ export default function NowPlayingPage() {
           <li>
             now: <SongLink song={currentSong} className="font-bold" />
           </li>
-          <li>next: {nextSong.songID ? <SongLink song={nextSong} /> : 'selecting...'}</li>
         </ul>
       </section>
     </main>
