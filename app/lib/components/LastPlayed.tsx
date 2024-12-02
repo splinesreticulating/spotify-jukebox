@@ -3,13 +3,13 @@ import { daysAgo } from '../utils'
 
 export const LastPlayed: React.FC<{ song: Song }> = ({ song }) => {
   // const lastPlayedDate = await checkHistorylists(song)
-  const lastPlayedDate = song.date_played!
-  const days = daysAgo(lastPlayedDate)
+  const lastPlayedDate = song.date_played
 
-  return <em>last played {days} days ago</em>
-}
+  if (!lastPlayedDate) {
+    return <em>unplayed</em>
+  } else return <em>last played {daysAgo(lastPlayedDate)} days ago</em>
+}  // :thinkface:
 
-// :thinkface:
 // const checkHistorylists = async (song: Song) => {
 //     let lastPlayedDate = new Date('00-00-0000')
 
