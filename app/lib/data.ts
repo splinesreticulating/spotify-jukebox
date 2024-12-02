@@ -33,41 +33,54 @@ const fetchSongsBaseQuery = (
   bpmRef?: string,
   eighties?: boolean,
   nineties?: boolean,
-) => ({
-  where: {
-    AND: [
-      {
-        OR: [
-          { artists: { has: query } },
-          { title: { contains: query } },
-          { tags: { has: query } },
-        ],
+) => {
+  const conditions = []
+
+  if (query) {
+    conditions.push({
+      OR: [
+        { artists: { has: query } },
+        { title: { contains: query, mode: 'insensitive' as const } },
+        { tags: { has: query } },
+      ],
+    })
+  }
+
+  if (levelsArray.length > 0) {
+    conditions.push({ level: { in: levelsArray.map(Number) } })
+  }
+
+  if (instrumentalness && instrumentalness >= 90) {
+    conditions.push({ instrumentalness: { gte: 90 } })
+  }
+
+  if (keyRef) {
+    conditions.push({ key: keyRef })
+  }
+
+  if (bpmRef) {
+    conditions.push({
+      bpm: {
+        gte: Number(bpmRef) * MIN_BPM_MULTIPLIER,
+        lte: Number(bpmRef) * MAX_BPM_MULTIPLIER,
       },
-      levelsArray.length > 0 ? { level: { in: levelsArray.map(Number) } } : {},
-      instrumentalness && instrumentalness >= 90 ? { instrumentalness: { gte: 90 } } : {},
-      keyRef ? { key: keyRef } : {},
-      bpmRef
-        ? {
-            bpm: {
-              gte: Number(bpmRef) * MIN_BPM_MULTIPLIER,
-              lte: Number(bpmRef) * MAX_BPM_MULTIPLIER,
-            },
-          }
-        : {},
-      eighties || nineties
-        ? {
-            OR: [
-              eighties ? { year: { gte: 1980, lt: 1990 } } : {},
-              nineties ? { year: { gte: 1990, lt: 2000 } } : {},
-            ],
-          }
-        : {},
-    ],
-  },
-  orderBy: {
-    date_added: 'desc' as const,
-  },
-})
+    })
+  }
+
+  if (eighties || nineties) {
+    const yearConditions = []
+    if (eighties) yearConditions.push({ year: { gte: 1980, lt: 1990 } })
+    if (nineties) yearConditions.push({ year: { gte: 1990, lt: 2000 } })
+    conditions.push({ OR: yearConditions })
+  }
+
+  return {
+    where: conditions.length > 0 ? { AND: conditions } : {},
+    orderBy: {
+      date_added: 'desc' as const,
+    },
+  }
+}
 
 const compatibleKeys = (keyRef: string) => {
   // Here's where we figure out all the compatible
@@ -216,45 +229,68 @@ export async function fetchFilteredArtists(query: string) {
 }
 
 export const fetchNowPlaying = async (): Promise<NowPlayingData> => {
-  const nowPlaying = await db.history.findMany({
+  // Get the two most recent history entries
+  const recentHistory = await db.history.findMany({
     select: { 
       nut_id: true, 
       played_at: true,
     },
-    orderBy: { played_at: 'desc' as const },
+    orderBy: { played_at: 'desc' },
     take: 2,
   })
 
-  const currentSong: NowPlayingSong = {
-    songID: nowPlaying[0].nut_id,
-    artists: ['lookup not implemented'],
-    title: 'lookup not implemented',
-  }
-  
-  const lastSong: NowPlayingSong = {
-    songID: nowPlaying[1].nut_id,
-    artists: ['lookup not implemented'],
-    title: 'lookup not implemented'
+  if (recentHistory.length === 0) {
+    throw new Error('No history found')
   }
 
-  const next = await fetchNextSong()
-  
-  const nextSong: NowPlayingSong = {
-    artists: [],
-    title: '',
-    songID: 0,
-  }
-
-  const [friends, currentSongData] = await Promise.all([
-    db.compatibility_tree.findFirst({
-      where: { branch_id: currentSong.songID, root_id: lastSong.songID },
-    }),
-    fetchSongById(currentSong.songID),
+  // Get the song details for both current and last songs
+  const [currentSongData, lastSongData] = await Promise.all([
+    fetchSongById(recentHistory[0].nut_id),
+    recentHistory[1] ? fetchSongById(recentHistory[1].nut_id) : null,
   ])
 
-  currentSong.level = Number(currentSongData!.level)
+  if (!currentSongData) {
+    throw new Error('Current song not found')
+  }
 
-  return { currentSong, lastSong, nextSong, friends: !!friends }
+  const currentSong: NowPlayingSong = {
+    songID: currentSongData.id,
+    artists: currentSongData.artists,
+    title: currentSongData.title,
+    level: Number(currentSongData.level),
+  }
+
+  const lastSong: NowPlayingSong = lastSongData ? {
+    songID: lastSongData.id,
+    artists: lastSongData.artists,
+    title: lastSongData.title,
+  } : {
+    songID: 0,
+    artists: [],
+    title: '',
+  }
+
+  // Check if there's a friendship between the songs
+  const friends = lastSongData ? await db.compatibility_tree.findFirst({
+    where: { 
+      branch_id: currentSong.songID, 
+      root_id: lastSong.songID 
+    },
+  }) : null
+
+  // For now, return an empty nextSong as it's not implemented
+  const nextSong: NowPlayingSong = {
+    songID: 0,
+    artists: [],
+    title: '',
+  }
+
+  return { 
+    currentSong, 
+    lastSong, 
+    nextSong, 
+    friends: !!friends 
+  }
 }
 
 export const measurePoolDepth = async (songId: number) => {
