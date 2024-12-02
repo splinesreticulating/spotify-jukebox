@@ -97,7 +97,7 @@ export default async function Table({
                     </Link>
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
-                    <p>{song.level ? Number(song.level) / 1000 : ''}</p>
+                    <p>{song.level ? song.level : ''}</p>
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">{song.bpm || ''}</td>
                   <td className="whitespace-nowrap px-3 py-3">{song.key || ''}</td>

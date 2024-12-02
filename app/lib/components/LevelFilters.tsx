@@ -3,7 +3,7 @@
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
-const allLevels = ['1000', '2000', '3000', '4000', '5000']
+const allLevels = ['1', '2', '3', '4', '5']
 
 export function LevelFilters({ levels }: { levels: string }) {
   const router = useRouter()

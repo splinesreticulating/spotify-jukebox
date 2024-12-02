@@ -16,7 +16,7 @@ import { useActionState } from 'react'
 const levels = ['Sleep', 'Morning', 'Afternoon', 'Bar', 'Club']
 const levelOptions = levels.map((level, index) => ({
   id: level,
-  value: `${(index + 1) * 1000}`,
+  value: `${(index + 1)}`,
   label: level,
 }))
 
