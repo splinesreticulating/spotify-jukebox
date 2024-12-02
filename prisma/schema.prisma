@@ -3,185 +3,121 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-model historylist {
-  ID          Int                 @id @default(autoincrement())
-  songID      Int                 @default(0)
-  filename    String              @default("") @db.VarChar(255)
-  date_played DateTime            @default(dbgenerated("'0000-00-00 00:00:00'")) @db.DateTime(0)
-  duration    Int                 @default(0)
-  artist      String              @default("") @db.VarChar(255)
-  title       String              @default("") @db.VarChar(255)
-  album       String              @default("") @db.VarChar(255)
-  albumyear   String              @default("") @db.VarChar(4)
-  website     String              @default("") @db.VarChar(255)
-  buycd       String              @default("") @db.VarChar(255)
-  picture     String              @default("") @db.VarChar(255)
-  listeners   Int                 @default(0) @db.MediumInt
-  label       String              @default("") @db.VarChar(100)
-  pline       String              @default("") @db.VarChar(50)
-  trackno     Int                 @default(0)
-  composer    String              @default("") @db.VarChar(100)
-  ISRC        String              @default("") @db.VarChar(50)
-  catalog     String              @default("") @db.VarChar(50)
-  UPC         String              @default("") @db.VarChar(50)
-  feeagency   String              @default("") @db.VarChar(20)
-  songtype    String              @default("") @db.Char(1)
-  requestID   Int                 @default(0)
-  overlay     historylist_overlay @default(no)
-  songrights  String              @default("broadcast")
-
-  @@index([date_played], map: "date_played")
-}
-
-model historylist_last {
-  ID          Int                 @id @default(autoincrement())
-  songID      Int                 @default(0)
-  filename    String              @default("") @db.VarChar(255)
-  date_played DateTime            @default(dbgenerated("'0000-00-00 00:00:00'")) @db.DateTime(0)
-  duration    Int                 @default(0)
-  artist      String              @default("") @db.VarChar(255)
-  title       String              @default("") @db.VarChar(255)
-  album       String              @default("") @db.VarChar(255)
-  albumyear   String              @default("") @db.VarChar(4)
-  website     String              @default("") @db.VarChar(255)
-  buycd       String              @default("") @db.VarChar(255)
-  picture     String              @default("") @db.VarChar(255)
-  listeners   Int                 @default(0) @db.MediumInt
-  label       String              @default("") @db.VarChar(100)
-  pline       String              @default("") @db.VarChar(50)
-  trackno     Int                 @default(0)
-  composer    String              @default("") @db.VarChar(100)
-  ISRC        String              @default("") @db.VarChar(50)
-  catalog     String              @default("") @db.VarChar(50)
-  UPC         String              @default("") @db.VarChar(50)
-  feeagency   String              @default("") @db.VarChar(20)
-  songtype    String              @default("") @db.Char(1)
-  requestID   Int                 @default(0)
-  overlay     historylist_overlay @default(no)
-  songrights  String              @default("broadcast")
-
-  @@index([date_played], map: "date_played")
-}
-
-model keywords {
-  ID      Int    @id @default(autoincrement()) @db.UnsignedInt
-  keyword String @unique(map: "keyword") @default("") @db.VarChar(25)
-}
-
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model queuelist {
-  ID        Int    @id @default(autoincrement())
-  songID    Int    @default(0)
-  sortID    Float  @default(0)
-  requests  Int    @default(0)
-  requestID Int    @default(0)
-  auxdata   String @default("") @db.VarChar(200)
-}
-
-model songlist {
-  id                 Int                       @id @default(autoincrement()) @map("ID")
-  artist             String                    @default("") @db.VarChar(255)
-  title              String                    @default("") @db.VarChar(255)
-  hours_off          Int?                      @default(48) @db.SmallInt
-  roboticness        Int?                      @default(2) @db.TinyInt
-  info               String?                   @db.Text
-  bpm                Int                       @default(0) @db.MediumInt
-  albumyear          String                    @default("1700") @db.VarChar(4)
-  start_bpm          Int?                      @db.UnsignedTinyInt
-  end_bpm            Int?                      @db.UnsignedTinyInt
-  genre              String                    @default("") @db.VarChar(20)
-  grouping           String?                   @default("") @db.VarChar(256)
-  count_played       Int                       @default(0) @db.MediumInt
-  filename           String                    @unique(map: "filename") @default("") @db.VarChar(255)
-  songtype           String                    @default("S") @db.Char(1)
-  album              String                    @default("") @db.VarChar(255)
-  happiness          Int?                      @default(0)
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model bad_nuts {
+  id                 Int       @id @default(autoincrement())
+  reason             String?
+  spotify_id         String?   @db.Char(22)
+  title              String?   @db.VarChar(150)
+  artists            String[]
+  album              String?   @db.VarChar(150)
+  bpm                Int?
+  level              Int?
+  key                String?   @db.VarChar(3)
+  date_added         DateTime? @default(now()) @db.Timestamp(6)
+  date_liked         DateTime? @db.Timestamp(6)
+  date_played        DateTime? @db.Timestamp(6)
+  date_artist_played DateTime? @db.Timestamp(6)
+  date_album_played  DateTime? @db.Timestamp(6)
+  date_title_played  DateTime? @db.Timestamp(6)
+  image_urls         String[]
+  file_path          String?
+  hours_off          Int?      @default(24)
+  year               Int?
+  tags               String[]
+  instrumentalness   Int?
+  duration           Int?
+  explicit           Boolean?
   danceability       Int?
   energy             Int?
-  accousticness      Int?
-  instrumentalness   Int?
   liveness           Int?
+  loudness           Int?
   speechiness        Int?
-  dj                 String?                   @db.VarChar(25)
-  weight             Float                     @default(50)
-  balance            Float                     @default(0)
-  flags              String                    @default("NNNNNNNNNN") @db.VarChar(10)
-  status             Int                       @default(0) @db.TinyInt
-  date_added         DateTime?                 @db.DateTime(0)
-  date_played        DateTime?                 @default(dbgenerated("'2002-01-01 00:00:01'")) @db.DateTime(0)
-  date_artist_played DateTime?                 @default(dbgenerated("'2002-01-01 00:00:01'")) @db.DateTime(0)
-  date_album_played  DateTime?                 @default(dbgenerated("'2002-01-01 00:00:01'")) @db.DateTime(0)
-  date_title_played  DateTime?                 @default(dbgenerated("'2002-01-01 00:00:01'")) @db.DateTime(0)
-  duration           Int                       @default(0)
-  label              String                    @default("") @db.VarChar(255)
-  diskID             Int                       @default(0)
-  pline              String                    @default("") @db.VarChar(50)
-  trackno            Int                       @default(0)
-  composer           String                    @default("") @db.VarChar(100)
-  ISRC               String                    @default("") @db.VarChar(50)
-  catalog            String                    @default("") @db.VarChar(50)
-  UPC                String                    @default("") @db.VarChar(50)
-  feeagency          String                    @default("") @db.VarChar(20)
-  website            String                    @default("") @db.VarChar(255)
-  buycd              String                    @default("") @db.VarChar(255)
-  lyrics             String?                   @db.Text
-  picture            String                    @default("") @db.VarChar(255)
-  count_requested    Int                       @default(0) @db.MediumInt
-  last_requested     DateTime                  @default(dbgenerated("'2002-01-01 00:00:01'")) @db.DateTime(0)
-  count_performances Int                       @default(0)
-  xfade              String                    @default("") @db.VarChar(50)
-  mood               String                    @default("") @db.VarChar(50)
-  rating             Int                       @default(0) @db.MediumInt
-  overlay            songlist_overlay          @default(no)
-  playlimit_count    Int                       @default(0)
-  playlimit_action   songlist_playlimit_action @default(none)
-  songrights         String                    @default("broadcast")
-  adz_listID         Int                       @default(0)
-  killer             Boolean?
-  xmas_only          Boolean?                  @default(false)
-
-  @@index([date_album_played], map: "date_album_played")
-  @@index([date_artist_played], map: "date_artist_played")
-  @@index([date_played], map: "date_played")
+  valence            Int?
+  time_signature     Int?
+  roboticness        Int?      @default(2)
+  count_played       Int?      @default(0)
 }
 
-model tblbranches {
-  root   Int @default(0) @db.UnsignedMediumInt
-  branch Int @default(0) @db.UnsignedMediumInt
-  level  Int @default(3000) @db.UnsignedSmallInt
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model compatibility_tree {
+  id                                      Int     @id @default(autoincrement())
+  root_id                                 Int
+  branch_id                               Int
+  root_spotify_id                         String? @db.Char(22)
+  branch_spotify_id                       String? @db.Char(22)
+  root_title                              String? @db.VarChar(150)
+  branch_title                            String? @db.VarChar(150)
+  branch_level                            Int?
+  nuts_compatibility_tree_branch_idTonuts nuts    @relation("compatibility_tree_branch_idTonuts", fields: [branch_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  nuts_compatibility_tree_root_idTonuts   nuts    @relation("compatibility_tree_root_idTonuts", fields: [root_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  @@id([root, branch])
+  @@index([branch_id], map: "idx_compatibility_tree_branch_id")
+  @@index([root_id], map: "idx_compatibility_tree_root_id")
 }
 
-model tblsettings {
-  name        String  @id @default("") @db.VarChar(25)
-  value       String  @default("") @db.VarChar(50)
-  description String? @db.VarChar(140)
+model history {
+  id        Int      @id @default(autoincrement())
+  nut_id    Int
+  played_at DateTime @default(now()) @db.Timestamp(6)
+
+  @@index([nut_id], map: "idx_history_nut_id")
+  @@index([played_at], map: "idx_played_at")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model nuts {
+  id                                                    Int                  @id @default(autoincrement())
+  spotify_id                                            String               @unique @db.Char(22)
+  title                                                 String?              @db.VarChar(150)
+  artists                                               String[]
+  album                                                 String?              @db.VarChar(150)
+  bpm                                                   Int?
+  level                                                 Int?
+  key                                                   String?              @db.VarChar(3)
+  date_added                                            DateTime?            @default(now()) @db.Timestamp(6)
+  date_liked                                            DateTime?            @db.Timestamp(6)
+  date_played                                           DateTime?            @db.Timestamp(6)
+  date_artist_played                                    DateTime?            @db.Timestamp(6)
+  date_album_played                                     DateTime?            @db.Timestamp(6)
+  date_title_played                                     DateTime?            @db.Timestamp(6)
+  image_urls                                            String[]
+  file_path                                             String?
+  hours_off                                             Int?                 @default(24)
+  year                                                  Int?
+  tags                                                  String[]
+  instrumentalness                                      Int?
+  duration                                              Int?
+  explicit                                              Boolean?
+  danceability                                          Int?
+  energy                                                Int?
+  liveness                                              Int?
+  loudness                                              Int?
+  speechiness                                           Int?
+  valence                                               Int?
+  time_signature                                        Int?
+  roboticness                                           Int?                 @default(2)
+  count_played                                          Int?                 @default(0)
+  compatibility_tree_compatibility_tree_branch_idTonuts compatibility_tree[] @relation("compatibility_tree_branch_idTonuts")
+  compatibility_tree_compatibility_tree_root_idTonuts   compatibility_tree[] @relation("compatibility_tree_root_idTonuts")
+
+  @@index([date_played], map: "idx_date_played")
+}
+
+model settings {
+  name        String    @id
+  value       String
+  description String?
+  updated_at  DateTime? @default(now()) @db.Timestamp(6)
 }
 
 model users {
   id       String  @id @db.VarChar(100)
-  email    String  @db.VarChar(256)
+  email    String  @unique @db.VarChar(256)
   password String  @db.VarChar(100)
   name     String? @db.VarChar(100)
-}
-
-enum historylist_overlay {
-  yes
-  no
-}
-
-enum songlist_overlay {
-  yes
-  no
-}
-
-enum songlist_playlimit_action {
-  none
-  remove
-  erase
 }
