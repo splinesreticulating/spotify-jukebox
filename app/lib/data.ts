@@ -282,12 +282,29 @@ export const fetchNowPlaying = async (): Promise<NowPlayingData> => {
       })
     : null
 
-  // For now, return an empty nextSong as it's not implemented
-  const nextSong: NowPlayingSong = {
-    songID: 0,
-    artists: [],
-    title: '',
-  }
+  const nextQueueItem = await db.queue.findFirst({
+    select: {
+      nut: {
+        select: songSelectFields,
+      },
+    },
+    orderBy: {
+      added_at: 'desc',
+    },
+  })
+
+  const nextSong: NowPlayingSong = nextQueueItem?.nut
+    ? {
+        songID: nextQueueItem.nut.id,
+        artists: nextQueueItem.nut.artists,
+        title: nextQueueItem.nut.title,
+        level: nextQueueItem.nut.level || undefined,
+      }
+    : {
+        songID: 0,
+        artists: [],
+        title: '',
+      }
 
   return {
     currentSong,
