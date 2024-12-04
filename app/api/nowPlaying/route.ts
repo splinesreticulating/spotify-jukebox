@@ -3,10 +3,6 @@ import { fetchNowPlaying } from '@/app/lib/data'
 
 const NOW_PLAYING_REFRESH_INTERVAL_MS = 10_000
 
-process.on('unhandledRejection', (reason, promise) => {
-  console.error('Unhandled Rejection at:', promise, 'reason:', reason)
-})
-
 export async function GET() {
   let controller: ReadableStreamDefaultController
   let isStreamClosed = false
