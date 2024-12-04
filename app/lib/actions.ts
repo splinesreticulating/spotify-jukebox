@@ -101,11 +101,8 @@ export async function defriend(nowPlayingData: NowPlayingData) {
   try {
     await db.compatibility_tree.deleteMany({
       where: {
-        AND: [
-          { root_id: lastSong.songID },
-          { branch_id: currentSong.songID }
-        ]
-      }
+        AND: [{ root_id: lastSong.songID }, { branch_id: currentSong.songID }],
+      },
     })
   } catch (error) {
     console.error(error)

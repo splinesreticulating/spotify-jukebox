@@ -117,9 +117,9 @@ export async function fetchCardData() {
     })
 
     const data = await Promise.all([songCountPromise, artistsPromise])
-    
+
     // Get unique artists by flattening and deduplicating the arrays
-    const allArtists = data[1].flatMap(song => song.artists)
+    const allArtists = data[1].flatMap((song) => song.artists)
     const uniqueArtists = new Set(allArtists)
 
     return {
@@ -215,7 +215,7 @@ export async function fetchFilteredArtists(query: string) {
       select: { artists: true },
     })
 
-    const allArtists = songs.flatMap(song => song.artists)
+    const allArtists = songs.flatMap((song) => song.artists)
     const uniqueArtists = [...new Set(allArtists)].map((name, index) => ({
       name,
       id: index + 1,
@@ -231,8 +231,8 @@ export async function fetchFilteredArtists(query: string) {
 export const fetchNowPlaying = async (): Promise<NowPlayingData> => {
   // Get the two most recent history entries
   const recentHistory = await db.history.findMany({
-    select: { 
-      nut_id: true, 
+    select: {
+      nut_id: true,
       played_at: true,
     },
     orderBy: { played_at: 'desc' },
@@ -260,23 +260,27 @@ export const fetchNowPlaying = async (): Promise<NowPlayingData> => {
     level: Number(currentSongData.level),
   }
 
-  const lastSong: NowPlayingSong = lastSongData ? {
-    songID: lastSongData.id,
-    artists: lastSongData.artists,
-    title: lastSongData.title,
-  } : {
-    songID: 0,
-    artists: [],
-    title: '',
-  }
+  const lastSong: NowPlayingSong = lastSongData
+    ? {
+        songID: lastSongData.id,
+        artists: lastSongData.artists,
+        title: lastSongData.title,
+      }
+    : {
+        songID: 0,
+        artists: [],
+        title: '',
+      }
 
   // Check if there's a friendship between the songs
-  const friends = lastSongData ? await db.compatibility_tree.findFirst({
-    where: { 
-      branch_id: currentSong.songID, 
-      root_id: lastSong.songID 
-    },
-  }) : null
+  const friends = lastSongData
+    ? await db.compatibility_tree.findFirst({
+        where: {
+          branch_id: currentSong.songID,
+          root_id: lastSong.songID,
+        },
+      })
+    : null
 
   // For now, return an empty nextSong as it's not implemented
   const nextSong: NowPlayingSong = {
@@ -285,11 +289,11 @@ export const fetchNowPlaying = async (): Promise<NowPlayingData> => {
     title: '',
   }
 
-  return { 
-    currentSong, 
-    lastSong, 
-    nextSong, 
-    friends: !!friends 
+  return {
+    currentSong,
+    lastSong,
+    nextSong,
+    friends: !!friends,
   }
 }
 
@@ -326,6 +330,24 @@ export async function fetchNowPlayingSongID(): Promise<number | null> {
   }
 }
 
-const fetchNextSong = async () => {
-  return null
+export async function getLastPlayedDatesFromHistory(
+  nutId: number,
+): Promise<{ lastPlayed: Date | null; beforeThat: Date | null }> {
+  noStore()
+
+  try {
+    const historyEntries = await db.history.findMany({
+      where: { nut_id: nutId },
+      orderBy: { played_at: 'desc' },
+      take: 2,
+    })
+
+    const lastPlayed = historyEntries[0]?.played_at || null
+    const beforeThat = historyEntries[1]?.played_at || null
+
+    return { lastPlayed, beforeThat }
+  } catch (error) {
+    console.error('Database Error:', error)
+    throw new Error('Failed to fetch history dates')
+  }
 }
