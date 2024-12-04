@@ -125,3 +125,17 @@ export async function authenticate(prevState: any, formData: FormData) {
     throw error
   }
 }
+
+export async function addToQueue(songId: number) {
+  try {
+    await db.queue.create({
+      data: {
+        nut_id: songId,
+      },
+    })
+    return { success: true }
+  } catch (error) {
+    console.error('Failed to add song to queue:', error)
+    return { success: false }
+  }
+}
