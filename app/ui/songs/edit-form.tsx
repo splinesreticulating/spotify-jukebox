@@ -16,7 +16,7 @@ import { useActionState } from 'react'
 const levels = ['Sleep', 'Morning', 'Afternoon', 'Bar', 'Club']
 const levelOptions = levels.map((level, index) => ({
   id: level,
-  value: `${(index + 1)}`,
+  value: `${index + 1}`,
   label: level,
 }))
 
@@ -81,94 +81,102 @@ export default function EditSongForm({ song }: { song: Song }) {
   const [state, dispatch] = useActionState<ActionState, FormData>(updateSongWithId, initialState)
 
   return (
-    <form action={dispatch} className="p-4">
-      <div className="mb-4 text-lg md:text-2xl">
+    <form action={dispatch} className="mx-auto max-w-3xl space-y-6 p-6">
+      <div className="border-b border-gray-200 pb-4 text-2xl font-semibold text-gray-800 md:text-3xl">
         {song.artists?.join(', ') || ''} - {song.title || ''}
       </div>
 
-      <details className="mb-4 rounded-md bg-gray-100 p-2">
-        <summary className="cursor-pointer text-sm font-medium"></summary>
-        <p className="mt-2 text-sm">
+      <details className="group rounded-lg bg-white shadow-sm transition-shadow duration-200 hover:shadow-md">
+        <summary className="cursor-pointer px-4 py-3 text-sm font-medium text-gray-700 hover:text-gray-900">
+          Song Details
+          <span className="float-right transform transition-transform duration-200 group-open:rotate-180">▼</span>
+        </summary>
+        <div className="space-y-2 rounded-b-lg bg-gray-50 px-4 py-3">
           <LastPlayed song={song} />
-        </p>
-        <p className="text-sm">
           <DateAdded song={song} />
-        </p>
+        </div>
       </details>
 
-      <div className="rounded-md bg-gray-50 p-2 md:p-4">
-        {state.message && <p className="mb-4 text-green-500">{state.message}</p>}
-        {inputFieldsData.map((field) => (
-          <div key={field.id} className="mb-4">
-            <InputField
-              id={field.id}
-              name={field.name}
-              label={field.label}
-              type={field.type}
-              defaultValue={
-                field.defaultValueTransform
-                  ? field.defaultValueTransform(song[field.valueKey])
-                  : (song[field.valueKey] as string | number | null)?.toString() || ''
-              }
-              className="w-full"
-            />
-          </div>
-        ))}
+      <div className="space-y-6 rounded-xl bg-white p-6 shadow-sm">
+        {state.message && <div className="rounded-lg bg-green-50 px-4 py-3 text-green-700">{state.message}</div>}
 
-        <div className="mb-4">
-          <label htmlFor="year" className="mb-2 block text-sm font-medium text-gray-700">
-            Year
-          </label>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          {inputFieldsData.map((field) => (
+            <div key={field.id}>
+              <InputField
+                id={field.id}
+                name={field.name}
+                label={field.label}
+                type={field.type}
+                defaultValue={
+                  field.defaultValueTransform
+                    ? field.defaultValueTransform(song[field.valueKey])
+                    : (song[field.valueKey] as string | number | null)?.toString() || ''
+                }
+                className="w-full focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div>
+            <label htmlFor="year" className="mb-2 block text-sm font-medium text-gray-700">
+              Year
+            </label>
             <NumericalDropDown
-              className="rounded-md border-gray-300"
+              className="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
               name="year"
               defaultValue={song.year}
               lowerValue={1700}
               upperValue={2024}
               nullOptionLabel="Select a year"
-            ></NumericalDropDown>
+            />
           </div>
-        </div>
 
-        <div className="mb-4">
-          <label htmlFor="instrumentalness" className="mb-2 block text-sm font-medium text-gray-700">
-            Instrumentalness
-          </label>
           <div>
+            <label htmlFor="instrumentalness" className="mb-2 block text-sm font-medium text-gray-700">
+              Instrumentalness
+            </label>
             <NumericalDropDown
-              className="rounded-md border-gray-300"
+              className="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
               name="instrumentalness"
               defaultValue={song.instrumentalness}
               lowerValue={0}
               upperValue={100}
               nullOptionLabel="(not set)"
-            ></NumericalDropDown>
+            />
           </div>
         </div>
 
         <TimeOffDropdown initialValue={song.hours_off || 48} />
 
-        <RadioButtonGroup
-          name="level"
-          options={levelOptions.map((level) => ({
-            ...level,
-            checked: song.level === Number(level.value),
-          }))}
-          className="mb-4 flex flex-wrap gap-2"
-        />
+        <div className="space-y-6">
+          <div className="rounded-lg bg-gray-50 p-4">
+            <RadioButtonGroup
+              name="level"
+              options={levelOptions.map((level) => ({
+                ...level,
+                checked: song.level === Number(level.value),
+              }))}
+              className="flex flex-wrap gap-3"
+            />
+          </div>
 
-        <RadioButtonGroup
-          name="roboticness"
-          options={roboticnessOptions.map((roboticness) => ({
-            ...roboticness,
-            checked: song.roboticness === Number(roboticness.value),
-          }))}
-          className="mb-4 flex flex-wrap gap-2"
-        />
+          <div className="rounded-lg bg-gray-50 p-4">
+            <RadioButtonGroup
+              name="roboticness"
+              options={roboticnessOptions.map((roboticness) => ({
+                ...roboticness,
+                checked: song.roboticness === Number(roboticness.value),
+              }))}
+              className="flex flex-wrap gap-3"
+            />
+          </div>
+        </div>
       </div>
 
-      <FormActions songId={song.id} className="mt-4" />
+      <FormActions className="pt-4" />
     </form>
   )
 }
