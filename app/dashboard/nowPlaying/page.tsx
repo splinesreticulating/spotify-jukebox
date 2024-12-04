@@ -24,8 +24,12 @@ export default function NowPlayingPage() {
         setIsLoading(false)
       }
 
-      eventSource.onerror = (error) => {
-        console.error('EventSource failed:', error)
+      eventSource.onerror = (event: Event) => {
+        const target = event.target as EventSource
+        console.error('EventSource failed:', {
+          readyState: target.readyState,
+          url: target.url,
+        })
         eventSource?.close()
       }
     }
