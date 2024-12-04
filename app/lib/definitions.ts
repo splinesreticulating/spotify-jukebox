@@ -72,5 +72,6 @@ export type NowPlayingSong = {
 export type NowPlayingData = {
   currentSong: NowPlayingSong
   lastSong: NowPlayingSong
+  nextSong: NowPlayingSong
   friends: boolean
 }
