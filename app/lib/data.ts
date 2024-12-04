@@ -119,7 +119,7 @@ export async function fetchCardData() {
     const data = await Promise.all([songCountPromise, artistsPromise])
 
     // Get unique artists by flattening and deduplicating the arrays
-    const allArtists = data[1].flatMap((song: Song) => song.artists)
+    const allArtists = data[1].flatMap((song) => song.artists)
     const uniqueArtists = new Set(allArtists)
 
     return {
@@ -215,7 +215,7 @@ export async function fetchFilteredArtists(query: string) {
       select: { artists: true },
     })
 
-    const allArtists = songs.flatMap((song: Song) => song.artists)
+    const allArtists = songs.flatMap((song) => song.artists)
     const uniqueArtists = [...new Set(allArtists)].map((name, index) => ({
       name,
       id: index + 1,
