@@ -6,6 +6,7 @@ import { unstable_noStore as noStore } from 'next/cache'
 
 const songSelectFields = {
   id: true,
+  spotify_id: true,
   title: true,
   artists: true,
   tags: true,
@@ -20,6 +21,9 @@ const songSelectFields = {
   count_played: true,
   date_played: true,
   roboticness: true,
+  danceability: true,
+  energy: true,
+  valence: true,
 }
 
 const MAX_BPM_MULTIPLIER = 1.09

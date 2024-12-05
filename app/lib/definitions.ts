@@ -8,6 +8,7 @@ export type User = {
 // Figure out how to get prisma to auto-generate the Song type, or how to reference it if it already exists
 export type Song = {
   id: number
+  spotify_id: string
   artists: string[]
   title: string | null
   album: string | null
@@ -22,6 +23,9 @@ export type Song = {
   count_played: number | null
   date_played: Date | null
   roboticness: number | null
+  danceability: number | null
+  energy: number | null
+  valence: number | null
 }
 
 // export type LatestSong = Pick<Song, 'title' | 'id' | 'artist'>

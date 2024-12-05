@@ -34,6 +34,7 @@ type InputFieldData = {
   valueKey: keyof Song
   placeholder?: string
   defaultValueTransform?: (value: any) => string
+  className?: string
 }
 
 const inputFieldsData: InputFieldData[] = [
@@ -43,6 +44,13 @@ const inputFieldsData: InputFieldData[] = [
     label: 'Title',
     type: 'text',
     valueKey: 'title',
+  },
+  {
+    id: 'spotify_id',
+    name: 'spotify_id',
+    label: 'Spotify ID',
+    type: 'text',
+    valueKey: 'spotify_id',
   },
   {
     id: 'artists',
@@ -68,6 +76,22 @@ const inputFieldsData: InputFieldData[] = [
     valueKey: 'tags',
     placeholder: 'Separate multiple tags with commas',
     defaultValueTransform: (value: string[] | null) => value?.join(', ') || '',
+  },
+  {
+    id: 'key',
+    name: 'key',
+    label: 'Key',
+    type: 'text',
+    valueKey: 'key',
+    className: 'w-24',
+  },
+  {
+    id: 'bpm',
+    name: 'bpm',
+    label: 'BPM',
+    type: 'number',
+    valueKey: 'bpm',
+    className: 'w-24',
   },
 ]
 
@@ -102,7 +126,10 @@ export default function EditSongForm({ song }: { song: Song }) {
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           {inputFieldsData.map((field) => (
-            <div key={field.id}>
+            <div
+              key={field.id}
+              className={field.type === 'number' || field.id === 'key' ? 'md:col-span-1' : 'md:col-span-2'}
+            >
               <InputField
                 id={field.id}
                 name={field.name}
@@ -113,7 +140,7 @@ export default function EditSongForm({ song }: { song: Song }) {
                     ? field.defaultValueTransform(song[field.valueKey])
                     : (song[field.valueKey] as string | number | null)?.toString() || ''
                 }
-                className="w-full focus:ring-2 focus:ring-blue-500"
+                className={field.type === 'number' || field.id === 'key' ? 'w-24' : 'w-full'}
               />
             </div>
           ))}
@@ -125,7 +152,7 @@ export default function EditSongForm({ song }: { song: Song }) {
               Year
             </label>
             <NumericalDropDown
-              className="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+              className="w-32 rounded-lg border-gray-300"
               name="year"
               defaultValue={song.year}
               lowerValue={1700}
@@ -139,9 +166,55 @@ export default function EditSongForm({ song }: { song: Song }) {
               Instrumentalness
             </label>
             <NumericalDropDown
-              className="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+              className="w-32 rounded-lg border-gray-300"
               name="instrumentalness"
               defaultValue={song.instrumentalness}
+              lowerValue={0}
+              upperValue={100}
+              nullOptionLabel="(not set)"
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div>
+            <label htmlFor="danceability" className="mb-2 block text-sm font-medium text-gray-700">
+              Danceability
+            </label>
+            <NumericalDropDown
+              className="w-32 rounded-lg border-gray-300"
+              name="danceability"
+              defaultValue={song.danceability}
+              lowerValue={0}
+              upperValue={100}
+              nullOptionLabel="(not set)"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="energy" className="mb-2 block text-sm font-medium text-gray-700">
+              Energy
+            </label>
+            <NumericalDropDown
+              className="w-32 rounded-lg border-gray-300"
+              name="energy"
+              defaultValue={song.energy}
+              lowerValue={0}
+              upperValue={100}
+              nullOptionLabel="(not set)"
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div>
+            <label htmlFor="valence" className="mb-2 block text-sm font-medium text-gray-700">
+              Valence
+            </label>
+            <NumericalDropDown
+              className="w-32 rounded-lg border-gray-300"
+              name="valence"
+              defaultValue={song.valence}
               lowerValue={0}
               upperValue={100}
               nullOptionLabel="(not set)"
