@@ -29,7 +29,7 @@ export default async function LatestSongs() {
                       </Link>
                       <Link href={`/dashboard/songs/${song.id}/edit`}>{song.title}</Link>
                     </p>
-                    <p className="hidden text-sm text-gray-500 sm:block">{song.artist}</p>
+                    <p className="hidden text-sm text-gray-500 sm:block">{song.artists.join(', ')}</p>
                   </div>
                 </div>
                 <p className={`${openSans.className} truncate text-sm font-medium md:text-base`}>

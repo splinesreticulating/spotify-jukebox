@@ -105,151 +105,145 @@ export default function EditSongForm({ song }: { song: Song }) {
   const [state, dispatch] = useActionState<ActionState, FormData>(updateSongWithId, initialState)
 
   return (
-    <form action={dispatch} className="mx-auto max-w-3xl space-y-6 p-6">
-      <div className="border-b border-gray-200 pb-4 text-2xl font-semibold text-gray-800 md:text-3xl">
-        {song.artists?.join(', ') || ''} - {song.title || ''}
+    <form action={dispatch} className="mx-auto max-w-3xl space-y-8 p-6">
+      <div className="rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 p-6">
+        <div className="text-3xl font-bold text-gray-800">
+          {song.artists?.join(', ')} - {song.title || ''}
+        </div>
+        <div className="mt-4 text-sm text-gray-600">
+          <DateAdded song={song} />
+          {' · '}
+          <LastPlayed song={song} />
+        </div>
       </div>
 
-      <details className="group rounded-lg bg-white shadow-sm transition-shadow duration-200 hover:shadow-md">
-        <summary className="cursor-pointer px-4 py-3 text-sm font-medium text-gray-700 hover:text-gray-900">
-          Song Details
-          <span className="float-right transform transition-transform duration-200 group-open:rotate-180">▼</span>
-        </summary>
-        <div className="space-y-2 rounded-b-lg bg-gray-50 px-4 py-3">
-          <LastPlayed song={song} />
-          <DateAdded song={song} />
-        </div>
-      </details>
-
-      <div className="space-y-6 rounded-xl bg-white p-6 shadow-sm">
-        {state.message && <div className="rounded-lg bg-green-50 px-4 py-3 text-green-700">{state.message}</div>}
-
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          {inputFieldsData.map((field) => (
-            <div
-              key={field.id}
-              className={field.type === 'number' || field.id === 'key' ? 'md:col-span-1' : 'md:col-span-2'}
-            >
-              <InputField
-                id={field.id}
-                name={field.name}
-                label={field.label}
-                type={field.type}
-                defaultValue={
-                  field.defaultValueTransform
-                    ? field.defaultValueTransform(song[field.valueKey])
-                    : (song[field.valueKey] as string | number | null)?.toString() || ''
-                }
-                className={field.type === 'number' || field.id === 'key' ? 'w-24' : 'w-full'}
-              />
-            </div>
-          ))}
-        </div>
-
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          <div>
-            <label htmlFor="year" className="mb-2 block text-sm font-medium text-gray-700">
-              Year
-            </label>
-            <NumericalDropDown
-              className="w-32 rounded-lg border-gray-300"
-              name="year"
-              defaultValue={song.year}
-              lowerValue={1700}
-              upperValue={2024}
-              nullOptionLabel="Select a year"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="instrumentalness" className="mb-2 block text-sm font-medium text-gray-700">
-              Instrumentalness
-            </label>
-            <NumericalDropDown
-              className="w-32 rounded-lg border-gray-300"
-              name="instrumentalness"
-              defaultValue={song.instrumentalness}
-              lowerValue={0}
-              upperValue={100}
-              nullOptionLabel="(not set)"
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          <div>
-            <label htmlFor="danceability" className="mb-2 block text-sm font-medium text-gray-700">
-              Danceability
-            </label>
-            <NumericalDropDown
-              className="w-32 rounded-lg border-gray-300"
-              name="danceability"
-              defaultValue={song.danceability}
-              lowerValue={0}
-              upperValue={100}
-              nullOptionLabel="(not set)"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="energy" className="mb-2 block text-sm font-medium text-gray-700">
-              Energy
-            </label>
-            <NumericalDropDown
-              className="w-32 rounded-lg border-gray-300"
-              name="energy"
-              defaultValue={song.energy}
-              lowerValue={0}
-              upperValue={100}
-              nullOptionLabel="(not set)"
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          <div>
-            <label htmlFor="valence" className="mb-2 block text-sm font-medium text-gray-700">
-              Valence
-            </label>
-            <NumericalDropDown
-              className="w-32 rounded-lg border-gray-300"
-              name="valence"
-              defaultValue={song.valence}
-              lowerValue={0}
-              upperValue={100}
-              nullOptionLabel="(not set)"
-            />
-          </div>
-        </div>
-
-        <TimeOffDropdown initialValue={song.hours_off || 48} />
+      <div className="space-y-8 rounded-xl bg-white p-8 shadow-sm ring-1 ring-gray-100">
+        {state.message && (
+          <div className="rounded-lg bg-green-50 px-4 py-3 text-green-700 shadow-inner">{state.message}</div>
+        )}
 
         <div className="space-y-6">
-          <div className="rounded-lg bg-gray-50 p-4">
-            <RadioButtonGroup
-              name="level"
-              options={levelOptions.map((level) => ({
-                ...level,
-                checked: song.level === Number(level.value),
-              }))}
-              className="flex flex-wrap gap-3"
-            />
-          </div>
+          <h3 className="text-lg font-medium text-gray-900">Basic Information</h3>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            {inputFieldsData.slice(0, 5).map((field) => (
+              <div key={field.id} className="md:col-span-2">
+                <InputField
+                  {...field}
+                  defaultValue={
+                    field.defaultValueTransform
+                      ? field.defaultValueTransform(song[field.valueKey])
+                      : (song[field.valueKey] as string | number | null)?.toString() || ''
+                  }
+                  className={`${
+                    field.type === 'number' || field.id === 'key' ? 'w-24' : 'w-full'
+                  } rounded-lg border-gray-300 transition-colors focus:border-indigo-500 focus:ring-indigo-500`}
+                />
+              </div>
+            ))}
 
-          <div className="rounded-lg bg-gray-50 p-4">
-            <RadioButtonGroup
-              name="roboticness"
-              options={roboticnessOptions.map((roboticness) => ({
-                ...roboticness,
-                checked: song.roboticness === Number(roboticness.value),
-              }))}
-              className="flex flex-wrap gap-3"
-            />
+            <div className="grid grid-cols-3 gap-6 md:col-span-2">
+              <InputField
+                {...inputFieldsData[5]}
+                defaultValue={(song[inputFieldsData[5].valueKey] as string | number | null)?.toString() || ''}
+                className="w-24 rounded-lg border-gray-300 transition-colors focus:border-indigo-500 focus:ring-indigo-500"
+              />
+              <InputField
+                {...inputFieldsData[6]}
+                defaultValue={(song[inputFieldsData[6].valueKey] as string | number | null)?.toString() || ''}
+                className="w-24 rounded-lg border-gray-300 transition-colors focus:border-indigo-500 focus:ring-indigo-500"
+              />
+              <TimeOffDropdown initialValue={song.hours_off || 24} className="w-48" />
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          <h3 className="text-lg font-medium text-gray-900">Audio Characteristics</h3>
+          <div className="grid grid-cols-1 gap-6 rounded-lg bg-gray-50 p-6 md:grid-cols-2">
+            <div>
+              <label htmlFor="danceability" className="mb-2 block text-sm font-medium text-gray-700">
+                Danceability
+              </label>
+              <NumericalDropDown
+                className="w-32 rounded-lg border-gray-300 transition-all hover:border-gray-400 focus:border-indigo-500 focus:ring-indigo-500"
+                name="danceability"
+                defaultValue={song.danceability}
+                lowerValue={0}
+                upperValue={100}
+                nullOptionLabel="(not set)"
+              />
+            </div>
+            <div>
+              <label htmlFor="energy" className="mb-2 block text-sm font-medium text-gray-700">
+                Energy
+              </label>
+              <NumericalDropDown
+                className="w-32 rounded-lg border-gray-300 transition-all hover:border-gray-400 focus:border-indigo-500 focus:ring-indigo-500"
+                name="energy"
+                defaultValue={song.energy}
+                lowerValue={0}
+                upperValue={100}
+                nullOptionLabel="(not set)"
+              />
+            </div>
+            <div>
+              <label htmlFor="valence" className="mb-2 block text-sm font-medium text-gray-700">
+                Valence
+              </label>
+              <NumericalDropDown
+                className="w-32 rounded-lg border-gray-300 transition-all hover:border-gray-400 focus:border-indigo-500 focus:ring-indigo-500"
+                name="valence"
+                defaultValue={song.valence}
+                lowerValue={0}
+                upperValue={100}
+                nullOptionLabel="(not set)"
+              />
+            </div>
+            <div>
+              <label htmlFor="loudness" className="mb-2 block text-sm font-medium text-gray-700">
+                Loudness
+              </label>
+              <NumericalDropDown
+                className="w-32 rounded-lg border-gray-300 transition-all hover:border-gray-400 focus:border-indigo-500 focus:ring-indigo-500"
+                name="loudness"
+                defaultValue={song.loudness}
+                lowerValue={0}
+                upperValue={100}
+                nullOptionLabel="(not set)"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          <h3 className="text-lg font-medium text-gray-900">Classification</h3>
+          <div className="space-y-4">
+            <div className="rounded-lg bg-gray-50 p-4 shadow-inner">
+              <RadioButtonGroup
+                name="level"
+                options={levelOptions.map((level) => ({
+                  ...level,
+                  checked: song.level === Number(level.value),
+                }))}
+                className="flex flex-wrap gap-3"
+              />
+            </div>
+
+            <div className="rounded-lg bg-gray-50 p-4 shadow-inner">
+              <RadioButtonGroup
+                name="roboticness"
+                options={roboticnessOptions.map((roboticness) => ({
+                  ...roboticness,
+                  checked: song.roboticness === Number(roboticness.value),
+                }))}
+                className="flex flex-wrap gap-3"
+              />
+            </div>
           </div>
         </div>
       </div>
 
-      <FormActions className="pt-4" />
+      <FormActions className="sticky bottom-0 bg-white py-4 shadow-lg" />
     </form>
   )
 }

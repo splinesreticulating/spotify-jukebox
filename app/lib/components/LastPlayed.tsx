@@ -1,29 +1,29 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react'
 import { Song } from '../definitions'
 import { daysAgo } from '../utils'
-import { getLastPlayedDatesFromHistory } from '../data';
+import { getLastPlayedDatesFromHistory } from '../data'
 
 export const LastPlayed: React.FC<{ song: Song }> = ({ song }) => {
-  const [lastPlayedDate, setLastPlayedDate] = useState<Date | null>(null);
-  const [beforeThatDate, setBeforeThatDate] = useState<Date | null>(null);
+  const [lastPlayedDate, setLastPlayedDate] = useState<Date | null>(null)
+  const [beforeThatDate, setBeforeThatDate] = useState<Date | null>(null)
 
   useEffect(() => {
     const fetchLastPlayedDate = async () => {
-      const { lastPlayed, beforeThat } = await getLastPlayedDatesFromHistory(song.id);
-      setLastPlayedDate(lastPlayed);
-      setBeforeThatDate(beforeThat);
-    };
+      const { lastPlayed, beforeThat } = await getLastPlayedDatesFromHistory(song.id)
+      setLastPlayedDate(lastPlayed)
+      setBeforeThatDate(beforeThat)
+    }
 
-    fetchLastPlayedDate();
-  }, [song.id]);
+    fetchLastPlayedDate()
+  }, [song.id])
 
   if (!lastPlayedDate) {
     return <em>unplayed</em>
   }
   return (
     <em>
-      last played {daysAgo(lastPlayedDate)} days ago
+      Last played {daysAgo(lastPlayedDate)} days ago
       {beforeThatDate && ` (before that: ${daysAgo(beforeThatDate)} days ago)`}
     </em>
-  );
-} 
+  )
+}

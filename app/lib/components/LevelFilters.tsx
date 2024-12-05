@@ -12,6 +12,8 @@ export function LevelFilters({ levels }: { levels: string }) {
   const [selectedLevels, setSelectedLevels] = useState<string[]>(initialLevels)
 
   useEffect(() => {
+    if (!currentSearchParams) return
+
     const levelsQuery = selectedLevels.join(',')
     const newSearchParams = new URLSearchParams(Object.fromEntries(currentSearchParams.entries()))
     newSearchParams.set('levels', levelsQuery)
