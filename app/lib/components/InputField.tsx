@@ -1,38 +1,19 @@
-interface InputFieldProps {
-  id: string
-  name: string
+interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string
-  type: string
-  defaultValue?: string | number
-  step?: string
-  placeholder?: string
-  className?: string
+  error?: string
 }
 
-export const InputField: React.FC<InputFieldProps> = ({
-  id,
-  name,
-  label,
-  type,
-  defaultValue,
-  step,
-  placeholder,
-  className,
-}) => (
-  <div className={`mb-4 ${className}`}>
-    <label htmlFor={id} className="mb-2 block text-sm font-medium">
-      {label}
-    </label>
-    <div className="relative mt-2 rounded-md">
+export function InputField({ label, error, className = '', ...props }: InputFieldProps) {
+  return (
+    <div>
+      <label htmlFor={props.id || props.name} className="mb-2 block text-sm font-medium text-gray-700">
+        {label}
+      </label>
       <input
-        id={id}
-        name={name}
-        type={type}
-        defaultValue={defaultValue}
-        step={step}
-        placeholder={placeholder}
-        className="w-full rounded-md border border-gray-300 p-2"
+        {...props}
+        className={`block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 ${className}`}
       />
+      {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
     </div>
-  </div>
-)
+  )
+}
