@@ -11,19 +11,15 @@ async function getUser(email: string): Promise<User | null> {
     const response = await db.users.findFirst({ where: { email } })
 
     if (!response) {
-      return {
-        id: 'none',
-        name: 'noah body',
-        password: '',
-        email: 'nope@ok.com',
-      }
-    } else
-      return {
-        id: `${response.id}`,
-        name: 'no',
-        password: response.password,
-        email: response.email,
-      }
+      return null
+    }
+    
+    return {
+      id: `${response.id}`,
+      name: response.name || 'Anonymous',
+      password: response.password,
+      email: response.email,
+    }
   } catch (error) {
     console.error('Failed to fetch user:', error)
     throw new Error('Failed to fetch user.')
@@ -41,12 +37,18 @@ export const { auth, signIn, signOut } = NextAuth({
 
         if (parsedCredentials.success) {
           const { email, password } = parsedCredentials.data
-
           const user = await getUser(email)
           if (!user) return null
 
           const passwordsMatch = await bcrypt.compare(password, user.password)
-          if (passwordsMatch) return user
+          
+          if (passwordsMatch) {
+            return {
+              id: user.id,
+              name: user.name,
+              email: user.email,
+            }
+          }
         }
 
         console.log('Invalid credentials')

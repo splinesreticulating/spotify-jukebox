@@ -1,7 +1,6 @@
 import { fetchFilteredSongs } from '@/app/lib/data'
 import Link from 'next/link'
-import { PlayIcon } from '@heroicons/react/16/solid'
-import { PLAY_NEXT_URL } from '@/app/lib/utils'
+import PlayButton from './PlayButton'
 
 export default async function Table({
   query,
@@ -34,11 +33,9 @@ export default async function Table({
               <div key={song.id} className="mb-2 w-full rounded-md bg-white p-1 text-xs">
                 <div className="flex items-center justify-between pb-1">
                   <div className="flex items-center">
-                    <Link href={PLAY_NEXT_URL + `${song.id}`}>
-                      <PlayIcon className="mr-1 inline h-3 w-3 text-gray-500 hover:text-red-800" aria-hidden="true" />
-                    </Link>
+                    <PlayButton songId={song.id} />
                     <Link href={`/dashboard/songs/${song.id}/edit`}>
-                      {song.artist} - {song.title}
+                      {song.artists?.join(', ') || ''} - {song.title || ''}
                     </Link>
                   </div>
                 </div>
@@ -85,22 +82,22 @@ export default async function Table({
                     [&:last-child>td:last-child]:rounded-br-lg
                   "
                 >
-                  <td className="whitespace-nowrap py-3 pl-6 pr-3">{song.artist}</td>
+                  <td className="whitespace-nowrap py-3 pl-6 pr-3">{song.artists?.join(', ') || ''}</td>
                   <td className="whitespace-nowrap px-3 py-3">
-                    <Link href={PLAY_NEXT_URL + `${song.id}`}>
-                      <PlayIcon className="mr-1 inline h-3 w-3 text-gray-500 hover:text-red-800" aria-hidden="true" />
-                    </Link>
+                    <PlayButton songId={song.id} />
                     <Link href={`/dashboard/songs/${song.id}/edit`}>
-                      <strong>{song.title}</strong>
+                      <strong>{song.title || ''}</strong>
                     </Link>
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
-                    <p>{Number(song.genre) / 1000}</p>
+                    <p>{song.level ? song.level : ''}</p>
                   </td>
-                  <td className="whitespace-nowrap px-3 py-3">{song.bpm}</td>
-                  <td className="whitespace-nowrap px-3 py-3">{song.info}</td>
-                  <td className="whitespace-nowrap px-3 py-3">{Number(song.albumyear) > 1700 ? song.albumyear : ''}</td>
-                  <td className="whitespace-nowrap px-3 py-3">{song.date_added && song.date_added.toDateString()}</td>
+                  <td className="whitespace-nowrap px-3 py-3">{song.bpm || ''}</td>
+                  <td className="whitespace-nowrap px-3 py-3">{song.key || ''}</td>
+                  <td className="whitespace-nowrap px-3 py-3">
+                    {song.year && Number(song.year) > 1700 ? song.year : ''}
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-3">{song.date_added?.toDateString() || ''}</td>
                 </tr>
               ))}
             </tbody>

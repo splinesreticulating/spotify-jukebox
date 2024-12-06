@@ -5,14 +5,42 @@ import clsx from 'clsx'
 import Link from 'next/link'
 import { generatePagination } from '@/app/lib/utils'
 import { usePathname, useSearchParams } from 'next/navigation'
+import { useTheme } from '@/app/lib/ThemeContext'
 
 export default function Pagination({ totalPages }: { totalPages: number }) {
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const currentPage = Number(searchParams.get('page')) || 1
+  const currentPage = Number(searchParams?.get('page')) || 1
+  const { theme } = useTheme()
+
+  const getThemeClasses = (isActive: boolean) => {
+    const themeMap = {
+      ocean: {
+        active: 'bg-ocean-primary text-white',
+        hover: 'hover:bg-ocean-accent hover:text-ocean-primary',
+      },
+      forest: {
+        active: 'bg-forest-primary text-white',
+        hover: 'hover:bg-forest-accent hover:text-forest-primary',
+      },
+      sunset: {
+        active: 'bg-sunset-primary text-white',
+        hover: 'hover:bg-sunset-accent hover:text-sunset-primary',
+      },
+      purple: {
+        active: 'bg-purple-primary text-white',
+        hover: 'hover:bg-purple-accent hover:text-purple-primary',
+      },
+      midnight: {
+        active: 'bg-midnight-primary text-white',
+        hover: 'hover:bg-midnight-accent hover:text-midnight-primary',
+      },
+    }
+    return isActive ? themeMap[theme].active : themeMap[theme].hover
+  }
 
   const createPageURL = (pageNumber: number | string) => {
-    const params = new URLSearchParams(searchParams)
+    const params = new URLSearchParams(searchParams?.toString() || '')
     params.set('page', pageNumber.toString())
     return `${pathname}?${params.toString()}`
   }
@@ -21,7 +49,12 @@ export default function Pagination({ totalPages }: { totalPages: number }) {
 
   return (
     <div className="inline-flex">
-      <PaginationArrow direction="left" href={createPageURL(currentPage - 1)} isDisabled={currentPage <= 1} />
+      <PaginationArrow
+        direction="left"
+        href={createPageURL(currentPage - 1)}
+        isDisabled={currentPage <= 1}
+        theme={theme}
+      />
 
       <div className="flex -space-x-px">
         {allPages.map((page, index) => {
@@ -39,12 +72,18 @@ export default function Pagination({ totalPages }: { totalPages: number }) {
               page={page}
               position={position}
               isActive={currentPage === page}
+              themeClasses={getThemeClasses(currentPage === page)}
             />
           )
         })}
       </div>
 
-      <PaginationArrow direction="right" href={createPageURL(currentPage + 1)} isDisabled={currentPage >= totalPages} />
+      <PaginationArrow
+        direction="right"
+        href={createPageURL(currentPage + 1)}
+        isDisabled={currentPage >= totalPages}
+        theme={theme}
+      />
     </div>
   )
 }
@@ -54,23 +93,31 @@ function PaginationNumber({
   href,
   isActive,
   position,
+  themeClasses,
 }: {
   page: number | string
   href: string
   position?: 'first' | 'last' | 'middle' | 'single'
   isActive: boolean
+  themeClasses: string
 }) {
-  const className = clsx('flex h-10 w-10 items-center justify-center text-sm border', {
-    'rounded-l-md': position === 'first' || position === 'single',
-    'rounded-r-md': position === 'last' || position === 'single',
-    'z-10 bg-blue-600 border-blue-600 text-white': isActive,
-    'hover:bg-gray-100': !isActive && position !== 'middle',
-    'text-gray-300': position === 'middle',
-  })
+  const className = clsx(
+    'flex h-10 w-10 items-center justify-center text-sm border',
+    {
+      'rounded-l-md': position === 'first' || position === 'single',
+      'rounded-r-md': position === 'last' || position === 'single',
+      'z-10 border-none': isActive,
+      'hover:bg-gray-100': !isActive && position !== 'middle',
+      'text-gray-300': position === 'middle',
+    },
+    themeClasses,
+  )
 
-  return isActive || position === 'middle' ? (
-    <div className={className}>{page}</div>
-  ) : (
+  if (position === 'middle') {
+    return <div className={className}>...</div>
+  }
+
+  return (
     <Link href={href} className={className}>
       {page}
     </Link>
@@ -81,16 +128,17 @@ function PaginationArrow({
   href,
   direction,
   isDisabled,
+  theme,
 }: {
   href: string
   direction: 'left' | 'right'
   isDisabled?: boolean
+  theme: string
 }) {
   const className = clsx('flex h-10 w-10 items-center justify-center rounded-md border', {
     'pointer-events-none text-gray-300': isDisabled,
     'hover:bg-gray-100': !isDisabled,
-    'mr-2 md:mr-4': direction === 'left',
-    'ml-2 md:ml-4': direction === 'right',
+    [`hover:bg-${theme}-accent hover:text-${theme}-primary`]: !isDisabled,
   })
 
   const icon = direction === 'left' ? <ArrowLeftIcon className="w-4" /> : <ArrowRightIcon className="w-4" />

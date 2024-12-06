@@ -24,8 +24,12 @@ export default function NowPlayingPage() {
         setIsLoading(false)
       }
 
-      eventSource.onerror = (error) => {
-        console.error('EventSource failed:', error)
+      eventSource.onerror = (event: Event) => {
+        const target = event.target as EventSource
+        console.error('EventSource failed:', {
+          readyState: target.readyState,
+          url: target.url,
+        })
         eventSource?.close()
       }
     }
@@ -79,7 +83,9 @@ export default function NowPlayingPage() {
           <li>
             now: <SongLink song={currentSong} className="font-bold" />
           </li>
-          <li>next: {nextSong.songID ? <SongLink song={nextSong} /> : 'selecting...'}</li>
+          <li>
+            next: <SongLink song={nextSong} />
+          </li>
         </ul>
       </section>
     </main>
