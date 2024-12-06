@@ -1,11 +1,10 @@
 import { useState } from 'react'
 
-interface TimeOffDropdownProps {
-  initialValue: number
-  className?: string
+interface TimeOffDropdownProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
+  label: string
 }
 
-export function TimeOffDropdown({ initialValue, className }: TimeOffDropdownProps) {
+export function TimeOffDropdown({ label, className = '', ...props }: TimeOffDropdownProps) {
   const options = [
     ['12 hours', 12],
     ['1 day', 24],
@@ -26,36 +25,22 @@ export function TimeOffDropdown({ initialValue, className }: TimeOffDropdownProp
     ['longer...', 9999],
   ].map(([label, value]) => ({ label, value }))
 
-  const [selectedValue, setSelectedValue] = useState(initialValue || '')
-
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = Number(e.target.value)
-    setSelectedValue(value)
-  }
-
   return (
-    <div className={`mb-4 ${className}`}>
-      <label htmlFor="hoursOff" className="mb-2 block text-sm font-medium text-gray-700">
-        Time off
+    <div>
+      <label htmlFor={props.id || props.name} className="mb-2 block text-sm font-medium text-gray-700">
+        {label}
       </label>
-      <div className="relative mt-2 rounded-md">
-        <select
-          id="hoursOff"
-          name="hoursOff"
-          value={selectedValue}
-          onChange={handleChange}
-          className="form-select block rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
-        >
-          <option value="" disabled>
-            Select time off
+      <select
+        {...props}
+        className={`block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 ${className}`}
+      >
+        <option value="">Select time off</option>
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
           </option>
-          {options.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      </div>
+        ))}
+      </select>
     </div>
   )
 }

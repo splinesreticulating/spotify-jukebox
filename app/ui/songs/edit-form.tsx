@@ -1,243 +1,148 @@
 'use client'
 
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation } from '@tanstack/react-query'
 import { Song } from '@/app/lib/definitions'
-import { updateSong } from '@/app/lib/actions'
+import { songSchema, FormValues } from '@/app/lib/schemas'
 import {
-  DateAdded,
-  LastPlayed,
   InputField,
   TimeOffDropdown,
-  FormActions,
   RadioButtonGroup,
   NumericalDropDown,
+  DateAdded,
+  LastPlayed,
 } from '@/app/lib/components'
-import { useActionState } from 'react'
+import { toast } from 'sonner'
 
 const FIRST_YEAR = 1800
 
-const levels = ['Sleep', 'Morning', 'Afternoon', 'Bar', 'Club']
-const levelOptions = levels.map((level, index) => ({
-  id: level,
-  value: `${index + 1}`,
-  label: level,
-}))
+const levelOptions = [
+  { id: '1', value: 1, label: 'Sleep' },
+  { id: '2', value: 2, label: 'Morning' },
+  { id: '3', value: 3, label: 'Afternoon' },
+  { id: '4', value: 4, label: 'Bar' },
+  { id: '5', value: 5, label: 'Club' },
+]
 
 const roboticnessOptions = [
-  { id: '1', value: '1', label: 'Organic' },
-  { id: '2', value: '2', label: 'Mixed' },
-  { id: '3', value: '3', label: 'Electronic' },
+  { id: '1', value: 1, label: 'Organic' },
+  { id: '2', value: 2, label: 'Mixed' },
+  { id: '3', value: 3, label: 'Electronic' },
 ]
 
-type InputFieldData = {
-  id: string
-  name: string
-  label: string
-  type: string
-  valueKey: keyof Song
-  placeholder?: string
-  defaultValueTransform?: (value: any) => string
-  className?: string
-}
+export default function EditSongForm({ song: initialSong }: { song: Song }) {
+  const mutation = useMutation({
+    mutationFn: async (values: FormValues) => {
+      const response = await fetch(`/api/songs/${initialSong.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
+      })
 
-const inputFieldsData: InputFieldData[] = [
-  {
-    id: 'title',
-    name: 'title',
-    label: 'Title',
-    type: 'text',
-    valueKey: 'title',
-  },
-  {
-    id: 'spotify_id',
-    name: 'spotify_id',
-    label: 'Spotify ID',
-    type: 'text',
-    valueKey: 'spotify_id',
-  },
-  {
-    id: 'artists',
-    name: 'artists',
-    label: 'Artists',
-    type: 'text',
-    valueKey: 'artists',
-    placeholder: 'Separate multiple artists with commas',
-    defaultValueTransform: (value: string[] | null) => value?.join(', ') || '',
-  },
-  {
-    id: 'album',
-    name: 'album',
-    label: 'Album',
-    type: 'text',
-    valueKey: 'album',
-  },
-  {
-    id: 'tags',
-    name: 'tags',
-    label: 'Tags',
-    type: 'text',
-    valueKey: 'tags',
-    placeholder: 'Separate multiple tags with commas',
-    defaultValueTransform: (value: string[] | null) => value?.join(', ') || '',
-  },
-  {
-    id: 'key',
-    name: 'key',
-    label: 'Key',
-    type: 'text',
-    valueKey: 'key',
-    className: 'w-24',
-  },
-  {
-    id: 'bpm',
-    name: 'bpm',
-    label: 'BPM',
-    type: 'number',
-    valueKey: 'bpm',
-    className: 'w-24',
-  },
-]
+      if (!response.ok) {
+        const errorData = await response.text()
+        console.error('Update failed:', {
+          status: response.status,
+          statusText: response.statusText,
+          error: errorData,
+        })
+        throw new Error(`Failed to update song: ${errorData}`)
+      }
 
-interface ActionState {
-  message: string
-}
+      return response.json()
+    },
+  })
 
-export default function EditSongForm({ song }: { song: Song }) {
-  const initialState: ActionState = { message: '' }
-  const updateSongWithId = updateSong.bind(null, `${song.id}`)
-  const [state, dispatch] = useActionState<ActionState, FormData>(updateSongWithId, initialState)
+  const onSubmit = async (data: FormValues) => {
+    try {
+      await mutation.mutateAsync(data)
+      toast.success('Song updated successfully')
+    } catch (error) {
+      console.error('Submit error:', error)
+      toast.error('Failed to update song')
+    }
+  }
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors, isDirty },
+    reset,
+  } = useForm<FormValues>({
+    resolver: zodResolver(songSchema),
+    defaultValues: {
+      title: initialSong.title,
+      spotify_id: initialSong.spotify_id,
+      artists: initialSong.artists?.join(', ') || '',
+      album: initialSong.album,
+      tags: initialSong.tags?.join(', ') || '',
+      key: initialSong.key,
+      bpm: initialSong.bpm,
+      year: initialSong.year,
+      hours_off: initialSong.hours_off,
+      level: initialSong.level,
+      roboticness: initialSong.roboticness,
+      danceability: initialSong.danceability,
+      energy: initialSong.energy,
+      valence: initialSong.valence,
+      loudness: initialSong.loudness,
+    },
+  })
+
+  const values = watch()
 
   return (
-    <form action={dispatch} className="mx-auto max-w-3xl space-y-8 p-6">
+    <form onSubmit={handleSubmit(onSubmit)} className="mx-auto max-w-3xl space-y-8 p-6">
       <div className="rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 p-6">
         <div className="flex items-center gap-6">
-          {song.image_urls && song.image_urls.length > 0 && (
+          {initialSong.image_urls && initialSong.image_urls.length > 0 && (
             <img
-              src={song.image_urls[0]}
-              alt={`${song.title} album art`}
+              src={initialSong.image_urls[0]}
+              alt={`${initialSong.title} album art`}
               className="h-24 w-24 rounded-lg object-cover shadow-sm"
             />
           )}
           <div>
             <div className="text-3xl font-bold text-gray-800">
-              {song.artists?.join(', ')} - {song.title || ''}
+              {initialSong.artists?.join(', ')} - {initialSong.title || ''}
             </div>
             <div className="mt-4 text-sm text-gray-600">
-              <DateAdded song={song} />
+              <DateAdded song={initialSong} />
               {' · '}
-              <LastPlayed song={song} />
+              <LastPlayed song={initialSong} />
             </div>
           </div>
         </div>
       </div>
 
       <div className="space-y-8 rounded-xl bg-white p-8 shadow-sm ring-1 ring-gray-100">
-        {state.message && (
-          <div className="rounded-lg bg-green-50 px-4 py-3 text-green-700 shadow-inner">{state.message}</div>
-        )}
-
         <div className="space-y-6">
-          <h3 className="text-lg font-medium text-gray-900">Basic Information</h3>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            {inputFieldsData.slice(0, 5).map((field) => (
-              <div key={field.id} className="md:col-span-2">
-                <InputField
-                  {...field}
-                  defaultValue={
-                    field.defaultValueTransform
-                      ? field.defaultValueTransform(song[field.valueKey])
-                      : (song[field.valueKey] as string | number | null)?.toString() || ''
-                  }
-                  className={`${
-                    field.type === 'number' || field.id === 'key' ? 'w-24' : 'w-full'
-                  } rounded-lg border-gray-300 transition-colors focus:border-indigo-500 focus:ring-indigo-500`}
-                />
-              </div>
-            ))}
+            <InputField label="Title" {...register('title')} />
+            <InputField label="Spotify ID" {...register('spotify_id')} />
 
-            <div className="grid grid-cols-4 gap-6 md:col-span-2">
-              <InputField
-                {...inputFieldsData[5]}
-                defaultValue={(song[inputFieldsData[5].valueKey] as string | number | null)?.toString() || ''}
-                className="w-24 rounded-lg border-gray-300 transition-colors focus:border-indigo-500 focus:ring-indigo-500"
-              />
-              <InputField
-                {...inputFieldsData[6]}
-                defaultValue={(song[inputFieldsData[6].valueKey] as string | number | null)?.toString() || ''}
-                className="w-24 rounded-lg border-gray-300 transition-colors focus:border-indigo-500 focus:ring-indigo-500"
-              />
-              <div>
-                <label htmlFor="year" className="mb-2 block text-sm font-medium text-gray-700">
-                  Year
-                </label>
-                <NumericalDropDown
-                  className="w-32 rounded-lg border-gray-300 transition-all hover:border-gray-400 focus:border-indigo-500 focus:ring-indigo-500"
-                  name="year"
-                  defaultValue={song.year}
-                  lowerValue={FIRST_YEAR}
-                  upperValue={new Date().getFullYear()}
-                  nullOptionLabel="(not set)"
-                />
-              </div>
-              <TimeOffDropdown initialValue={song.hours_off || 24} className="w-48" />
-            </div>
-          </div>
-        </div>
+            <InputField label="Artists" placeholder="Separate artists with commas" {...register('artists')} />
 
-        <div className="space-y-6">
-          <h3 className="text-lg font-medium text-gray-900">Audio Characteristics</h3>
-          <div className="grid grid-cols-1 gap-6 rounded-lg bg-gray-50 p-6 md:grid-cols-2">
-            <div>
-              <label htmlFor="danceability" className="mb-2 block text-sm font-medium text-gray-700">
-                Danceability
-              </label>
-              <NumericalDropDown
-                className="w-32 rounded-lg border-gray-300 transition-all hover:border-gray-400 focus:border-indigo-500 focus:ring-indigo-500"
-                name="danceability"
-                defaultValue={song.danceability}
-                lowerValue={0}
-                upperValue={100}
-                nullOptionLabel="(not set)"
-              />
-            </div>
-            <div>
-              <label htmlFor="energy" className="mb-2 block text-sm font-medium text-gray-700">
-                Energy
-              </label>
-              <NumericalDropDown
-                className="w-32 rounded-lg border-gray-300 transition-all hover:border-gray-400 focus:border-indigo-500 focus:ring-indigo-500"
-                name="energy"
-                defaultValue={song.energy}
-                lowerValue={0}
-                upperValue={100}
-                nullOptionLabel="(not set)"
-              />
-            </div>
-            <div>
-              <label htmlFor="valence" className="mb-2 block text-sm font-medium text-gray-700">
-                Valence
-              </label>
-              <NumericalDropDown
-                className="w-32 rounded-lg border-gray-300 transition-all hover:border-gray-400 focus:border-indigo-500 focus:ring-indigo-500"
-                name="valence"
-                defaultValue={song.valence}
-                lowerValue={0}
-                upperValue={100}
-                nullOptionLabel="(not set)"
-              />
-            </div>
-            <div>
-              <label htmlFor="loudness" className="mb-2 block text-sm font-medium text-gray-700">
-                Loudness
-              </label>
-              <NumericalDropDown
-                className="w-32 rounded-lg border-gray-300 transition-all hover:border-gray-400 focus:border-indigo-500 focus:ring-indigo-500"
-                name="loudness"
-                defaultValue={song.loudness}
-                lowerValue={0}
-                upperValue={100}
-                nullOptionLabel="(not set)"
-              />
-            </div>
+            <InputField label="Album" {...register('album')} />
+
+            <InputField label="Tags" placeholder="Separate tags with commas" {...register('tags')} />
+
+            <InputField label="Key" {...register('key')} />
+            <InputField label="BPM" type="number" {...register('bpm', { valueAsNumber: true })} />
+
+            <NumericalDropDown
+              label="Year"
+              lowerValue={FIRST_YEAR}
+              upperValue={new Date().getFullYear()}
+              {...register('year', { valueAsNumber: true })}
+            />
+
+            <TimeOffDropdown label="Time Off" {...register('hours_off', { valueAsNumber: true })} />
           </div>
         </div>
 
@@ -245,31 +150,49 @@ export default function EditSongForm({ song }: { song: Song }) {
           <h3 className="text-lg font-medium text-gray-900">Classification</h3>
           <div className="space-y-4">
             <div className="rounded-lg bg-gray-50 p-4 shadow-inner">
-              <RadioButtonGroup
-                name="level"
-                options={levelOptions.map((level) => ({
-                  ...level,
-                  checked: song.level === Number(level.value),
-                }))}
-                className="flex flex-wrap gap-3"
-              />
+              <div className="flex flex-wrap gap-3">
+                <RadioButtonGroup
+                  name="level"
+                  options={levelOptions}
+                  value={values.level ?? undefined}
+                  onChange={(value) => setValue('level', value, { shouldValidate: true })}
+                />
+              </div>
             </div>
 
             <div className="rounded-lg bg-gray-50 p-4 shadow-inner">
-              <RadioButtonGroup
-                name="roboticness"
-                options={roboticnessOptions.map((roboticness) => ({
-                  ...roboticness,
-                  checked: song.roboticness === Number(roboticness.value),
-                }))}
-                className="flex flex-wrap gap-3"
-              />
+              <div className="flex flex-wrap gap-3">
+                <RadioButtonGroup
+                  name="roboticness"
+                  options={roboticnessOptions}
+                  value={values.roboticness ?? undefined}
+                  onChange={(value) => setValue('roboticness', value, { shouldValidate: true })}
+                />
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <FormActions className="sticky bottom-0 bg-white py-4 shadow-lg" />
+      <div className="sticky bottom-0 bg-white py-4 shadow-lg">
+        <div className="flex justify-end gap-4">
+          <button
+            type="button"
+            onClick={() => reset()}
+            disabled={!isDirty}
+            className="rounded-md bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 disabled:opacity-50"
+          >
+            Reset
+          </button>
+          <button
+            type="submit"
+            disabled={!isDirty || mutation.isPending}
+            className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
+          >
+            {mutation.isPending ? 'Saving...' : 'Save Changes'}
+          </button>
+        </div>
+      </div>
     </form>
   )
 }
