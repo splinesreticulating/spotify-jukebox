@@ -2,6 +2,8 @@
 
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { useTheme } from '@/app/lib/ThemeContext'
+import clsx from 'clsx'
 
 const allLevels = ['1', '2', '3', '4', '5']
 
@@ -10,6 +12,33 @@ export function LevelFilters({ levels }: { levels: string }) {
   const currentSearchParams = useSearchParams()
   const initialLevels = levels ? levels.split(',').filter(Boolean) : allLevels
   const [selectedLevels, setSelectedLevels] = useState<string[]>(initialLevels)
+  const { theme } = useTheme()
+
+  const getThemeClasses = (isSelected: boolean) => {
+    const themeMap = {
+      ocean: {
+        selected: 'bg-ocean-primary text-white',
+        unselected: 'bg-white text-ocean-primary border-ocean-primary',
+      },
+      forest: {
+        selected: 'bg-forest-primary text-white',
+        unselected: 'bg-white text-forest-primary border-forest-primary',
+      },
+      sunset: {
+        selected: 'bg-sunset-primary text-white',
+        unselected: 'bg-white text-sunset-primary border-sunset-primary',
+      },
+      purple: {
+        selected: 'bg-purple-primary text-white',
+        unselected: 'bg-white text-purple-primary border-purple-primary',
+      },
+      midnight: {
+        selected: 'bg-midnight-primary text-white',
+        unselected: 'bg-white text-midnight-primary border-midnight-primary',
+      },
+    }
+    return isSelected ? themeMap[theme].selected : themeMap[theme].unselected
+  }
 
   useEffect(() => {
     if (!currentSearchParams) return
@@ -39,11 +68,7 @@ export function LevelFilters({ levels }: { levels: string }) {
             className="hidden"
           />
           <span
-            className={`hw-1 cursor-pointer rounded px-2 ${
-              selectedLevels.includes(level)
-                ? 'border-teal-600 bg-teal-600 text-white'
-                : 'border-teal-600 bg-white text-teal-600'
-            }`}
+            className={clsx('hw-1 cursor-pointer rounded border px-2', getThemeClasses(selectedLevels.includes(level)))}
           >
             {level[0]}
           </span>

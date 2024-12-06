@@ -2,6 +2,7 @@ import '@/app/ui/global.css'
 import { inter } from '@/app/ui/fonts'
 import { Metadata } from 'next'
 import { ToastProvider } from '@/app/ui/toast/toast'
+import { ThemeProvider } from '@/app/lib/ThemeContext'
 
 export const metadata: Metadata = {
   title: {
@@ -16,7 +17,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className={`${inter.className} antialiased`}>
-        <ToastProvider>{children}</ToastProvider>
+        <ThemeProvider>
+          <ToastProvider>{children}</ToastProvider>
+        </ThemeProvider>
       </body>
     </html>
   )
