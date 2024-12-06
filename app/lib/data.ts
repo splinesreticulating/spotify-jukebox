@@ -25,6 +25,7 @@ const songSelectFields = {
   energy: true,
   valence: true,
   loudness: true,
+  image_urls: true,
 }
 
 const MAX_BPM_MULTIPLIER = 1.09

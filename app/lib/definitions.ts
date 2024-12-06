@@ -27,6 +27,7 @@ export type Song = {
   energy: number | null
   valence: number | null
   loudness: number | null
+  image_urls: string[] | null
 }
 
 // export type LatestSong = Pick<Song, 'title' | 'id' | 'artist'>

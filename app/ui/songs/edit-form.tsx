@@ -13,6 +13,8 @@ import {
 } from '@/app/lib/components'
 import { useActionState } from 'react'
 
+const FIRST_YEAR = 1800
+
 const levels = ['Sleep', 'Morning', 'Afternoon', 'Bar', 'Club']
 const levelOptions = levels.map((level, index) => ({
   id: level,
@@ -107,13 +109,24 @@ export default function EditSongForm({ song }: { song: Song }) {
   return (
     <form action={dispatch} className="mx-auto max-w-3xl space-y-8 p-6">
       <div className="rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 p-6">
-        <div className="text-3xl font-bold text-gray-800">
-          {song.artists?.join(', ')} - {song.title || ''}
-        </div>
-        <div className="mt-4 text-sm text-gray-600">
-          <DateAdded song={song} />
-          {' · '}
-          <LastPlayed song={song} />
+        <div className="flex items-center gap-6">
+          {song.image_urls && song.image_urls.length > 0 && (
+            <img
+              src={song.image_urls[0]}
+              alt={`${song.title} album art`}
+              className="h-24 w-24 rounded-lg object-cover shadow-sm"
+            />
+          )}
+          <div>
+            <div className="text-3xl font-bold text-gray-800">
+              {song.artists?.join(', ')} - {song.title || ''}
+            </div>
+            <div className="mt-4 text-sm text-gray-600">
+              <DateAdded song={song} />
+              {' · '}
+              <LastPlayed song={song} />
+            </div>
+          </div>
         </div>
       </div>
 
@@ -141,7 +154,7 @@ export default function EditSongForm({ song }: { song: Song }) {
               </div>
             ))}
 
-            <div className="grid grid-cols-3 gap-6 md:col-span-2">
+            <div className="grid grid-cols-4 gap-6 md:col-span-2">
               <InputField
                 {...inputFieldsData[5]}
                 defaultValue={(song[inputFieldsData[5].valueKey] as string | number | null)?.toString() || ''}
@@ -152,6 +165,19 @@ export default function EditSongForm({ song }: { song: Song }) {
                 defaultValue={(song[inputFieldsData[6].valueKey] as string | number | null)?.toString() || ''}
                 className="w-24 rounded-lg border-gray-300 transition-colors focus:border-indigo-500 focus:ring-indigo-500"
               />
+              <div>
+                <label htmlFor="year" className="mb-2 block text-sm font-medium text-gray-700">
+                  Year
+                </label>
+                <NumericalDropDown
+                  className="w-32 rounded-lg border-gray-300 transition-all hover:border-gray-400 focus:border-indigo-500 focus:ring-indigo-500"
+                  name="year"
+                  defaultValue={song.year}
+                  lowerValue={FIRST_YEAR}
+                  upperValue={new Date().getFullYear()}
+                  nullOptionLabel="(not set)"
+                />
+              </div>
               <TimeOffDropdown initialValue={song.hours_off || 24} className="w-48" />
             </div>
           </div>
