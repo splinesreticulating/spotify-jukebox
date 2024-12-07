@@ -15,6 +15,8 @@ import {
 } from '@/app/lib/components'
 import { toast } from 'sonner'
 import { toastStyles } from '@/app/lib/constants/toast-styles'
+import { useTheme } from '@/app/lib/ThemeContext'
+import clsx from 'clsx'
 
 const FIRST_YEAR = 1800
 
@@ -96,6 +98,7 @@ export default function EditSongForm({ song: initialSong }: { song: Song }) {
   })
 
   const values = watch()
+  const { theme } = useTheme()
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="mx-auto max-w-3xl space-y-8 p-6">
@@ -181,14 +184,24 @@ export default function EditSongForm({ song: initialSong }: { song: Song }) {
             type="button"
             onClick={() => reset()}
             disabled={!isDirty}
-            className="rounded-md bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 disabled:opacity-50"
+            className={clsx(
+              'rounded-md px-4 py-2 text-sm font-medium',
+              'border bg-white hover:bg-gray-50',
+              `text-${theme}-primary border-${theme}-primary`,
+              'disabled:opacity-50',
+            )}
           >
             Reset
           </button>
           <button
             type="submit"
             disabled={!isDirty || mutation.isPending}
-            className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
+            className={clsx(
+              'rounded-md px-4 py-2 text-sm font-medium',
+              `bg-${theme}-primary hover:bg-${theme}-hover`,
+              'text-white',
+              'disabled:opacity-50',
+            )}
           >
             {mutation.isPending ? 'Saving...' : 'Save Changes'}
           </button>
