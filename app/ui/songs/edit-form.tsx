@@ -14,6 +14,7 @@ import {
   LastPlayed,
 } from '@/app/lib/components'
 import { toast } from 'sonner'
+import { toastStyles } from '@/app/lib/constants/toast-styles'
 
 const FIRST_YEAR = 1800
 
@@ -59,10 +60,10 @@ export default function EditSongForm({ song: initialSong }: { song: Song }) {
   const onSubmit = async (data: FormValues) => {
     try {
       await mutation.mutateAsync(data)
-      toast.success('Song updated successfully')
+      toast.success('Updated', toastStyles.success)
     } catch (error) {
       console.error('Submit error:', error)
-      toast.error('Failed to update song')
+      toast.error('Update failed', toastStyles.error)
     }
   }
 
