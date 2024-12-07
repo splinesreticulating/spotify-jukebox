@@ -374,3 +374,18 @@ export async function getLastPlayedDatesFromHistory(
     throw new Error('Failed to fetch history dates')
   }
 }
+
+export async function fetchSettings() {
+  noStore()
+  try {
+    const settings = await db.settings.findMany({
+      orderBy: {
+        name: 'asc',
+      },
+    })
+    return settings
+  } catch (error) {
+    console.error('Database Error:', error)
+    throw new Error('Failed to fetch settings data')
+  }
+}

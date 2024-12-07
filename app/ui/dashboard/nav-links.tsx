@@ -1,6 +1,12 @@
 'use client'
 
-import { UserGroupIcon, HomeIcon, PlayCircleIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline'
+import {
+  UserGroupIcon,
+  HomeIcon,
+  PlayCircleIcon,
+  MagnifyingGlassIcon,
+  Cog6ToothIcon,
+} from '@heroicons/react/24/outline'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import clsx from 'clsx'
@@ -11,6 +17,7 @@ const links = [
   { name: 'Search', href: '/dashboard/songs', icon: MagnifyingGlassIcon },
   { name: 'Artists', href: '/dashboard/artists', icon: UserGroupIcon },
   { name: 'Now playing', href: '/dashboard/nowPlaying', icon: PlayCircleIcon },
+  { name: 'Settings', href: '/dashboard/settings', icon: Cog6ToothIcon },
 ]
 
 export default function NavLinks() {
