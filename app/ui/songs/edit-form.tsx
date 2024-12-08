@@ -161,7 +161,12 @@ export default function EditSongForm({ song: initialSong }: { song: Song }) {
                   name="level"
                   options={levelOptions}
                   value={values.level ?? undefined}
-                  onChange={(value) => setValue('level', value, { shouldValidate: true })}
+                  onChange={(value) =>
+                    setValue('level', value, {
+                      shouldValidate: true,
+                      shouldDirty: true,
+                    })
+                  }
                 />
               </div>
             </div>
@@ -172,7 +177,12 @@ export default function EditSongForm({ song: initialSong }: { song: Song }) {
                   name="roboticness"
                   options={roboticnessOptions}
                   value={values.roboticness ?? undefined}
-                  onChange={(value) => setValue('roboticness', value, { shouldValidate: true })}
+                  onChange={(value) =>
+                    setValue('roboticness', value, {
+                      shouldValidate: true,
+                      shouldDirty: true,
+                    })
+                  }
                 />
               </div>
             </div>
