@@ -64,9 +64,9 @@ export default function EditSongForm({ song: initialSong }: { song: Song }) {
   const onSubmit = async (data: FormValues) => {
     try {
       await mutation.mutateAsync(data)
+      reset(data, { keepValues: true, keepDirty: false })
       toast.success('Updated', toastStyles.success)
-    } catch (error) {
-      console.error('Submit error:', error)
+    } catch {
       toast.error('Update failed', toastStyles.error)
     }
   }
@@ -76,7 +76,7 @@ export default function EditSongForm({ song: initialSong }: { song: Song }) {
     handleSubmit,
     watch,
     setValue,
-    formState: { errors, isDirty },
+    formState: { isDirty },
     reset,
   } = useForm<FormValues>({
     resolver: zodResolver(songSchema),
