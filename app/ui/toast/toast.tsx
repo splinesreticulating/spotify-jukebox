@@ -2,13 +2,7 @@
 
 import { createContext, useContext, useState } from 'react'
 import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/16/solid'
-
-type ToastType = 'success' | 'error'
-
-interface Toast {
-  message: string
-  type: ToastType
-}
+import { Toast, ToastType } from '@/app/lib/types'
 
 interface ToastContextType {
   toast: (message: string, type: ToastType) => void

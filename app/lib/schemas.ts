@@ -35,6 +35,3 @@ export const songSchema = songInputSchema.transform((data) => ({
         .filter(Boolean)
     : [],
 }))
-
-export type FormValues = z.infer<typeof songInputSchema>
-export type SongData = z.infer<typeof songSchema>

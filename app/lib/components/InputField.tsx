@@ -1,7 +1,4 @@
-interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  label: string
-  error?: string
-}
+import type { InputFieldProps } from '@/app/lib/types'
 
 export function InputField({ label, error, className = '', ...props }: InputFieldProps) {
   return (

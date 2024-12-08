@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { befriend, defriend } from '@/app/lib/actions'
-import { NowPlayingData } from '@/app/lib/definitions'
+import { NowPlayingData } from '@/app/lib/types/songs'
 import { SongLink } from '@/app/lib/components/SongLink'
 import { Heart } from '@/app/lib/components/Heart'
 import { NowPlayingSkeleton } from '@/app/ui/skeletons'

@@ -1,14 +1,9 @@
 import { clsx } from 'clsx'
 import Link from 'next/link'
 import { openSans } from '@/app/ui/fonts'
+import type { BreadcrumbsProps } from '@/app/lib/types'
 
-interface Breadcrumb {
-  label: string
-  href: string
-  active?: boolean
-}
-
-export default function Breadcrumbs({ breadcrumbs }: { breadcrumbs: Breadcrumb[] }) {
+export default function Breadcrumbs({ breadcrumbs }: BreadcrumbsProps) {
   return (
     <nav aria-label="Breadcrumb" className="mb-6 block">
       <ol className={clsx(openSans.className, 'flex text-xl md:text-2xl')}>

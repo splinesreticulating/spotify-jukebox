@@ -1,6 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
-import { NowPlayingSong } from '../definitions'
+import { NowPlayingSong } from '@/app/lib/types/songs'
 
 export const SongLink: React.FC<{ song: NowPlayingSong; className?: string }> = ({ song, className = '' }) => (
   <span className={`break-words text-sm sm:text-base ${className}`}>
@@ -8,4 +8,4 @@ export const SongLink: React.FC<{ song: NowPlayingSong; className?: string }> = 
       {`${song.artists?.join(', ') || ''} - ${song.title || ''}`.toLowerCase()}
     </Link>
   </span>
-) 
+)

@@ -1,6 +1,7 @@
 import { BanknotesIcon, ClockIcon, UserGroupIcon, InboxIcon } from '@heroicons/react/24/outline'
 import { openSans } from '@/app/ui/fonts'
 import { fetchCardData } from '@/app/lib/data'
+import type { CardProps } from '@/app/lib/types'
 
 const iconMap = {
   collected: BanknotesIcon,
@@ -20,7 +21,7 @@ export default async function CardWrapper() {
   )
 }
 
-export function Card({ title, value, type }: { title: string; value: number | string; type: 'songs' | 'artists' }) {
+export function Card({ title, value, type }: CardProps) {
   const Icon = iconMap[type]
 
   return (

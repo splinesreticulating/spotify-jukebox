@@ -1,8 +1,4 @@
-import { useState } from 'react'
-
-interface TimeOffDropdownProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
-  label: string
-}
+import type { TimeOffDropdownProps } from '@/app/lib/types'
 
 export function TimeOffDropdown({ label, className = '', ...props }: TimeOffDropdownProps) {
   const options = [

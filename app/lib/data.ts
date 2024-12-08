@@ -1,10 +1,12 @@
 'use server'
 
 import { ITEMS_PER_PAGE, db } from './db'
-import { NowPlayingData, NowPlayingSong, Song } from './definitions'
+import { NowPlayingData, NowPlayingSong, Song } from '@/app/lib/types'
 import { unstable_noStore as noStore } from 'next/cache'
+import type { SongSelectFields } from '@/app/lib/types'
+import type { LatestSong } from '@/app/ui/dashboard/latest-songs'
 
-const songSelectFields = {
+const songSelectFields: SongSelectFields = {
   id: true,
   spotify_id: true,
   title: true,
@@ -31,15 +33,23 @@ const songSelectFields = {
 const MAX_BPM_MULTIPLIER = 1.09
 const MIN_BPM_MULTIPLIER = 0.96
 
-const fetchSongsBaseQuery = (
-  query: string,
-  levelsArray: string[],
-  instrumentalness: number | undefined,
-  keyRef?: string,
-  bpmRef?: string,
-  eighties?: boolean,
-  nineties?: boolean,
-) => {
+const fetchSongsBaseQuery = ({
+  query,
+  levelsArray,
+  instrumentalness,
+  keyRef,
+  bpmRef,
+  eighties,
+  nineties,
+}: {
+  query: string
+  levelsArray: string[]
+  instrumentalness?: number
+  keyRef?: string
+  bpmRef?: string
+  eighties?: boolean
+  nineties?: boolean
+}) => {
   const conditions = []
 
   if (query) {
@@ -95,19 +105,29 @@ const compatibleKeys = (keyRef: string) => {
   return [keyRef]
 }
 
-export async function fetchLatestSongs() {
+export async function fetchLatestSongs(): Promise<LatestSong[]> {
   noStore()
 
   try {
     const songs = await db.nuts.findMany({
-      select: songSelectFields,
+      select: {
+        id: true,
+        title: true,
+        artists: true,
+        date_added: true,
+      },
       orderBy: {
-        date_added: 'desc' as const,
+        date_added: 'desc',
       },
       take: 5,
     })
 
-    return songs
+    return songs.map((song) => ({
+      id: song.id,
+      artists: Array.isArray(song.artists) ? song.artists : [],
+      title: song.title ?? '',
+      date_added: song.date_added ?? new Date(),
+    }))
   } catch (err) {
     console.error(err)
     return []
@@ -147,21 +167,51 @@ export async function fetchFilteredSongs(
   bpmRef?: string,
   eighties?: boolean,
   nineties?: boolean,
-): Promise<Song[]> {
+) {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE
   const levelsArray = levels ? levels.split(',').map((level) => level) : []
 
   try {
     const songs = await db.nuts.findMany({
-      ...fetchSongsBaseQuery(query, levelsArray, instrumentalness, keyRef, bpmRef, eighties, nineties),
+      ...fetchSongsBaseQuery({
+        query,
+        levelsArray,
+        instrumentalness,
+        keyRef,
+        bpmRef,
+        eighties,
+        nineties,
+      }),
       take: ITEMS_PER_PAGE,
       skip: offset,
-      select: songSelectFields,
     })
-    return songs
+
+    return songs.map((song) => ({
+      id: song.id,
+      spotify_id: song.spotify_id,
+      artists: song.artists,
+      title: song.title,
+      album: song.album,
+      tags: song.tags,
+      instrumentalness: song.instrumentalness,
+      bpm: song.bpm,
+      key: song.key,
+      level: song.level,
+      date_added: song.date_added,
+      year: song.year,
+      hours_off: song.hours_off,
+      count_played: song.count_played,
+      date_played: song.date_played,
+      roboticness: song.roboticness,
+      danceability: song.danceability,
+      energy: song.energy,
+      valence: song.valence,
+      loudness: song.loudness,
+      image_urls: song.image_urls,
+    })) as Song[]
   } catch (error) {
     console.error('Database Error:', error)
-    throw new Error('Failed to fetch filtered songs')
+    throw new Error('Failed to fetch songs.')
   }
 }
 
@@ -178,15 +228,15 @@ export async function fetchSongsPages(
 
   try {
     const count = await db.nuts.count({
-      ...fetchSongsBaseQuery(
+      ...fetchSongsBaseQuery({
         query,
         levelsArray,
-        Number(instrumentalness),
+        instrumentalness: instrumentalness ? Number(instrumentalness) : undefined,
         keyRef,
         bpmRef,
-        eighties === 'true',
-        nineties === 'true',
-      ),
+        eighties: eighties === 'true',
+        nineties: nineties === 'true',
+      }),
     })
 
     return Math.ceil(count / ITEMS_PER_PAGE)
@@ -196,19 +246,17 @@ export async function fetchSongsPages(
   }
 }
 
-export const fetchSongById = async (id: number): Promise<Song | null> => {
-  noStore()
-
+export async function fetchSongById(id: number) {
   try {
-    const song = await db.nuts.findUnique({
+    const song = (await db.nuts.findUnique({
       where: { id },
       select: songSelectFields,
-    })
+    })) as Song | null
 
     return song
   } catch (error) {
     console.error('Database Error:', error)
-    throw new Error(`Failed to fetch song with ID: ${id}`)
+    throw new Error('Failed to fetch song.')
   }
 }
 
@@ -291,7 +339,12 @@ export const fetchNowPlaying = async (): Promise<NowPlayingData> => {
   const nextQueueItem = await db.queue.findFirst({
     select: {
       nut: {
-        select: songSelectFields,
+        select: {
+          id: true,
+          title: true,
+          artists: true,
+          level: true,
+        },
       },
     },
     orderBy: {
@@ -301,15 +354,15 @@ export const fetchNowPlaying = async (): Promise<NowPlayingData> => {
 
   const nextSong: NowPlayingSong = nextQueueItem?.nut
     ? {
-        songID: nextQueueItem.nut.id,
-        artists: nextQueueItem.nut.artists,
-        title: nextQueueItem.nut.title,
-        level: nextQueueItem.nut.level || undefined,
+        songID: Number(nextQueueItem.nut.id),
+        artists: Array.isArray(nextQueueItem.nut.artists) ? nextQueueItem.nut.artists : [],
+        title: String(nextQueueItem.nut.title),
+        level: nextQueueItem.nut.level ? Number(nextQueueItem.nut.level) : undefined,
       }
     : {
         songID: 0,
         artists: [],
-        title: '',
+        title: null,
       }
 
   return {

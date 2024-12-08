@@ -2,7 +2,7 @@ import NextAuth from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
 import bcrypt from 'bcrypt'
 import { z } from 'zod'
-import type { User } from '@/app/lib/definitions'
+import type { User } from '@/app/lib/types'
 import { authConfig } from './auth.config'
 import { db } from '@/app/lib/db'
 
@@ -13,7 +13,7 @@ async function getUser(email: string): Promise<User | null> {
     if (!response) {
       return null
     }
-    
+
     return {
       id: `${response.id}`,
       name: response.name || 'Anonymous',
@@ -41,7 +41,7 @@ export const { auth, signIn, signOut } = NextAuth({
           if (!user) return null
 
           const passwordsMatch = await bcrypt.compare(password, user.password)
-          
+
           if (passwordsMatch) {
             return {
               id: user.id,

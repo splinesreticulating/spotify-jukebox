@@ -1,6 +1,7 @@
 import { fetchFilteredSongs } from '@/app/lib/data'
 import Link from 'next/link'
 import PlayButton from './PlayButton'
+import type { SongsTableProps } from '@/app/lib/types'
 
 export default async function Table({
   query,
@@ -11,16 +12,7 @@ export default async function Table({
   bpmRef,
   eighties,
   nineties,
-}: {
-  query: string
-  currentPage: number
-  levels: string
-  instrumental: number
-  keyRef?: string
-  bpmRef?: string
-  eighties?: boolean
-  nineties?: boolean
-}) {
+}: SongsTableProps) {
   const songs = await fetchFilteredSongs(query, currentPage, levels, instrumental, keyRef, bpmRef, eighties, nineties)
 
   return (

@@ -3,8 +3,9 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
-import { Song } from '@/app/lib/definitions'
-import { songSchema, FormValues } from '@/app/lib/schemas'
+import { Song } from '@/app/lib/types'
+import { songSchema } from '@/app/lib/schemas'
+import type { FormValues } from '@/app/lib/types'
 import {
   InputField,
   TimeOffDropdown,
@@ -17,10 +18,11 @@ import { toast } from 'sonner'
 import { toastStyles } from '@/app/lib/constants/toast-styles'
 import { useTheme } from '@/app/lib/ThemeContext'
 import clsx from 'clsx'
+import type { LevelOption, RoboticnessOption } from '@/app/lib/types'
 
 const FIRST_YEAR = 1800
 
-const levelOptions = [
+const levelOptions: LevelOption[] = [
   { id: '1', value: 1, label: 'Sleep' },
   { id: '2', value: 2, label: 'Morning' },
   { id: '3', value: 3, label: 'Afternoon' },
@@ -28,7 +30,7 @@ const levelOptions = [
   { id: '5', value: 5, label: 'Club' },
 ]
 
-const roboticnessOptions = [
+const roboticnessOptions: RoboticnessOption[] = [
   { id: '1', value: 1, label: 'Organic' },
   { id: '2', value: 2, label: 'Mixed' },
   { id: '3', value: 3, label: 'Electronic' },
