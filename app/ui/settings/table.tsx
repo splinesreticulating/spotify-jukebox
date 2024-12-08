@@ -5,7 +5,7 @@ import { toast } from 'sonner'
 import { toastStyles } from '@/app/lib/constants/toast-styles'
 import { useDebounce } from 'use-debounce'
 import clsx from 'clsx'
-import type { Setting, SettingConfig, SettingConfigs } from '@/app/lib/types'
+import type { Setting } from '@/app/lib/types'
 
 const formatSettingName = (name: string): string => {
   return name
