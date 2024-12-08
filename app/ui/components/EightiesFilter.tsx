@@ -1,10 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-
-interface EightiesFilterProps {
-  initialValue: boolean
-}
+import type { EightiesFilterProps } from '@/app/lib/types'
 
 const EightiesFilter: React.FC<EightiesFilterProps> = ({ initialValue }) => {
   const [checked, setChecked] = useState(initialValue)

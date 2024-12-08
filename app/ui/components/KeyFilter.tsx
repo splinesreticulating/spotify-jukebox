@@ -1,10 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-
-interface KeyFilterProps {
-  initialValue: string | undefined
-}
+import type { KeyFilterProps } from '@/app/lib/types'
 
 const KeyFilter: React.FC<KeyFilterProps> = ({ initialValue }) => {
   const [checked, setChecked] = useState(false)

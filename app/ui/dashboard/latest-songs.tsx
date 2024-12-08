@@ -5,18 +5,25 @@ import Link from 'next/link'
 import { daysAgo, PLAY_NEXT_URL } from '@/app/lib/utils'
 import { PlayIcon } from '@heroicons/react/16/solid'
 
+export interface LatestSong {
+  id: number
+  title: string
+  artists: string[]
+  date_added: Date
+}
+
 export default async function LatestSongs() {
-  const latestSongs = await fetchLatestSongs()
+  const songs: LatestSong[] = await fetchLatestSongs()
 
   return (
     <div className="flex w-full flex-col md:col-span-4">
       <h2 className={`${openSans.className} mb-4 text-xl md:text-2xl`}>Latest Songs</h2>
       <div className="flex grow flex-col justify-between rounded-xl bg-gray-50 p-4">
         <div className="bg-white px-6">
-          {latestSongs.map((song, i) => {
+          {songs.map((song, i) => {
             return (
               <div
-                key={song.id}
+                key={`song-${song.id}`}
                 className={clsx('flex flex-row items-center justify-between py-4', {
                   'border-t': i !== 0,
                 })}
@@ -29,7 +36,9 @@ export default async function LatestSongs() {
                       </Link>
                       <Link href={`/dashboard/songs/${song.id}/edit`}>{song.title}</Link>
                     </p>
-                    <p className="hidden text-sm text-gray-500 sm:block">{song.artists.join(', ')}</p>
+                    <p className="hidden text-sm text-gray-500 sm:block">
+                      {Array.isArray(song.artists) ? song.artists.join(', ') : ''}
+                    </p>
                   </div>
                 </div>
                 <p className={`${openSans.className} truncate text-sm font-medium md:text-base`}>

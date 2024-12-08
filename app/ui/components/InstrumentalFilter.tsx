@@ -1,12 +1,9 @@
 'use client'
 
 import React, { useState } from 'react'
+import type { InstrumentalFilterProps } from '@/app/lib/types'
 
-interface InstrumentalnessFilterProps {
-  initialValue: number
-}
-
-const InstrumentalFilter: React.FC<InstrumentalnessFilterProps> = ({ initialValue }) => {
+const InstrumentalFilter: React.FC<InstrumentalFilterProps> = ({ initialValue }) => {
   const [checked, setChecked] = useState(initialValue >= 90)
 
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {

@@ -1,15 +1,9 @@
 'use server'
 
-import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
 import { signIn } from '@/auth'
 import { AuthError } from 'next-auth'
 import { db } from './db'
-import { NowPlayingData } from './definitions'
-
-export type State = {
-  message: string
-}
+import { NowPlayingData } from '@/app/lib/types'
 
 export async function updateSong(id: string, formData: FormData) {
   const fields = {
@@ -91,7 +85,7 @@ export async function defriend(nowPlayingData: NowPlayingData) {
   }
 }
 
-export async function authenticate(prevState: any, formData: FormData) {
+export async function authenticate(_prevState: any, formData: FormData) {
   try {
     await signIn('credentials', formData)
   } catch (error) {

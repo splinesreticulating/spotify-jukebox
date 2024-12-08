@@ -1,10 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-
-interface BPMFilterProps {
-  initialValue: number | undefined
-}
+import type { BPMFilterProps } from '@/app/lib/types'
 
 const BPMFilter: React.FC<BPMFilterProps> = ({ initialValue }) => {
   const [checked, setChecked] = useState(false)

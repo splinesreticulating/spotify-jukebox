@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 }
 
 export default async function EditSongPage({ params }: { params: Promise<{ id: string }> }) {
-  const id = (await params).id // new version of next says params must be awaited
+  const id = (await params).id
   const song = await fetchSongById(Number(id))
 
   if (!song) {

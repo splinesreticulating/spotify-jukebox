@@ -1,19 +1,6 @@
 import Pagination from '@/app/ui/songs/pagination'
 import Table from './table'
-
-type SearchResultsProps = {
-  searchParams: {
-    query?: string
-    page?: string
-    levels?: string
-    instrumental?: string
-    keyRef?: string
-    bpmRef?: string
-    eighties?: string
-    nineties?: string
-    totalPages: number
-  }
-}
+import type { SearchResultsProps } from '@/app/lib/types'
 
 export default function SearchResults({ searchParams }: SearchResultsProps) {
   const { query = '', page, levels = '', instrumental, keyRef, bpmRef, eighties, nineties, totalPages } = searchParams

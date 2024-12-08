@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Song } from '../definitions'
+import { Song } from '@/app/lib/types/songs'
 import { daysAgo } from '../utils'
 import { getLastPlayedDatesFromHistory } from '../data'
 
