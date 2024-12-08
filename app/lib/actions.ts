@@ -103,12 +103,20 @@ export async function authenticate(_prevState: any, formData: FormData) {
 
 export async function addToQueue(songId: number) {
   try {
-    await db.queue.create({
-      data: {
-        nut_id: songId,
-      },
+    // Start a transaction to ensure atomicity
+    return await db.$transaction(async (tx) => {
+      // Delete existing queue items
+      await tx.queue.deleteMany({})
+
+      // Add the new song
+      await tx.queue.create({
+        data: {
+          nut_id: songId,
+        },
+      })
+
+      return { success: true }
     })
-    return { success: true }
   } catch (error) {
     console.error('Failed to add song to queue:', error)
     return { success: false }
