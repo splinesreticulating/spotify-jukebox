@@ -39,16 +39,6 @@ export interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElem
   className?: string
 }
 
-export type Breadcrumb = {
-  label: string
-  href: string
-  active?: boolean
-}
-
-export interface BreadcrumbsProps {
-  breadcrumbs: Breadcrumb[]
-}
-
 export interface SongsTableProps {
   query: string
   currentPage: number

@@ -1,5 +1,4 @@
 import Form from '@/app/ui/songs/edit-form'
-import Breadcrumbs from '@/app/ui/songs/breadcrumbs'
 import { fetchSongById } from '@/app/lib/data'
 import { notFound } from 'next/navigation'
 import { Metadata } from 'next'
@@ -18,16 +17,6 @@ export default async function EditSongPage({ params }: { params: Promise<{ id: s
 
   return (
     <main>
-      <Breadcrumbs
-        breadcrumbs={[
-          { label: 'Songs', href: '/dashboard/songs' },
-          {
-            label: 'Edit Song',
-            href: `/dashboard/songs/${id}/edit`,
-            active: true,
-          },
-        ]}
-      />
       <Form song={song} />
     </main>
   )
