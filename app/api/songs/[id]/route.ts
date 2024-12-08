@@ -2,8 +2,9 @@ import { db } from '@/app/lib/db'
 import { songSchema } from '@/app/lib/schemas'
 import { NextResponse } from 'next/server'
 
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const id = (await params).id
     const data = await request.json()
     const formattedData = {
       ...data,
@@ -15,7 +16,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     const prismaData = Object.fromEntries(Object.entries(validated).map(([key, value]) => [key, value ?? undefined]))
 
     const updated = await db.nuts.update({
-      where: { id: Number(params.id) },
+      where: { id: Number(id) },
       data: prismaData,
     })
 
@@ -23,7 +24,10 @@ export async function PUT(request: Request, { params }: { params: { id: string }
   } catch (error) {
     console.error('Failed to update song:', error)
     return NextResponse.json(
-      { error: 'Failed to update song', details: error instanceof Error ? error.message : 'Unknown error' },
+      {
+        error: 'Failed to update song',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
       { status: 500 },
     )
   }
