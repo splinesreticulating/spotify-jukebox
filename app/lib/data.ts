@@ -260,28 +260,6 @@ export async function fetchSongById(id: number) {
   }
 }
 
-export async function fetchFilteredArtists(query: string) {
-  noStore()
-
-  try {
-    const songs = await db.nuts.findMany({
-      where: { artists: { has: query } },
-      select: { artists: true },
-    })
-
-    const allArtists = songs.flatMap((song) => song.artists)
-    const uniqueArtists = [...new Set(allArtists)].map((name, index) => ({
-      name,
-      id: index + 1,
-    }))
-
-    return uniqueArtists
-  } catch (err) {
-    console.error('Database Error:', err)
-    throw new Error('Failed to fetch artists list.')
-  }
-}
-
 export const fetchNowPlaying = async (): Promise<NowPlayingData> => {
   // Get the two most recent history entries
   const recentHistory = await db.history.findMany({
