@@ -5,6 +5,7 @@ import KeyFilter from '@/app/ui/components/KeyFilter'
 import BPMFilter from '@/app/ui/components/BPMFilter'
 import EightiesFilter from '@/app/ui/components/EightiesFilter'
 import NinetiesFilter from '@/app/ui/components/NinetiesFilter'
+import ThisYearFilter from '@/app/ui/components/ThisYearFilter'
 
 type SearchFiltersProps = {
   initialValues: Record<string, string>
@@ -28,6 +29,7 @@ export default function SearchFilters({ initialValues, nowPlayingKey, nowPlaying
           <BPMFilter initialValue={nowPlayingBPM} />
           <EightiesFilter initialValue={Boolean(initialValues.eighties)} />
           <NinetiesFilter initialValue={Boolean(initialValues.nineties)} />
+          <ThisYearFilter initialValue={Boolean(initialValues.thisYear)} />
         </div>
       </div>
     </>

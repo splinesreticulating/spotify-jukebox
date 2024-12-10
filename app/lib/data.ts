@@ -41,6 +41,7 @@ const fetchSongsBaseQuery = ({
   bpmRef,
   eighties,
   nineties,
+  thisYear,
 }: {
   query: string
   levelsArray: string[]
@@ -49,6 +50,7 @@ const fetchSongsBaseQuery = ({
   bpmRef?: string
   eighties?: boolean
   nineties?: boolean
+  thisYear?: boolean
 }) => {
   const conditions = []
 
@@ -83,10 +85,11 @@ const fetchSongsBaseQuery = ({
     })
   }
 
-  if (eighties || nineties) {
+  if (eighties || nineties || thisYear) {
     const yearConditions = []
     if (eighties) yearConditions.push({ year: { gte: 1980, lt: 1990 } })
     if (nineties) yearConditions.push({ year: { gte: 1990, lt: 2000 } })
+    if (thisYear) yearConditions.push({ year: { equals: new Date().getFullYear() } })
     conditions.push({ OR: yearConditions })
   }
 
@@ -167,6 +170,7 @@ export async function fetchFilteredSongs(
   bpmRef?: string,
   eighties?: boolean,
   nineties?: boolean,
+  thisYear?: boolean,
 ) {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE
   const levelsArray = levels ? levels.split(',').map((level) => level) : []
@@ -181,34 +185,13 @@ export async function fetchFilteredSongs(
         bpmRef,
         eighties,
         nineties,
+        thisYear,
       }),
       take: ITEMS_PER_PAGE,
       skip: offset,
     })
 
-    return songs.map((song) => ({
-      id: song.id,
-      spotify_id: song.spotify_id,
-      artists: song.artists,
-      title: song.title,
-      album: song.album,
-      tags: song.tags,
-      instrumentalness: song.instrumentalness,
-      bpm: song.bpm,
-      key: song.key,
-      level: song.level,
-      date_added: song.date_added,
-      year: song.year,
-      hours_off: song.hours_off,
-      count_played: song.count_played,
-      date_played: song.date_played,
-      roboticness: song.roboticness,
-      danceability: song.danceability,
-      energy: song.energy,
-      valence: song.valence,
-      loudness: song.loudness,
-      image_urls: song.image_urls,
-    })) as Song[]
+    return songs
   } catch (error) {
     console.error('Database Error:', error)
     throw new Error('Failed to fetch songs.')
@@ -223,6 +206,7 @@ export async function fetchSongsPages(
   bpmRef?: string,
   eighties?: string,
   nineties?: string,
+  thisYear?: string,
 ): Promise<number> {
   const levelsArray = levels ? levels.split(',').map((level) => level) : []
 
@@ -236,6 +220,7 @@ export async function fetchSongsPages(
         bpmRef,
         eighties: eighties === 'true',
         nineties: nineties === 'true',
+        thisYear: thisYear === 'true',
       }),
     })
 

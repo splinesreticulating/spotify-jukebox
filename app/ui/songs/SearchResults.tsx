@@ -3,7 +3,18 @@ import Table from './table'
 import type { SearchResultsProps } from '@/app/lib/types'
 
 export default function SearchResults({ searchParams }: SearchResultsProps) {
-  const { query = '', page, levels = '', instrumental, keyRef, bpmRef, eighties, nineties, totalPages } = searchParams
+  const {
+    query = '',
+    page,
+    levels = '',
+    instrumental,
+    keyRef,
+    bpmRef,
+    eighties,
+    nineties,
+    thisYear,
+    totalPages,
+  } = searchParams
 
   const currentPage = Number(page) || 1
 
@@ -18,6 +29,7 @@ export default function SearchResults({ searchParams }: SearchResultsProps) {
         bpmRef={bpmRef}
         eighties={eighties === 'true'}
         nineties={nineties === 'true'}
+        thisYear={thisYear === 'true'}
       />
       <div className="mt-5 flex w-full justify-center">
         <Pagination totalPages={totalPages} />

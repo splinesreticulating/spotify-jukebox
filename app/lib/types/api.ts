@@ -10,6 +10,7 @@ export type SongQueryParams = {
   bpmRef?: string
   eighties?: boolean
   nineties?: boolean
+  thisYear?: boolean
 }
 
 export type SongSelectFields = {

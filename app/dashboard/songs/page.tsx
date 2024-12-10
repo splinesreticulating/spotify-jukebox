@@ -10,11 +10,20 @@ export const metadata: Metadata = {
 }
 
 async function getData(searchParams: Promise<Record<string, string>>) {
-  const { query, levels, instrumentalness, keyRef, bpmRef, eighties, nineties } = await searchParams
+  const { query, levels, instrumentalness, keyRef, bpmRef, eighties, nineties, thisYear } = await searchParams
 
   const nowPlayingSongId = await fetchNowPlayingSongID()
   const nowPlayingSong = await fetchSongById(nowPlayingSongId!)
-  const totalPages = await fetchSongsPages(query, levels, instrumentalness, keyRef, bpmRef, eighties, nineties)
+  const totalPages = await fetchSongsPages(
+    query,
+    levels,
+    instrumentalness,
+    keyRef,
+    bpmRef,
+    eighties,
+    nineties,
+    thisYear,
+  )
 
   return {
     nowPlayingSong,

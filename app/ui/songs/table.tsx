@@ -12,8 +12,19 @@ export default async function Table({
   bpmRef,
   eighties,
   nineties,
+  thisYear,
 }: SongsTableProps) {
-  const songs = await fetchFilteredSongs(query, currentPage, levels, instrumental, keyRef, bpmRef, eighties, nineties)
+  const songs = await fetchFilteredSongs(
+    query,
+    currentPage,
+    levels,
+    instrumental,
+    keyRef,
+    bpmRef,
+    eighties,
+    nineties,
+    thisYear,
+  )
 
   return (
     <div className="mt-6 flow-root">

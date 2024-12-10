@@ -17,6 +17,7 @@ export type SearchResultsProps = {
     bpmRef?: string
     eighties?: string
     nineties?: string
+    thisYear?: string
     totalPages: number
   }
 }
@@ -48,6 +49,7 @@ export interface SongsTableProps {
   bpmRef?: string
   eighties?: boolean
   nineties?: boolean
+  thisYear?: boolean
 }
 
 // Filter Components
@@ -69,4 +71,8 @@ export interface NinetiesFilterProps {
 
 export interface InstrumentalFilterProps {
   initialValue: number
+}
+
+export interface ThisYearFilterProps {
+  initialValue: boolean
 }
