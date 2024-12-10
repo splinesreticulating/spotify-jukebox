@@ -24,12 +24,12 @@ export default function SearchFilters({ initialValues, nowPlayingKey, nowPlaying
           <LevelFilters levels={initialValues.levels || ''} />
         </div>
         <div>
-          <InstrumentalFilter initialValue={Number(initialValues.instrumental) || 0} />
-          <KeyFilter initialValue={nowPlayingKey} />
-          <BPMFilter initialValue={nowPlayingBPM} />
-          <EightiesFilter initialValue={Boolean(initialValues.eighties)} />
-          <NinetiesFilter initialValue={Boolean(initialValues.nineties)} />
           <ThisYearFilter initialValue={Boolean(initialValues.thisYear)} />
+          <NinetiesFilter initialValue={Boolean(initialValues.nineties)} />
+          <EightiesFilter initialValue={Boolean(initialValues.eighties)} />
+          <BPMFilter initialValue={nowPlayingBPM} />
+          <KeyFilter initialValue={nowPlayingKey} />
+          <InstrumentalFilter initialValue={Number(initialValues.instrumental) || 0} />
         </div>
       </div>
     </>
