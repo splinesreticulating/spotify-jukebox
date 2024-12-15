@@ -12,7 +12,7 @@ export function TimeOffDropdown({ label, className = '', ...props }: TimeOffDrop
     ['2 weeks', 336],
     ['3 weeks', 504],
     ['1 month', 730],
-    ['2 months', 1460],
+    ['2 months', 1440],
     ['3 months', 2190],
     ['4 months', 2920],
     ['5 months', 3650],
