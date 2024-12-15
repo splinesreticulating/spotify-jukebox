@@ -45,6 +45,10 @@ export default function NavLinks() {
         base: 'bg-midnight-background hover:bg-midnight-accent hover:text-midnight-primary',
         active: 'bg-midnight-accent text-midnight-primary',
       },
+      christmas: {
+        base: 'bg-christmas-background hover:bg-christmas-accent hover:text-christmas-primary',
+        active: 'bg-christmas-accent text-christmas-primary',
+      },
     }
     return isActive ? themeMap[theme].active : themeMap[theme].base
   }

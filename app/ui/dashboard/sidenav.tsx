@@ -40,6 +40,11 @@ export default function SideNav() {
         background: 'bg-midnight-background',
         button: 'bg-midnight-background hover:bg-midnight-accent hover:text-midnight-primary',
       },
+      christmas: {
+        logo: 'bg-christmas-primary',
+        background: 'bg-christmas-background',
+        button: 'bg-christmas-background hover:bg-christmas-accent hover:text-christmas-primary',
+      },
     }
     return themeMap[theme][element]
   }

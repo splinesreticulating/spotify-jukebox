@@ -35,6 +35,10 @@ export default function Pagination({ totalPages }: { totalPages: number }) {
         active: 'bg-midnight-primary text-white',
         hover: 'hover:bg-midnight-accent hover:text-midnight-primary',
       },
+      christmas: {
+        active: 'bg-christmas-primary text-white',
+        hover: 'hover:bg-christmas-accent hover:text-christmas-primary',
+      },
     }
     return isActive ? themeMap[theme].active : themeMap[theme].hover
   }

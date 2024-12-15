@@ -5,8 +5,6 @@ export type Toast = {
   type: ToastType
 }
 
-export type Theme = 'ocean' | 'forest' | 'sunset' | 'purple' | 'midnight'
-
 export type SearchResultsProps = {
   searchParams: {
     query?: string

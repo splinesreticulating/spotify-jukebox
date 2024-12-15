@@ -16,6 +16,7 @@ export default function ThemeSelector() {
       <option value="sunset">Sunset</option>
       <option value="purple">Purple Rain</option>
       <option value="midnight">Midnight</option>
+      <option value="christmas">Christmas</option>
     </select>
   )
 }

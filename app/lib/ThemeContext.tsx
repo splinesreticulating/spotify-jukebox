@@ -1,17 +1,14 @@
 'use client'
 
 import { createContext, useContext, useState } from 'react'
-import { Theme } from '@/app/lib/types'
+import { Theme, ThemeContextType } from './types/themes'
 
-interface ThemeContextType {
-  theme: Theme
-  setTheme: (theme: Theme) => void
-}
+const DEFAULT_THEME = 'christmas'
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('ocean')
+  const [theme, setTheme] = useState<Theme>(DEFAULT_THEME)
 
   return <ThemeContext.Provider value={{ theme, setTheme }}>{children}</ThemeContext.Provider>
 }

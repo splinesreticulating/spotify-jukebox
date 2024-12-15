@@ -45,6 +45,14 @@ const config: Config = {
           hover: '#0F172A',
           background: '#F8FAFC',
         },
+        // Christmas Theme
+        christmas: {
+          primary: '#FD5E53', // Red
+          secondary: '#E3B04B', // Gold
+          accent: '#B0EACD', // Light green
+          hover: '#21BF73', // Dark green
+          background: '#F9FCFB', // White with a hint of green
+        },
       },
     },
   },

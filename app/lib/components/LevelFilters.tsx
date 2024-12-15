@@ -36,6 +36,10 @@ export function LevelFilters({ levels }: { levels: string }) {
         selected: 'bg-midnight-primary text-white',
         unselected: 'bg-white text-midnight-primary border-midnight-primary',
       },
+      christmas: {
+        selected: 'bg-christmas-primary text-white',
+        unselected: 'bg-white text-christmas-primary border-christmas-primary',
+      },
     }
     return isSelected ? themeMap[theme].selected : themeMap[theme].unselected
   }
