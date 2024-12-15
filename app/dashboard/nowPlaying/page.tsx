@@ -74,18 +74,24 @@ export default function NowPlayingPage() {
       <section className="w-full max-w-md text-center">
         <Image src="/squirrelGuitarButton.png" width={92} height={95} alt="Squirrel button" className="mx-auto my-2" />
         <ul className="flex w-full flex-col items-center space-y-4">
-          <li>
-            last: <SongLink song={lastSong} />
-          </li>
-          <li>
-            <Heart onHeartClick={toggleFriendship} isHeartFilled={friends} />
-          </li>
+          {lastSong.title && (
+            <>
+              <li>
+                last: <SongLink song={lastSong} />
+              </li>
+              <li>
+                <Heart onHeartClick={toggleFriendship} isHeartFilled={friends} />
+              </li>
+            </>
+          )}
           <li>
             now: <SongLink song={currentSong} className="font-bold" />
           </li>
-          <li>
-            next: <SongLink song={nextSong} />
-          </li>
+          {nextSong.title && (
+            <li>
+              next: <SongLink song={nextSong} />
+            </li>
+          )}
         </ul>
       </section>
     </main>
