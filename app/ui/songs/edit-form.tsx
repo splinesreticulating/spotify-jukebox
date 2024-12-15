@@ -19,6 +19,7 @@ import { toastStyles } from '@/app/lib/constants/toast-styles'
 import { useTheme } from '@/app/lib/ThemeContext'
 import clsx from 'clsx'
 import type { LevelOption, RoboticnessOption } from '@/app/lib/types'
+import { ArrowsUpDownIcon } from '@heroicons/react/24/outline'
 
 const FIRST_YEAR = 1800
 
@@ -119,6 +120,16 @@ export default function EditSongForm({ song: initialSong }: { song: Song }) {
             </div>
             <div className="mt-4 text-sm text-gray-600">
               <DateAdded song={initialSong} />
+              {initialSong.date_liked && (
+                <>
+                  {' · Liked: '}
+                  {new Date(initialSong.date_liked).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })}
+                </>
+              )}
               {' · '}
               <LastPlayed song={initialSong} />
             </div>
@@ -139,7 +150,30 @@ export default function EditSongForm({ song: initialSong }: { song: Song }) {
             <InputField label="Tags" placeholder="Separate tags with commas" {...register('tags')} />
 
             <InputField label="Key" {...register('key')} />
-            <InputField label="BPM" type="number" {...register('bpm', { valueAsNumber: true })} />
+            <div className="flex items-end gap-2">
+              <div className="flex-1">
+                <InputField label="BPM" type="number" {...register('bpm', { valueAsNumber: true })} />
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  const currentBpm = watch('bpm')
+                  if (currentBpm) {
+                    setValue('bpm', currentBpm * 2 > 300 ? currentBpm / 2 : currentBpm * 2, {
+                      shouldValidate: true,
+                      shouldDirty: true,
+                    })
+                  }
+                }}
+                className={clsx(
+                  'mb-[2px] rounded-md px-3 py-2 text-sm font-medium',
+                  'border bg-white hover:bg-gray-50',
+                  `text-${theme}-primary border-${theme}-primary`,
+                )}
+              >
+                <ArrowsUpDownIcon className="h-5 w-5" />
+              </button>
+            </div>
 
             <NumericalDropDown
               label="Year"

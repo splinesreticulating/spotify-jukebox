@@ -16,6 +16,7 @@ const songSelectFields: SongSelectFields = {
   level: true,
   bpm: true,
   date_added: true,
+  date_liked: true,
   year: true,
   hours_off: true,
   album: true,

@@ -10,6 +10,7 @@ export type Song = {
   key: string | null
   level: number | null
   date_added: Date | null
+  date_liked: Date | null
   year: number | null
   hours_off: number | null
   count_played: number | null
