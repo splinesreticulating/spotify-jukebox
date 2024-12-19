@@ -31,7 +31,7 @@ const EightiesFilter: React.FC<EightiesFilterProps> = ({ initialValue }) => {
   return (
     <label className="flex items-center">
       <input type="checkbox" checked={checked} onChange={handleCheckboxChange} />
-      <span className="ml-2">80's</span>
+      <span className="ml-2">80s</span>
     </label>
   )
 }

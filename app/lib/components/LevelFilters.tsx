@@ -51,7 +51,7 @@ export function LevelFilters({ levels }: { levels: string }) {
     const newSearchParams = new URLSearchParams(Object.fromEntries(currentSearchParams.entries()))
     newSearchParams.set('levels', levelsQuery)
     router.replace(`?${newSearchParams.toString()}`)
-  }, [selectedLevels])
+  }, [currentSearchParams, router, selectedLevels])
 
   const handleCheckboxChange = (level: string) => {
     setSelectedLevels((prevLevels) =>

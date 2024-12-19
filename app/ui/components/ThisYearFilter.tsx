@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from 'react'
 import type { ThisYearFilterProps } from '@/app/lib/types'
 
+const currentYear = new Date().getFullYear()
+
 const ThisYearFilter: React.FC<ThisYearFilterProps> = ({ initialValue }) => {
   const [checked, setChecked] = useState(initialValue)
 
@@ -30,7 +32,7 @@ const ThisYearFilter: React.FC<ThisYearFilterProps> = ({ initialValue }) => {
   return (
     <label className="flex items-center">
       <input type="checkbox" checked={checked} onChange={handleCheckboxChange} />
-      <span className="ml-2">This Year</span>
+      <span className="ml-2">{currentYear}</span>
     </label>
   )
 }

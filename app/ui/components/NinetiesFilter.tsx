@@ -31,7 +31,7 @@ const NinetiesFilter: React.FC<NinetiesFilterProps> = ({ initialValue }) => {
   return (
     <label className="flex items-center">
       <input type="checkbox" checked={checked} onChange={handleCheckboxChange} />
-      <span className="ml-2">90's</span>
+      <span className="ml-2">90s</span>
     </label>
   )
 }
