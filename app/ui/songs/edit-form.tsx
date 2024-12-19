@@ -20,6 +20,7 @@ import { useTheme } from '@/app/lib/ThemeContext'
 import clsx from 'clsx'
 import type { LevelOption, RoboticnessOption } from '@/app/lib/types'
 import { ArrowsUpDownIcon } from '@heroicons/react/24/outline'
+import Image from 'next/image'
 
 const FIRST_YEAR = 1800
 
@@ -108,10 +109,12 @@ export default function EditSongForm({ song: initialSong }: { song: Song }) {
       <div className="rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 p-6">
         <div className="flex items-center gap-6">
           {initialSong.image_urls && initialSong.image_urls.length > 0 && (
-            <img
+            <Image
               src={initialSong.image_urls[0]}
               alt={`${initialSong.title} album art`}
               className="h-24 w-24 rounded-lg object-cover shadow-sm"
+              width={96}
+              height={96}
             />
           )}
           <div>
@@ -187,7 +190,6 @@ export default function EditSongForm({ song: initialSong }: { song: Song }) {
         </div>
 
         <div className="space-y-6">
-          <h3 className="text-lg font-medium text-gray-900">Classification</h3>
           <div className="space-y-4">
             <div className="rounded-lg bg-gray-50 p-4 shadow-inner">
               <div className="flex flex-wrap gap-3">
