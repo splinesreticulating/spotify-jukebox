@@ -45,17 +45,14 @@ model bad_nuts {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model compatibility_tree {
-  id                                      Int     @id @default(autoincrement())
+  id                                      Int  @id @default(autoincrement())
   root_id                                 Int
   branch_id                               Int
-  root_spotify_id                         String? @db.Char(22)
-  branch_spotify_id                       String? @db.Char(22)
-  root_title                              String? @db.VarChar(150)
-  branch_title                            String? @db.VarChar(150)
   branch_level                            Int?
-  nuts_compatibility_tree_branch_idTonuts nuts    @relation("compatibility_tree_branch_idTonuts", fields: [branch_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  nuts_compatibility_tree_root_idTonuts   nuts    @relation("compatibility_tree_root_idTonuts", fields: [root_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  nuts_compatibility_tree_branch_idTonuts nuts @relation("compatibility_tree_branch_idTonuts", fields: [branch_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  nuts_compatibility_tree_root_idTonuts   nuts @relation("compatibility_tree_root_idTonuts", fields: [root_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
+  @@unique([root_id, branch_id])
   @@index([branch_id], map: "idx_compatibility_tree_branch_id")
   @@index([root_id], map: "idx_compatibility_tree_root_id")
 }
@@ -104,7 +101,7 @@ model nuts {
   count_played                                          Int?                 @default(0)
   compatibility_tree_compatibility_tree_branch_idTonuts compatibility_tree[] @relation("compatibility_tree_branch_idTonuts")
   compatibility_tree_compatibility_tree_root_idTonuts   compatibility_tree[] @relation("compatibility_tree_root_idTonuts")
-  queue_items queue[]
+  queue_items                                           queue[]
 
   @@index([date_played], map: "idx_date_played")
 }
@@ -124,11 +121,11 @@ model users {
 }
 
 model queue {
-  id      Int      @id @default(autoincrement())
-  nut_id  Int
+  id       Int      @id @default(autoincrement())
+  nut_id   Int
   added_at DateTime @default(now()) @db.Timestamp(6)
-  nut     nuts     @relation(fields: [nut_id], references: [id], onDelete: Cascade)
-  
+  nut      nuts     @relation(fields: [nut_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
   @@index([added_at], map: "idx_queue_added_at")
-  @@index([nut_id])
+  @@index([nut_id], map: "idx_queue_nut_id")
 }
