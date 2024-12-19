@@ -85,7 +85,7 @@ export async function defriend(nowPlayingData: NowPlayingData) {
   }
 }
 
-export async function authenticate(_prevState: any, formData: FormData) {
+export async function authenticate(_prevState: { errorMessage: string } | undefined, formData: FormData) {
   try {
     await signIn('credentials', formData)
   } catch (error) {

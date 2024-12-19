@@ -1,7 +1,7 @@
 import { fetchFilteredSongs } from '@/app/lib/data'
 import Link from 'next/link'
 import PlayButton from './PlayButton'
-import type { SongsTableProps } from '@/app/lib/types'
+import type { Song, SongsTableProps } from '@/app/lib/types'
 
 export default async function Table({
   query,
@@ -32,7 +32,7 @@ export default async function Table({
         <div className="rounded-lg bg-gray-50 p-2 md:pt-0">
           {/* MOBILE */}
           <div className="md:hidden">
-            {songs?.map((song) => (
+            {songs?.map((song: Song) => (
               <div key={song.id} className="mb-2 w-full rounded-md bg-white p-1 text-xs">
                 <div className="flex items-center justify-between pb-1">
                   <div className="flex items-center">
@@ -74,7 +74,7 @@ export default async function Table({
               </tr>
             </thead>
             <tbody className="bg-white">
-              {songs?.map((song) => (
+              {songs?.map((song: Song) => (
                 <tr
                   key={song.id}
                   className="

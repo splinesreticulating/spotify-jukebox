@@ -5,6 +5,7 @@ import { NowPlayingData, NowPlayingSong, Song } from '@/app/lib/types'
 import { unstable_noStore as noStore } from 'next/cache'
 import type { SongSelectFields } from '@/app/lib/types'
 import type { LatestSong } from '@/app/ui/dashboard/latest-songs'
+import { ArtistPayload, LatestSongPayload } from './types/database'
 
 const songSelectFields: SongSelectFields = {
   id: true,
@@ -113,7 +114,7 @@ export async function fetchLatestSongs(): Promise<LatestSong[]> {
   noStore()
 
   try {
-    const songs = await db.nuts.findMany({
+    const songs: LatestSongPayload[] = await db.nuts.findMany({
       select: {
         id: true,
         title: true,
@@ -149,7 +150,7 @@ export async function fetchCardData() {
     const data = await Promise.all([songCountPromise, artistsPromise])
 
     // Get unique artists by flattening and deduplicating the arrays
-    const allArtists = data[1].flatMap((song) => song.artists)
+    const allArtists = data[1].flatMap((song: ArtistPayload) => song.artists)
     const uniqueArtists = new Set(allArtists)
 
     return {
