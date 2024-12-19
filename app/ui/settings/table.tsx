@@ -88,7 +88,7 @@ export default function SettingsTable({ settings }: { settings: Setting[] }) {
         }
       }
     })
-  }, [debouncedValues])
+  }, [debouncedValues, settings])
 
   const renderInput = (setting: Setting) => {
     const config = settingConfigs[setting.name]
