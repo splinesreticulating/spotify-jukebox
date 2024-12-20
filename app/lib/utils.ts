@@ -39,4 +39,19 @@ export const generatePagination = (currentPage: number, totalPages: number) => {
   return [1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages]
 }
 
-export const PLAY_NEXT_URL = 'http://192.168.193.76:6969/songs/queue_it_up?id='
+export const getLevelColor = (level?: number) => {
+  switch (level) {
+    case 1:
+      return 'text-indigo-400' // Sleep - soft purple
+    case 2:
+      return 'text-green-500' // Morning - fresh green
+    case 3:
+      return 'text-amber-500' // Afternoon - warm amber
+    case 4:
+      return 'text-orange-500' // Bar - vibrant orange
+    case 5:
+      return 'text-red-500' // Club - energetic red
+    default:
+      return ''
+  }
+}

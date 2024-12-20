@@ -284,11 +284,13 @@ export const fetchNowPlaying = async (): Promise<NowPlayingData> => {
         songID: lastSongData.id,
         artists: lastSongData.artists,
         title: lastSongData.title,
+        level: Number(lastSongData.level),
       }
     : {
         songID: 0,
         artists: [],
         title: '',
+        level: undefined,
       }
 
   // Check if there's a friendship between the songs

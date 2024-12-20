@@ -122,3 +122,32 @@ export async function addToQueue(songId: number) {
     return { success: false }
   }
 }
+
+export const fetchCompatibleSongs = async (songId: number, nextSongId: number) => {
+  const compatibleSongs = await db.compatibility_tree.findMany({
+    where: {
+      root_id: songId,
+      NOT: {
+        branch_id: nextSongId,
+      },
+    },
+    select: {
+      branch_level: true,
+      nuts_compatibility_tree_branch_idTonuts: {
+        select: {
+          id: true,
+          title: true,
+          artists: true,
+        },
+      },
+    },
+    take: 5,
+  })
+
+  return compatibleSongs.map((item) => ({
+    songID: item.nuts_compatibility_tree_branch_idTonuts.id,
+    title: item.nuts_compatibility_tree_branch_idTonuts.title,
+    artists: item.nuts_compatibility_tree_branch_idTonuts.artists,
+    level: item.branch_level || undefined,
+  }))
+}
