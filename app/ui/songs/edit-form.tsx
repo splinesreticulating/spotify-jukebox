@@ -227,7 +227,7 @@ export default function EditSongForm({ song: initialSong }: { song: Song }) {
       </div>
 
       <div className="sticky bottom-0 bg-white py-4 shadow-lg">
-        <div className="flex justify-end gap-4">
+        <div className="flex justify-end gap-4 px-8">
           <button
             type="button"
             onClick={() => reset()}
