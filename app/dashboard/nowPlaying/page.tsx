@@ -86,7 +86,7 @@ export default function NowPlayingPage() {
   return (
     <main className="flex flex-col items-center justify-center p-4 sm:p-6">
       <section className="w-full max-w-md text-center">
-        <Image src="/squirrelGuitarButton.png" width={92} height={95} alt="Squirrel button" className="mx-auto my-2" />
+        <Image src="/squirrelGuitarSanta.png" width={92} height={95} alt="Squirrel button" className="mx-auto my-2" />
         <ul className="flex w-full flex-col items-center space-y-4">
           {lastSong.title && (
             <>

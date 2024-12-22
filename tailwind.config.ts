@@ -47,11 +47,11 @@ const config: Config = {
         },
         // Christmas Theme
         christmas: {
-          primary: '#FD5E53', // Red
-          secondary: '#E3B04B', // Gold
-          accent: '#B0EACD', // Light green
-          hover: '#21BF73', // Dark green
-          background: '#F9FCFB', // White with a hint of green
+          primary: '#B91C1C', // Darker red
+          secondary: '#D4AF37', // Richer gold
+          accent: '#4D8E0C', // Softer mint green
+          hover: '#0C8E8E', // Deeper forest green
+          background: '#FAFAFA', // Slightly warmer white
         },
       },
     },
