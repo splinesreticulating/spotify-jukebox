@@ -7,16 +7,21 @@ import { NowPlayingData, NowPlayingSong } from '@/app/lib/types/songs'
 import { SongLink } from '@/app/lib/components/SongLink'
 import { Heart } from '@/app/lib/components/Heart'
 import { NowPlayingSkeleton } from '@/app/ui/skeletons'
-import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
+import { ChevronDownIcon, ChevronRightIcon, ArrowPathIcon } from '@heroicons/react/24/outline'
 import { fetchCompatibleSongs } from '@/app/lib/actions'
 import PlayButton from '@/app/ui/songs/PlayButton'
 import { getLevelColor } from '@/app/lib/utils'
+
+const EXCLUDED_TAGS = ['seen live']
 
 export default function NowPlayingPage() {
   const [nowPlayingData, setNowPlayingData] = useState<NowPlayingData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isExpanded, setIsExpanded] = useState(false)
   const [compatibleSongs, setCompatibleSongs] = useState<NowPlayingSong[]>([])
+  const [artistInfo, setArtistInfo] = useState<any>(null)
+  const [isArtistInfoOpen, setIsArtistInfoOpen] = useState(false)
+  const [isLoadingArtist, setIsLoadingArtist] = useState(false)
 
   useEffect(() => {
     let eventSource: EventSource | null = null
@@ -78,6 +83,20 @@ export default function NowPlayingPage() {
     setIsExpanded(!isExpanded)
   }
 
+  const fetchArtistInfo = async (artistName: string) => {
+    setIsLoadingArtist(true)
+    try {
+      const response = await fetch(`/api/lastfm/artist?name=${encodeURIComponent(artistName)}`)
+      if (!response.ok) throw new Error('Failed to fetch artist info')
+      const data = await response.json()
+      setArtistInfo(data)
+    } catch (error) {
+      console.error('Error fetching artist info:', error)
+    } finally {
+      setIsLoadingArtist(false)
+    }
+  }
+
   if (isLoading) return <NowPlayingSkeleton />
   if (!nowPlayingData) return null
 
@@ -100,7 +119,55 @@ export default function NowPlayingPage() {
           )}
           <li>
             <span className={getLevelColor(currentSong.level)}>now:</span>{' '}
-            <SongLink song={currentSong} className="font-bold" />
+            <div className="flex items-center justify-center gap-2">
+              <button
+                onClick={() => {
+                  setIsArtistInfoOpen(!isArtistInfoOpen)
+                  if (!artistInfo && currentSong.artists?.[0]) {
+                    fetchArtistInfo(currentSong.artists[0])
+                  }
+                }}
+                className="rounded-full p-1 hover:bg-gray-100"
+                aria-label={isArtistInfoOpen ? 'Hide artist info' : 'Show artist info'}
+              >
+                {isArtistInfoOpen ? <ChevronDownIcon className="h-5 w-5" /> : <ChevronRightIcon className="h-5 w-5" />}
+              </button>
+              <SongLink song={currentSong} className="font-bold" />
+            </div>
+            {isArtistInfoOpen && (
+              <div className="mt-4 space-y-6 rounded-lg bg-gray-50 p-4 text-left text-sm">
+                {isLoadingArtist ? (
+                  <div className="flex items-center justify-center py-4">
+                    <ArrowPathIcon className="h-5 w-5 animate-spin text-gray-500" />
+                  </div>
+                ) : artistInfo ? (
+                  <>
+                    <p
+                      className="text-gray-600"
+                      dangerouslySetInnerHTML={{
+                        __html:
+                          artistInfo.bio?.summary?.split('<a href')[0]?.replace(/\s*\[.*?\]\s*/g, '') ||
+                          'No artist information available',
+                      }}
+                    />
+                    {artistInfo.tags?.tag && (
+                      <div className="flex flex-wrap gap-2">
+                        {artistInfo.tags.tag
+                          .filter((tag: any) => !EXCLUDED_TAGS.includes(tag.name.toLowerCase()))
+                          .slice(0, 5)
+                          .map((tag: any) => (
+                            <span key={tag.name} className="rounded bg-gray-200 px-2 py-1 text-xs text-gray-700">
+                              {tag.name}
+                            </span>
+                          ))}
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <p className="text-gray-500">No info found for {currentSong.artists?.[0]}</p>
+                )}
+              </div>
+            )}
           </li>
           <li className="w-full">
             {nextSong.title ? (
