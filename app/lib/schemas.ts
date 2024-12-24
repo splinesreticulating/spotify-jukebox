@@ -17,6 +17,7 @@ export const songInputSchema = z.object({
   energy: z.number().nullable(),
   valence: z.number().nullable(),
   loudness: z.number().nullable(),
+  instrumentalness: z.number().min(0).max(100).nullable(),
 })
 
 // Output type (after transformation)
