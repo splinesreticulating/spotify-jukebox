@@ -107,35 +107,43 @@ export default function EditSongForm({ song: initialSong }: { song: Song }) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="mx-auto max-w-3xl space-y-8 p-6">
-      <div className="rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 p-6">
-        <div className="flex items-center gap-6">
+      <div className="rounded-xl bg-gradient-to-br from-white to-gray-50 p-6 shadow-sm ring-1 ring-gray-200">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
           {initialSong.image_urls && initialSong.image_urls.length > 0 && (
             <Image
               src={initialSong.image_urls[0]}
               alt={`${initialSong.title} album art`}
-              className="h-24 w-24 rounded-lg object-cover shadow-sm"
+              className="h-20 w-20 rounded-lg object-cover shadow-md sm:h-24 sm:w-24"
               width={96}
               height={96}
             />
           )}
-          <div>
-            <div className="text-3xl font-bold text-gray-800">
-              {initialSong.artists?.join(', ')} - {initialSong.title || ''}
+          <div className="min-w-0 flex-1">
+            <div className="space-y-1">
+              <div className="truncate text-lg font-semibold text-gray-900 sm:text-xl md:text-2xl">
+                {initialSong.title || ''}
+              </div>
+              <div className="text-base text-gray-600 sm:text-lg">{initialSong.artists?.join(', ')}</div>
             </div>
-            <div className="mt-4 text-sm text-gray-600">
+            <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-sm text-gray-500">
               <DateAdded song={initialSong} />
               {initialSong.date_liked && (
-                <>
-                  {' · Liked: '}
-                  {new Date(initialSong.date_liked).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
-                </>
+                <span className="flex items-center">
+                  <span className="mx-1.5 h-1 w-1 rounded-full bg-gray-300" />
+                  <span>
+                    Liked:{' '}
+                    {new Date(initialSong.date_liked).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    })}
+                  </span>
+                </span>
               )}
-              {' · '}
-              <LastPlayed song={initialSong} />
+              <span className="flex items-center">
+                <span className="mx-1.5 h-1 w-1 rounded-full bg-gray-300" />
+                <LastPlayed song={initialSong} />
+              </span>
             </div>
           </div>
         </div>
