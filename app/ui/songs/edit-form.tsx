@@ -98,6 +98,7 @@ export default function EditSongForm({ song: initialSong }: { song: Song }) {
       energy: initialSong.energy,
       valence: initialSong.valence,
       loudness: initialSong.loudness,
+      instrumentalness: initialSong.instrumentalness,
     },
   })
 
@@ -147,12 +148,10 @@ export default function EditSongForm({ song: initialSong }: { song: Song }) {
             <InputField label="Spotify ID" {...register('spotify_id')} />
 
             <InputField label="Artists" placeholder="Separate artists with commas" {...register('artists')} />
-
             <InputField label="Album" {...register('album')} />
 
-            <InputField label="Tags" placeholder="Separate tags with commas" {...register('tags')} />
-
             <InputField label="Key" {...register('key')} />
+
             <div className="flex items-end gap-2">
               <div className="flex-1">
                 <InputField label="BPM" type="number" {...register('bpm', { valueAsNumber: true })} />
@@ -178,12 +177,22 @@ export default function EditSongForm({ song: initialSong }: { song: Song }) {
               </button>
             </div>
 
+            <InputField
+              label="Instrumentalness"
+              type="number"
+              min="0"
+              max="100"
+              {...register('instrumentalness', { valueAsNumber: true })}
+            />
+
             <NumericalDropDown
               label="Year"
               lowerValue={FIRST_YEAR}
               upperValue={new Date().getFullYear()}
               {...register('year', { valueAsNumber: true })}
             />
+
+            <InputField label="Tags" placeholder="Separate tags with commas" {...register('tags')} />
 
             <TimeOffDropdown label="Time Off" {...register('hours_off', { valueAsNumber: true })} />
           </div>
