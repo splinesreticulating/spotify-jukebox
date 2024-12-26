@@ -20,10 +20,13 @@ export const LastPlayed: React.FC<{ song: Song }> = ({ song }) => {
   if (!lastPlayedDate) {
     return <em>unplayed</em>
   }
-  return (
-    <em>
-      Last played {daysAgo(lastPlayedDate)} days ago
-      {beforeThatDate && ` (before that: ${daysAgo(beforeThatDate)} days ago)`}
-    </em>
-  )
+
+  // If the song was played today and has a previous play date, show the previous play date
+  const daysAgoValue = Number(daysAgo(lastPlayedDate))
+  if (daysAgoValue === 0 && beforeThatDate) {
+    return <em>Last played {daysAgo(beforeThatDate)} days ago</em>
+  }
+
+  // Otherwise show the most recent play date
+  return <em>Last played {daysAgoValue} days ago</em>
 }
