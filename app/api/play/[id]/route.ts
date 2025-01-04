@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { addToQueue } from '@/app/lib/actions'
 
-export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function POST(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params
     const songId = Number(id)

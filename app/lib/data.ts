@@ -88,13 +88,6 @@ const fetchSongsBaseQuery = ({
   }
 }
 
-const compatibleKeys = (keyRef: string) => {
-  // Here's where we figure out all the compatible
-  // keys. We've got some code for this somewhere
-  // ...else
-  return [keyRef]
-}
-
 export async function fetchLatestSongs(): Promise<LatestSong[]> {
   noStore()
 

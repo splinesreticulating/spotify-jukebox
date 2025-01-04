@@ -1,4 +1,3 @@
-import clsx from 'clsx'
 import { openSans } from '@/app/ui/fonts'
 import { fetchLatestSongs } from '@/app/lib/data'
 import Link from 'next/link'

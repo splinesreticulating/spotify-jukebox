@@ -10,7 +10,7 @@ import { useTheme } from '@/app/lib/ThemeContext'
 import clsx from 'clsx'
 
 export default function SideNav() {
-  const [isPending, startTransition] = useTransition()
+  const [_isPending, startTransition] = useTransition()
   const { theme } = useTheme()
 
   const getThemeClasses = (element: 'logo' | 'background' | 'button') => {

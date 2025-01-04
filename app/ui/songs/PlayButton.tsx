@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { PlayIcon, PauseIcon, ArrowPathIcon } from '@heroicons/react/24/solid'
+import { PlayIcon, ArrowPathIcon } from '@heroicons/react/24/solid'
 import { useTheme } from '@/app/lib/ThemeContext'
 import clsx from 'clsx'
 import { toast } from 'sonner'
