@@ -20,6 +20,7 @@ export default function Table({
   const [songs, setSongs] = useState<Song[]>([])
   const [error, setError] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
+  const [expandedSong, setExpandedSong] = useState<number | null>(null)
 
   useEffect(() => {
     startTransition(() => {
@@ -70,32 +71,64 @@ export default function Table({
           ) : (
             <>
               {/* Mobile View */}
-              <div className="md:hidden">
-                {songs.map((song) => (
-                  <div key={song.id} className="mb-2 w-full rounded-md bg-white p-4">
-                    <div className="flex items-center justify-between border-b pb-4">
-                      <div>
-                        <div className="mb-2 flex items-center">
-                          <PlayButton songId={song.id} />
-                          <Link href={`/dashboard/songs/${song.id}/edit`} className="ml-2">
+              <div className="overflow-x-hidden md:hidden">
+                <div className="flex flex-col divide-y divide-gray-200">
+                  {songs.map((song) => (
+                    <div key={song.id} className="w-full py-3">
+                      {/* Main Row - Always Visible */}
+                      <div className="mb-2 flex w-full items-center gap-3">
+                        <PlayButton songId={song.id} />
+                        <div className="min-w-0 flex-1 overflow-hidden">
+                          <Link
+                            href={`/dashboard/songs/${song.id}/edit`}
+                            className="block max-w-[200px] truncate font-medium text-gray-900 sm:max-w-[300px]"
+                          >
                             {song.title}
                           </Link>
+                          <p className="max-w-[200px] truncate text-sm text-gray-500 sm:max-w-[300px]">
+                            {song.artists.join(', ')}
+                          </p>
                         </div>
-                        <p className="text-sm text-gray-500">{song.artists.join(', ')}</p>
+                        <button
+                          onClick={() => setExpandedSong(expandedSong === song.id ? null : song.id)}
+                          className="ml-auto shrink-0 p-2 text-gray-400 hover:text-gray-600"
+                          aria-label="Toggle details"
+                        >
+                          <svg
+                            className={`h-5 w-5 transition-transform ${expandedSong === song.id ? 'rotate-180' : ''}`}
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </button>
                       </div>
+
+                      {/* Details - Expandable */}
+                      {expandedSong === song.id && (
+                        <div className="space-y-1 pl-10 text-sm">
+                          <div className="flex justify-between py-1">
+                            <span className="text-gray-500">Level</span>
+                            <span className="text-gray-900">{song.level}</span>
+                          </div>
+                          <div className="flex justify-between py-1">
+                            <span className="text-gray-500">Key</span>
+                            <span className="text-gray-900">{song.key}</span>
+                          </div>
+                          <div className="flex justify-between py-1">
+                            <span className="text-gray-500">BPM</span>
+                            <span className="text-gray-900">{song.bpm}</span>
+                          </div>
+                          <div className="flex justify-between py-1">
+                            <span className="text-gray-500">Year</span>
+                            <span className="text-gray-900">{song.year}</span>
+                          </div>
+                        </div>
+                      )}
                     </div>
-                    <div className="flex w-full items-center justify-between pt-4">
-                      <div>
-                        <p className="text-sm">Level: {song.level}</p>
-                        <p className="text-sm">Key: {song.key}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm">BPM: {song.bpm}</p>
-                        <p className="text-sm">Year: {song.year}</p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
 
               {/* Desktop View */}

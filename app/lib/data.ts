@@ -47,7 +47,8 @@ const fetchSongsBaseQuery = ({
   nineties,
   thisYear,
 }: SongQueryParams) => {
-  const conditions = [
+  // First collect non-era conditions
+  const baseConditions = [
     // Search query
     query
       ? {
@@ -66,7 +67,10 @@ const fetchSongsBaseQuery = ({
     keyRef ? { key: keyRef } : null,
     // BPM filter
     bpmRef ? { bpm: { gte: Number(bpmRef) - 5, lte: Number(bpmRef) + 5 } } : null,
-    // Era filters
+  ].filter((condition): condition is NonNullable<typeof condition> => condition !== null)
+
+  // Collect era conditions separately
+  const eraConditions = [
     eighties ? { year: { gte: 1980, lt: 1990 } } : null,
     nineties ? { year: { gte: 1990, lt: 2000 } } : null,
     thisYear ? { year: new Date().getFullYear() } : null,
@@ -74,7 +78,11 @@ const fetchSongsBaseQuery = ({
 
   return {
     where: {
-      AND: conditions,
+      AND: [
+        ...baseConditions,
+        // Only add era OR condition if there are any era filters
+        ...(eraConditions.length > 0 ? [{ OR: eraConditions }] : []),
+      ],
     },
     orderBy: [{ date_added: 'desc' as const }],
   }

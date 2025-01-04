@@ -56,7 +56,6 @@ export default async function Page({
 
   return (
     <div className="w-full">
-      <h1 className="text-2xl">Search</h1>
       <SearchFilters
         initialValues={params}
         nowPlayingKey={nowPlaying.currentSong.key || undefined}
