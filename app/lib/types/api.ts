@@ -2,10 +2,10 @@ export type State = {
   message: string
 }
 
-export type SongQueryParams = {
+export interface SongQueryParams {
   query: string
   levelsArray: string[]
-  instrumentalness: number | undefined
+  instrumental?: string
   keyRef?: string
   bpmRef?: string
   eighties?: boolean

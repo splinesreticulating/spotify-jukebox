@@ -1,17 +1,19 @@
 'use client'
 
-import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/outline'
 import clsx from 'clsx'
-import Link from 'next/link'
 import { generatePagination } from '@/app/lib/utils'
-import { usePathname, useSearchParams } from 'next/navigation'
 import { useTheme } from '@/app/lib/ThemeContext'
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 
-export default function Pagination({ totalPages }: { totalPages: number }) {
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
-  const currentPage = Number(searchParams?.get('page')) || 1
+interface PaginationProps {
+  totalPages: number
+  currentPage: number
+  onPageChange: (page: number) => void
+}
+
+export default function Pagination({ totalPages, currentPage, onPageChange }: PaginationProps) {
   const { theme } = useTheme()
+  const allPages = generatePagination(currentPage, totalPages)
 
   const getThemeClasses = (isActive: boolean) => {
     const themeMap = {
@@ -43,115 +45,67 @@ export default function Pagination({ totalPages }: { totalPages: number }) {
     return isActive ? themeMap[theme].active : themeMap[theme].hover
   }
 
-  const createPageURL = (pageNumber: number | string) => {
-    const params = new URLSearchParams(searchParams?.toString() || '')
-    params.set('page', pageNumber.toString())
-    return `${pathname}?${params.toString()}`
-  }
-
-  const allPages = generatePagination(currentPage, totalPages)
-
   return (
     <div className="inline-flex">
-      <PaginationArrow
-        direction="left"
-        href={createPageURL(currentPage - 1)}
-        isDisabled={currentPage <= 1}
-        theme={theme}
-      />
+      <PaginationArrow direction="left" onClick={() => onPageChange(currentPage - 1)} disabled={currentPage <= 1} />
 
       <div className="flex -space-x-px">
         {allPages.map((page, index) => {
-          let position: 'first' | 'last' | 'single' | 'middle' | undefined
+          if (page === '...') {
+            return (
+              <span key={`${page}-${index}`} className="px-4 py-2 text-sm text-gray-700">
+                {page}
+              </span>
+            )
+          }
 
-          if (index === 0) position = 'first'
-          if (index === allPages.length - 1) position = 'last'
-          if (allPages.length === 1) position = 'single'
-          if (page === '...') position = 'middle'
-
+          const isActive = page === currentPage
           return (
-            <PaginationNumber
+            <button
               key={page}
-              href={createPageURL(page)}
-              page={page}
-              position={position}
-              isActive={currentPage === page}
-              themeClasses={getThemeClasses(currentPage === page)}
-            />
+              onClick={() => onPageChange(Number(page))}
+              className={clsx(
+                'relative inline-flex items-center px-4 py-2 text-sm font-semibold',
+                getThemeClasses(isActive),
+              )}
+            >
+              {page}
+            </button>
           )
         })}
       </div>
 
       <PaginationArrow
         direction="right"
-        href={createPageURL(currentPage + 1)}
-        isDisabled={currentPage >= totalPages}
-        theme={theme}
+        onClick={() => onPageChange(currentPage + 1)}
+        disabled={currentPage >= totalPages}
       />
     </div>
   )
 }
 
-function PaginationNumber({
-  page,
-  href,
-  isActive,
-  position,
-  themeClasses,
+function PaginationArrow({
+  direction,
+  onClick,
+  disabled,
 }: {
-  page: number | string
-  href: string
-  position?: 'first' | 'last' | 'middle' | 'single'
-  isActive: boolean
-  themeClasses: string
+  direction: 'left' | 'right'
+  onClick: () => void
+  disabled: boolean
 }) {
-  const className = clsx(
-    'flex h-10 w-10 items-center justify-center text-sm border',
-    {
-      'rounded-l-md': position === 'first' || position === 'single',
-      'rounded-r-md': position === 'last' || position === 'single',
-      'z-10 border-none': isActive,
-      'hover:bg-gray-100': !isActive && position !== 'middle',
-      'text-gray-300': position === 'middle',
-    },
-    themeClasses,
-  )
-
-  if (position === 'middle') {
-    return <div className={className}>...</div>
-  }
+  const Icon = direction === 'left' ? ChevronLeftIcon : ChevronRightIcon
 
   return (
-    <Link href={href} className={className}>
-      {page}
-    </Link>
-  )
-}
-
-function PaginationArrow({
-  href,
-  direction,
-  isDisabled,
-  theme,
-}: {
-  href: string
-  direction: 'left' | 'right'
-  isDisabled?: boolean
-  theme: string
-}) {
-  const className = clsx('flex h-10 w-10 items-center justify-center rounded-md border', {
-    'pointer-events-none text-gray-300': isDisabled,
-    'hover:bg-gray-100': !isDisabled,
-    [`hover:bg-${theme}-accent hover:text-${theme}-primary`]: !isDisabled,
-  })
-
-  const icon = direction === 'left' ? <ArrowLeftIcon className="w-4" /> : <ArrowRightIcon className="w-4" />
-
-  return isDisabled ? (
-    <div className={className}>{icon}</div>
-  ) : (
-    <Link className={className} href={href}>
-      {icon}
-    </Link>
+    <button
+      className={clsx(
+        'inline-flex h-10 w-10 items-center justify-center rounded-md',
+        disabled ? 'cursor-not-allowed opacity-50' : 'hover:bg-gray-100',
+      )}
+      onClick={onClick}
+      disabled={disabled}
+    >
+      <span className="sr-only">{direction === 'left' ? 'Previous page' : 'Next page'}</span>
+      <Icon className="h-4 w-4" />
+    </button>
   )
 }

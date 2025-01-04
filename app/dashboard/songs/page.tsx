@@ -1,50 +1,78 @@
-import { Suspense } from 'react'
-import { fetchNowPlayingSongID, fetchSongById, fetchSongsPages } from '@/app/lib/data'
-import { Metadata } from 'next'
-import { SongsTableSkeleton } from '@/app/ui/skeletons'
 import SearchFilters from '@/app/ui/songs/SearchFilters'
 import SearchResults from '@/app/ui/songs/SearchResults'
+import { fetchSongsPages, fetchNowPlaying } from '@/app/lib/data'
 
-export const metadata: Metadata = {
-  title: 'Search',
-}
+export default async function Page({
+  searchParams,
+}: {
+  searchParams?: Promise<{
+    query?: string
+    page?: string
+    levels?: string
+    instrumental?: string
+    keyRef?: string
+    bpmRef?: string
+    eighties?: string
+    nineties?: string
+    thisYear?: string
+  }>
+}) {
+  const params = await (searchParams ||
+    Promise.resolve({
+      query: '',
+      page: '',
+      levels: '',
+      instrumental: '',
+      keyRef: '',
+      bpmRef: '',
+      eighties: '',
+      nineties: '',
+      thisYear: '',
+    }))
+  const nowPlaying = await fetchNowPlaying()
 
-async function getData(searchParams: Promise<Record<string, string>>) {
-  const { query, levels, instrumentalness, keyRef, bpmRef, eighties, nineties, thisYear } = await searchParams
+  // Process search params
+  const query = params.query || ''
+  const currentPage = Number(params.page) || 1
+  const levels = params.levels || ''
+  const instrumental = params.instrumental || ''
+  const keyRef = params.keyRef || ''
+  const bpmRef = params.bpmRef || ''
+  const eighties = params.eighties === 'true'
+  const nineties = params.nineties === 'true'
+  const thisYear = params.thisYear === 'true'
 
-  const nowPlayingSongId = await fetchNowPlayingSongID()
-  const nowPlayingSong = await fetchSongById(nowPlayingSongId!)
+  // Pre-fetch data on the server
   const totalPages = await fetchSongsPages(
     query,
     levels,
-    instrumentalness,
+    instrumental,
     keyRef,
     bpmRef,
-    eighties,
-    nineties,
-    thisYear,
+    eighties.toString(),
+    nineties.toString(),
+    thisYear.toString(),
   )
-
-  return {
-    nowPlayingSong,
-    totalPages,
-  }
-}
-
-export default async function Page({ searchParams }: { searchParams: Promise<Record<string, string>> }) {
-  const { nowPlayingSong, totalPages } = await getData(searchParams)
 
   return (
     <div className="w-full">
-      <h1 className="text-2xl">Search</h1>
       <SearchFilters
-        initialValues={await searchParams}
-        nowPlayingKey={nowPlayingSong?.key || ''}
-        nowPlayingBPM={nowPlayingSong?.bpm || undefined}
+        initialValues={params}
+        nowPlayingKey={nowPlaying.currentSong.key || undefined}
+        nowPlayingBPM={nowPlaying.currentSong.bpm || undefined}
       />
-      <Suspense fallback={<SongsTableSkeleton />}>
-        <SearchResults searchParams={{ ...(await searchParams), totalPages }} />
-      </Suspense>
+      <SearchResults
+        query={query}
+        currentPage={currentPage}
+        levels={levels}
+        instrumental={instrumental}
+        keyRef={keyRef}
+        bpmRef={bpmRef}
+        eighties={eighties}
+        nineties={nineties}
+        thisYear={thisYear}
+        totalPages={totalPages}
+      />
     </div>
   )
 }
