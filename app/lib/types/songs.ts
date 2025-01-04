@@ -40,6 +40,8 @@ export type NowPlayingSong = {
   artists: Song['artists']
   title: Song['title']
   level?: number
+  key?: Song['key']
+  bpm?: Song['bpm']
 }
 
 export type LevelOption = {

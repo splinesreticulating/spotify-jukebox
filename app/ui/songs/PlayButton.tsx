@@ -1,28 +1,62 @@
 'use client'
 
-import { PlayIcon } from '@heroicons/react/16/solid'
-import { addToQueue } from '@/app/lib/actions'
-import { useToast } from '@/app/ui/toast/toast'
+import { useState } from 'react'
+import { PlayIcon, PauseIcon, ArrowPathIcon } from '@heroicons/react/24/solid'
+import { useTheme } from '@/app/lib/ThemeContext'
+import clsx from 'clsx'
+import { toast } from 'sonner'
 
-export default function PlayButton({ songId }: { songId: number }) {
-  const { toast } = useToast()
+interface PlayButtonProps {
+  songId: number
+  className?: string
+}
 
-  const handleClick = async () => {
+export default function PlayButton({ songId, className = '' }: PlayButtonProps) {
+  const [isLoading, setIsLoading] = useState(false)
+  const { theme } = useTheme()
+
+  const getThemeClasses = () => {
+    const themeMap = {
+      ocean: 'hover:text-ocean-primary active:text-ocean-accent',
+      forest: 'hover:text-forest-primary active:text-forest-accent',
+      sunset: 'hover:text-sunset-primary active:text-sunset-accent',
+      purple: 'hover:text-purple-primary active:text-purple-accent',
+      midnight: 'hover:text-midnight-primary active:text-midnight-accent',
+      christmas: 'hover:text-christmas-primary active:text-christmas-accent',
+    }
+    return themeMap[theme]
+  }
+
+  const handlePlay = async () => {
     try {
-      const result = await addToQueue(songId)
-      if (result.success) {
-        toast('Added to queue', 'success')
-      } else {
-        toast('Failed to add to queue', 'error')
+      setIsLoading(true)
+      const response = await fetch(`/api/play/${songId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to queue song')
       }
+
+      toast.success('Song added to queue')
     } catch (error) {
-      toast('Failed to add to queue', 'error')
+      console.error('Error queueing song:', error)
+      toast.error('Failed to queue song')
+    } finally {
+      setIsLoading(false)
     }
   }
 
   return (
-    <button onClick={handleClick}>
-      <PlayIcon className="mr-1 inline h-3 w-3 text-gray-500 hover:text-red-800" aria-hidden="true" />
+    <button
+      onClick={handlePlay}
+      disabled={isLoading}
+      className={clsx('rounded p-1 transition-colors', getThemeClasses(), className)}
+    >
+      {isLoading ? <ArrowPathIcon className="h-5 w-5 animate-spin" /> : <PlayIcon className="h-5 w-5" />}
     </button>
   )
 }

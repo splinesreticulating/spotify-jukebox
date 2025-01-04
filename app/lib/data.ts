@@ -6,6 +6,8 @@ import { unstable_noStore as noStore } from 'next/cache'
 import type { SongSelectFields } from '@/app/lib/types'
 import type { LatestSong } from '@/app/ui/dashboard/latest-songs'
 import { ArtistPayload, LatestSongPayload } from './types/database'
+import { unstable_cache } from 'next/cache'
+import type { SongQueryParams } from '@/app/lib/types/api'
 
 const songSelectFields: SongSelectFields = {
   id: true,
@@ -38,68 +40,43 @@ const MIN_BPM_MULTIPLIER = 0.96
 const fetchSongsBaseQuery = ({
   query,
   levelsArray,
-  instrumentalness,
+  instrumental,
   keyRef,
   bpmRef,
   eighties,
   nineties,
   thisYear,
-}: {
-  query: string
-  levelsArray: string[]
-  instrumentalness?: number
-  keyRef?: string
-  bpmRef?: string
-  eighties?: boolean
-  nineties?: boolean
-  thisYear?: boolean
-}) => {
-  const conditions = []
-
-  if (query) {
-    conditions.push({
-      OR: [
-        { artists: { has: query } },
-        { title: { contains: query, mode: 'insensitive' as const } },
-        { tags: { has: query } },
-      ],
-    })
-  }
-
-  if (levelsArray.length > 0) {
-    conditions.push({ level: { in: levelsArray.map(Number) } })
-  }
-
-  if (instrumentalness && instrumentalness >= 90) {
-    conditions.push({ instrumentalness: { gte: 90 } })
-  }
-
-  if (keyRef) {
-    conditions.push({ key: keyRef })
-  }
-
-  if (bpmRef) {
-    conditions.push({
-      bpm: {
-        gte: Number(bpmRef) * MIN_BPM_MULTIPLIER,
-        lte: Number(bpmRef) * MAX_BPM_MULTIPLIER,
-      },
-    })
-  }
-
-  if (eighties || nineties || thisYear) {
-    const yearConditions = []
-    if (eighties) yearConditions.push({ year: { gte: 1980, lt: 1990 } })
-    if (nineties) yearConditions.push({ year: { gte: 1990, lt: 2000 } })
-    if (thisYear) yearConditions.push({ year: { equals: new Date().getFullYear() } })
-    conditions.push({ OR: yearConditions })
-  }
+}: SongQueryParams) => {
+  const conditions = [
+    // Search query
+    query
+      ? {
+          OR: [
+            { title: { contains: query, mode: 'insensitive' as const } },
+            { artists: { hasSome: query.split(' ') } },
+            { tags: { hasSome: query.split(' ') } },
+          ],
+        }
+      : null,
+    // Levels filter
+    levelsArray.length > 0 ? { level: { in: levelsArray.map(Number) } } : null,
+    // Instrumentalness filter
+    instrumental === '1' ? { instrumentalness: { gte: 90 } } : null,
+    // Key filter
+    keyRef ? { key: keyRef } : null,
+    // BPM filter
+    bpmRef ? { bpm: { gte: Number(bpmRef) - 5, lte: Number(bpmRef) + 5 } } : null,
+    // Era filters
+    eighties ? { year: { gte: 1980, lt: 1990 } } : null,
+    nineties ? { year: { gte: 1990, lt: 2000 } } : null,
+    thisYear ? { year: new Date().getFullYear() } : null,
+  ].filter((condition): condition is NonNullable<typeof condition> => condition !== null)
 
   return {
-    where: conditions.length > 0 ? { AND: conditions } : {},
-    orderBy: {
-      date_added: 'desc' as const,
+    where: {
+      AND: conditions,
     },
+    orderBy: [{ date_added: 'desc' as const }],
   }
 }
 
@@ -163,47 +140,52 @@ export async function fetchCardData() {
   }
 }
 
-export async function fetchFilteredSongs(
-  query: string,
-  currentPage: number,
-  levels: string,
-  instrumentalness: number,
-  keyRef?: string,
-  bpmRef?: string,
-  eighties?: boolean,
-  nineties?: boolean,
-  thisYear?: boolean,
-) {
-  const offset = (currentPage - 1) * ITEMS_PER_PAGE
-  const levelsArray = levels ? levels.split(',').map((level) => level) : []
+export const fetchFilteredSongs = unstable_cache(
+  async (
+    query: string,
+    currentPage: number,
+    levels: string,
+    instrumental: string,
+    keyRef?: string,
+    bpmRef?: string,
+    eighties?: boolean,
+    nineties?: boolean,
+    thisYear?: boolean,
+  ) => {
+    const offset = (currentPage - 1) * ITEMS_PER_PAGE
+    const levelsArray = levels ? levels.split(',') : []
 
-  try {
-    const songs = await db.nuts.findMany({
-      ...fetchSongsBaseQuery({
-        query,
-        levelsArray,
-        instrumentalness,
-        keyRef,
-        bpmRef,
-        eighties,
-        nineties,
-        thisYear,
-      }),
-      take: ITEMS_PER_PAGE,
-      skip: offset,
-    })
-
-    return songs
-  } catch (error) {
-    console.error('Database Error:', error)
-    throw new Error('Failed to fetch songs.')
-  }
-}
+    try {
+      return await db.nuts.findMany({
+        ...fetchSongsBaseQuery({
+          query,
+          levelsArray,
+          instrumental,
+          keyRef,
+          bpmRef,
+          eighties,
+          nineties,
+          thisYear,
+        }),
+        take: ITEMS_PER_PAGE,
+        skip: offset,
+      })
+    } catch (error) {
+      console.error('Database Error:', error)
+      throw new Error('Failed to fetch songs.')
+    }
+  },
+  ['filtered-songs'],
+  {
+    revalidate: 60, // Cache for 1 minute
+    tags: ['songs'],
+  },
+)
 
 export async function fetchSongsPages(
   query: string,
   levels: string,
-  instrumentalness: string | undefined,
+  instrumental: string | undefined,
   keyRef?: string,
   bpmRef?: string,
   eighties?: string,
@@ -217,7 +199,7 @@ export async function fetchSongsPages(
       ...fetchSongsBaseQuery({
         query,
         levelsArray,
-        instrumentalness: instrumentalness ? Number(instrumentalness) : undefined,
+        instrumental: instrumental ? String(instrumental) : undefined,
         keyRef,
         bpmRef,
         eighties: eighties === 'true',
@@ -277,6 +259,8 @@ export const fetchNowPlaying = async (): Promise<NowPlayingData> => {
     artists: currentSongData.artists,
     title: currentSongData.title,
     level: Number(currentSongData.level),
+    key: currentSongData.key,
+    bpm: currentSongData.bpm,
   }
 
   const lastSong: NowPlayingSong = lastSongData

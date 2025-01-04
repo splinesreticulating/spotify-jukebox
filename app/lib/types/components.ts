@@ -1,10 +1,3 @@
-export type ToastType = 'success' | 'error'
-
-export type Toast = {
-  message: string
-  type: ToastType
-}
-
 export type SearchResultsProps = {
   searchParams: {
     query?: string
@@ -43,34 +36,9 @@ export interface SongsTableProps {
   currentPage: number
   levels: string
   instrumental: number
-  keyRef?: string
-  bpmRef?: string
+  keyRef: string
+  bpmRef: string
   eighties?: boolean
   nineties?: boolean
   thisYear?: boolean
-}
-
-// Filter Components
-export interface KeyFilterProps {
-  initialValue: string | undefined
-}
-
-export interface BPMFilterProps {
-  initialValue: number | undefined
-}
-
-export interface EightiesFilterProps {
-  initialValue: boolean
-}
-
-export interface NinetiesFilterProps {
-  initialValue: boolean
-}
-
-export interface InstrumentalFilterProps {
-  initialValue: number
-}
-
-export interface ThisYearFilterProps {
-  initialValue: boolean
 }

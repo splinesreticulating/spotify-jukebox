@@ -1,7 +1,6 @@
 import '@/app/ui/global.css'
 import { inter } from '@/app/ui/fonts'
 import { Metadata } from 'next'
-import { ToastProvider } from '@/app/ui/toast/toast'
 import { ThemeProvider } from '@/app/lib/ThemeContext'
 import { Providers } from './providers'
 
@@ -19,9 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className={`${inter.className} antialiased`}>
         <ThemeProvider>
-          <ToastProvider>
-            <Providers>{children}</Providers>
-          </ToastProvider>
+          <Providers>{children}</Providers>
         </ThemeProvider>
       </body>
     </html>
