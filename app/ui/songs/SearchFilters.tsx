@@ -115,7 +115,7 @@ export default function SearchFilters({ initialValues, nowPlayingKey, nowPlaying
                 : 'border-2 border-transparent bg-gray-100 text-gray-700 hover:bg-gray-200'
             } disabled:cursor-not-allowed disabled:opacity-50`}
         >
-          Similar BPM
+          ~ BPM
         </button>
         <button
           onClick={() => handleFilterChange('keyRef', initialValues.keyRef ? '' : nowPlayingKey || '')}
@@ -127,7 +127,7 @@ export default function SearchFilters({ initialValues, nowPlayingKey, nowPlaying
                 : 'border-2 border-transparent bg-gray-100 text-gray-700 hover:bg-gray-200'
             } disabled:cursor-not-allowed disabled:opacity-50`}
         >
-          Same Key
+          = Key
         </button>
       </div>
     </div>
