@@ -40,8 +40,9 @@ export default function SearchFilters({ initialValues, nowPlayingKey, nowPlaying
         />
         <MagnifyingGlassIcon className="absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
       </div>
-      {/* Levels Section */}
+      {/* Filter Buttons */}
       <div className="flex flex-wrap gap-2">
+        {/* Level Buttons */}
         {['1', '2', '3', '4', '5'].map((level) => (
           <button
             key={level}
@@ -57,19 +58,19 @@ export default function SearchFilters({ initialValues, nowPlayingKey, nowPlaying
                 initialValues.levels?.includes(level)
                   ? 'border-2 border-blue-700 bg-blue-100 text-blue-700'
                   : 'border-2 border-transparent bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
+              }
+              ${level === '5' ? 'mr-4' : ''}`}
           >
             {level}
           </button>
         ))}
-      </div>
-      {/* Era Section */}
-      <div className="flex flex-wrap gap-2">
+
+        {/* Era Buttons */}
         {[
           { id: 'eighties', label: '80s' },
           { id: 'nineties', label: '90s' },
           { id: 'thisYear', label: new Date().getFullYear().toString() },
-        ].map(({ id, label }) => (
+        ].map(({ id, label }, index, array) => (
           <button
             key={id}
             onClick={() => {
@@ -84,14 +85,14 @@ export default function SearchFilters({ initialValues, nowPlayingKey, nowPlaying
                 initialValues[id] === 'true'
                   ? 'border-2 border-purple-700 bg-purple-100 text-purple-700'
                   : 'border-2 border-transparent bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
+              }
+              ${index === array.length - 1 ? 'mr-4' : ''}`}
           >
             {label}
           </button>
         ))}
-      </div>
-      {/* Music Section */}
-      <div className="flex flex-wrap gap-2">
+
+        {/* Music Buttons */}
         <button
           onClick={() => handleFilterChange('instrumental', initialValues.instrumental !== 'true')}
           className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors
