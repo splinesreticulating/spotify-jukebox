@@ -153,7 +153,23 @@ export default function EditSongForm({ song: initialSong }: { song: Song }) {
         <div className="space-y-6">
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <InputField label="Title" {...register('title')} />
-            <InputField label="Spotify ID" {...register('spotify_id')} />
+            <InputField
+              label="Spotify ID"
+              placeholder="Paste Spotify URL or ID"
+              {...register('spotify_id', {
+                onChange: (e) => {
+                  const value = e.target.value
+                  // Check if it's a Spotify URL
+                  if (value.includes('spotify.com/track/')) {
+                    // Extract the ID after 'track/'
+                    const match = value.match(/track\/([a-zA-Z0-9]{22})/)
+                    if (match && match[1]) {
+                      e.target.value = match[1]
+                    }
+                  }
+                },
+              })}
+            />
 
             <InputField label="Artists" placeholder="Separate artists with commas" {...register('artists')} />
             <InputField label="Album" {...register('album')} />
