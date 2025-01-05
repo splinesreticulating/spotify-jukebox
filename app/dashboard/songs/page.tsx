@@ -2,21 +2,20 @@ import SearchFilters from '@/app/ui/songs/SearchFilters'
 import SearchResults from '@/app/ui/songs/SearchResults'
 import { fetchSongsPages, fetchNowPlaying } from '@/app/lib/data'
 
-export default async function Page({
-  searchParams,
-}: {
-  searchParams?: Promise<{
-    query?: string
-    page?: string
-    levels?: string
-    instrumental?: string
-    keyRef?: string
-    bpmRef?: string
-    eighties?: string
-    nineties?: string
-    thisYear?: string
-  }>
-}) {
+type SearchParams = {
+  query?: string
+  page?: string
+  levels?: string
+  instrumental?: string
+  keyRef?: string
+  bpmRef?: string
+  eighties?: string
+  nineties?: string
+  lastYear?: string
+  thisYear?: string
+}
+
+export default async function Page({ searchParams }: { searchParams?: Promise<SearchParams> }) {
   const params = await (searchParams ||
     Promise.resolve({
       query: '',
@@ -27,6 +26,7 @@ export default async function Page({
       bpmRef: '',
       eighties: '',
       nineties: '',
+      lastYear: '',
       thisYear: '',
     }))
   const nowPlaying = await fetchNowPlaying()
@@ -40,6 +40,7 @@ export default async function Page({
   const bpmRef = params.bpmRef || ''
   const eighties = params.eighties === 'true'
   const nineties = params.nineties === 'true'
+  const lastYear = params.lastYear === 'true'
   const thisYear = params.thisYear === 'true'
 
   // Pre-fetch data on the server
@@ -51,6 +52,7 @@ export default async function Page({
     bpmRef,
     eighties.toString(),
     nineties.toString(),
+    lastYear.toString(),
     thisYear.toString(),
   )
 
@@ -70,6 +72,7 @@ export default async function Page({
         bpmRef={bpmRef}
         eighties={eighties}
         nineties={nineties}
+        lastYear={lastYear}
         thisYear={thisYear}
         totalPages={totalPages}
       />

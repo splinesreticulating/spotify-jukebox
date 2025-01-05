@@ -15,6 +15,7 @@ export default function Table({
   bpmRef,
   eighties,
   nineties,
+  lastYear,
   thisYear,
 }: SongsTableProps) {
   const [songs, setSongs] = useState<Song[]>([])
@@ -35,6 +36,7 @@ export default function Table({
             bpmRef: bpmRef || '',
             eighties: eighties?.toString() || '',
             nineties: nineties?.toString() || '',
+            lastYear: lastYear?.toString() || '',
             thisYear: thisYear?.toString() || '',
           })
 
@@ -52,7 +54,7 @@ export default function Table({
       }
       fetchData()
     })
-  }, [query, currentPage, levels, instrumental, keyRef, bpmRef, eighties, nineties, thisYear])
+  }, [query, currentPage, levels, instrumental, keyRef, bpmRef, eighties, nineties, lastYear, thisYear])
 
   if (isPending) {
     return <TableRowSkeleton />

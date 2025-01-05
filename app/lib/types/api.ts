@@ -10,6 +10,7 @@ export interface SongQueryParams {
   bpmRef?: string
   eighties?: boolean
   nineties?: boolean
+  lastYear?: boolean
   thisYear?: boolean
 }
 

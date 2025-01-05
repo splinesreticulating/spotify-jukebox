@@ -40,5 +40,6 @@ export interface SongsTableProps {
   bpmRef: string
   eighties?: boolean
   nineties?: boolean
+  lastYear?: boolean
   thisYear?: boolean
 }

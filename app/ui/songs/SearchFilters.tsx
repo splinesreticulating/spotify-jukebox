@@ -69,6 +69,7 @@ export default function SearchFilters({ initialValues, nowPlayingKey, nowPlaying
         {[
           { id: 'eighties', label: '80s' },
           { id: 'nineties', label: '90s' },
+          { id: 'lastYear', label: (new Date().getFullYear() - 1).toString() },
           { id: 'thisYear', label: new Date().getFullYear().toString() },
         ].map(({ id, label }, index, array) => (
           <button

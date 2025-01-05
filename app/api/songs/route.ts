@@ -14,6 +14,7 @@ export async function GET(request: Request) {
     const eighties = searchParams.get('eighties') === 'true'
     const nineties = searchParams.get('nineties') === 'true'
     const thisYear = searchParams.get('thisYear') === 'true'
+    const lastYear = searchParams.get('lastYear') === 'true'
 
     const songs = await fetchFilteredSongs(
       query,
@@ -24,6 +25,7 @@ export async function GET(request: Request) {
       bpmRef,
       eighties,
       nineties,
+      lastYear,
       thisYear,
     )
 

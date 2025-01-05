@@ -45,6 +45,7 @@ const fetchSongsBaseQuery = ({
   bpmRef,
   eighties,
   nineties,
+  lastYear,
   thisYear,
 }: SongQueryParams) => {
   // First collect non-era conditions
@@ -73,6 +74,7 @@ const fetchSongsBaseQuery = ({
   const eraConditions = [
     eighties ? { year: { gte: 1980, lt: 1990 } } : null,
     nineties ? { year: { gte: 1990, lt: 2000 } } : null,
+    lastYear ? { year: new Date().getFullYear() - 1 } : null,
     thisYear ? { year: new Date().getFullYear() } : null,
   ].filter((condition): condition is NonNullable<typeof condition> => condition !== null)
 
@@ -151,6 +153,7 @@ export const fetchFilteredSongs = unstable_cache(
     bpmRef?: string,
     eighties?: boolean,
     nineties?: boolean,
+    lastYear?: boolean,
     thisYear?: boolean,
   ) => {
     const offset = (currentPage - 1) * ITEMS_PER_PAGE
@@ -166,6 +169,7 @@ export const fetchFilteredSongs = unstable_cache(
           bpmRef,
           eighties,
           nineties,
+          lastYear,
           thisYear,
         }),
         take: ITEMS_PER_PAGE,
@@ -191,6 +195,7 @@ export async function fetchSongsPages(
   bpmRef?: string,
   eighties?: string,
   nineties?: string,
+  lastYear?: string,
   thisYear?: string,
 ): Promise<number> {
   const levelsArray = levels ? levels.split(',').map((level) => level) : []
@@ -205,6 +210,7 @@ export async function fetchSongsPages(
         bpmRef,
         eighties: eighties === 'true',
         nineties: nineties === 'true',
+        lastYear: lastYear === 'true',
         thisYear: thisYear === 'true',
       }),
     })

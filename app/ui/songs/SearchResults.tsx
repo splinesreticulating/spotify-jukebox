@@ -14,6 +14,7 @@ interface SearchResultsProps {
   bpmRef: string
   eighties: boolean | ''
   nineties: boolean | ''
+  lastYear: boolean | ''
   thisYear: boolean | ''
   totalPages: number
 }
@@ -44,6 +45,7 @@ export default function SearchResults(props: SearchResultsProps) {
         bpmRef={props.bpmRef}
         eighties={props.eighties || undefined}
         nineties={props.nineties || undefined}
+        lastYear={props.lastYear || undefined}
         thisYear={props.thisYear || undefined}
       />
 
