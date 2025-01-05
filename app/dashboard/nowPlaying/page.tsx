@@ -146,8 +146,10 @@ export default function NowPlayingPage() {
                       className="text-gray-600"
                       dangerouslySetInnerHTML={{
                         __html:
-                          artistInfo.bio?.summary?.split('<a href')[0]?.replace(/\s*\[.*?\]\s*/g, '') ||
-                          'No artist information available',
+                          artistInfo.bio?.content
+                            ?.replace(/<a\b[^>]*>.*?<\/a>/g, '')
+                            .replace(/\s*\[.*?\]\s*/g, '')
+                            .replace(/\n/g, '<br />') || 'No artist information available',
                       }}
                     />
                     {artistInfo.tags?.tag && (
