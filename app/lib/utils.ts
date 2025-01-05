@@ -39,19 +39,14 @@ export const generatePagination = (currentPage: number, totalPages: number) => {
   return [1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages]
 }
 
-export const getLevelColor = (level?: number) => {
-  switch (level) {
-    case 1:
-      return 'text-indigo-400' // Sleep - soft purple
-    case 2:
-      return 'text-green-500' // Morning - fresh green
-    case 3:
-      return 'text-amber-500' // Afternoon - warm amber
-    case 4:
-      return 'text-orange-500' // Bar - vibrant orange
-    case 5:
-      return 'text-red-500' // Club - energetic red
-    default:
-      return ''
+export const getLevelColor = (level?: number): string => {
+  const colorMap: Record<number, string> = {
+    1: 'text-indigo-400', // Sleep - soft purple
+    2: 'text-green-500', // Morning - fresh green
+    3: 'text-yellow-500', // Afternoon - bright yellow
+    4: 'text-rose-700', // Bar - deep pink
+    5: 'text-violet-600', // Club - rich purple
   }
+
+  return colorMap[level ?? 0] ?? ''
 }
