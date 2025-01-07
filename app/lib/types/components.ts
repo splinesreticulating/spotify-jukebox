@@ -17,12 +17,13 @@ export interface TimeOffDropdownProps extends React.SelectHTMLAttributes<HTMLSel
   label: string
 }
 
-export type CardType = 'songs' | 'artists'
+export type CardType = 'artists' | 'songs' | 'compatibility'
 
 export interface CardProps {
   title: string
   value: number | string
   type: CardType
+  children?: React.ReactNode
 }
 
 export interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {

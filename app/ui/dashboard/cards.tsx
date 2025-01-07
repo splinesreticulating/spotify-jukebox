@@ -1,4 +1,4 @@
-import { BanknotesIcon, ClockIcon, UserGroupIcon, InboxIcon } from '@heroicons/react/24/outline'
+import { BanknotesIcon, ClockIcon, UserGroupIcon, InboxIcon, HeartIcon } from '@heroicons/react/24/outline'
 import { openSans } from '@/app/ui/fonts'
 import { fetchCardData } from '@/app/lib/data'
 import type { CardProps } from '@/app/lib/types'
@@ -8,15 +8,19 @@ const iconMap = {
   artists: UserGroupIcon,
   pending: ClockIcon,
   songs: InboxIcon,
+  compatibility: HeartIcon,
 }
 
 export default async function CardWrapper() {
-  const { numberOfSongs, numberOfArtists } = await fetchCardData()
+  const { numberOfSongs, numberOfArtists, numberOfCompatibilities } = await fetchCardData()
 
   return (
     <>
       <Card title="Total Songs" value={numberOfSongs.toLocaleString()} type="songs" />
       <Card title="Total Artists" value={numberOfArtists.toLocaleString()} type="artists" />
+      <Card title="Total Combos" value={numberOfCompatibilities.toLocaleString()} type="compatibility">
+        <HeartIcon className="h-12 w-12" />
+      </Card>
     </>
   )
 }

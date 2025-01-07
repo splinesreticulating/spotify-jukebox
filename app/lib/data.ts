@@ -126,16 +126,26 @@ export async function fetchCardData() {
     const artistsPromise = db.nuts.findMany({
       select: { artists: true },
     })
+    const compatibilityCountPromise = db.compatibility_tree.count()
 
-    const data = await Promise.all([songCountPromise, artistsPromise])
+    const data = await Promise.all([songCountPromise, artistsPromise, compatibilityCountPromise])
 
-    // Get unique artists by flattening and deduplicating the arrays
-    const allArtists = data[1].flatMap((song: ArtistPayload) => song.artists)
-    const uniqueArtists = new Set(allArtists)
+    // Get unique primary artists (first artist in each array)
+    const primaryArtists = data[1].map((song: ArtistPayload) => song.artists[0]).filter(Boolean) // Remove undefined/null values
+    const uniqueArtists = new Set(primaryArtists)
+
+    console.log({
+      totalSongs: data[0],
+      artistsArrayLength: data[1].length,
+      sampleArtists: data[1].slice(0, 3), // First 3 songs' artist arrays
+      primaryArtistsLength: primaryArtists.length,
+      uniqueArtistsSize: uniqueArtists.size,
+    })
 
     return {
       numberOfSongs: data[0],
       numberOfArtists: uniqueArtists.size,
+      numberOfCompatibilities: data[2],
     }
   } catch (error) {
     console.error('Database Error:', error)
@@ -398,5 +408,17 @@ export async function fetchSettings() {
   } catch (error) {
     console.error('Database Error:', error)
     throw new Error('Failed to fetch settings data')
+  }
+}
+
+export async function fetchCompatibilityTreeCount() {
+  noStore() // Prevent caching like other dashboard data functions
+
+  try {
+    const count = await db.compatibility_tree.count()
+    return count
+  } catch (error) {
+    console.error('Database Error:', error)
+    throw new Error('Failed to fetch compatibility tree count.')
   }
 }
