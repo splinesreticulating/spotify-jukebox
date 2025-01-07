@@ -134,14 +134,6 @@ export async function fetchCardData() {
     const primaryArtists = data[1].map((song: ArtistPayload) => song.artists[0]).filter(Boolean) // Remove undefined/null values
     const uniqueArtists = new Set(primaryArtists)
 
-    console.log({
-      totalSongs: data[0],
-      artistsArrayLength: data[1].length,
-      sampleArtists: data[1].slice(0, 3), // First 3 songs' artist arrays
-      primaryArtistsLength: primaryArtists.length,
-      uniqueArtistsSize: uniqueArtists.size,
-    })
-
     return {
       numberOfSongs: data[0],
       numberOfArtists: uniqueArtists.size,
