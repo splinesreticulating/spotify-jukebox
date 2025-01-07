@@ -43,7 +43,7 @@ export const getLevelColor = (level?: number): string => {
   const colorMap: Record<number, string> = {
     1: 'text-indigo-400', // Sleep - soft purple
     2: 'text-green-500', // Morning - fresh green
-    3: 'text-yellow-500', // Afternoon - bright yellow
+    3: 'text-orange-400', // Afternoon - bright yellow
     4: 'text-rose-700', // Bar - deep pink
     5: 'text-violet-600', // Club - rich purple
   }
