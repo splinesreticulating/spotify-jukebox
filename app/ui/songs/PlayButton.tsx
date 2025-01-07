@@ -2,8 +2,6 @@
 
 import { useState } from 'react'
 import { PlayIcon, ArrowPathIcon } from '@heroicons/react/24/solid'
-import { useTheme } from '@/app/lib/ThemeContext'
-import clsx from 'clsx'
 import { toast } from 'sonner'
 
 interface PlayButtonProps {
@@ -11,21 +9,8 @@ interface PlayButtonProps {
   className?: string
 }
 
-export default function PlayButton({ songId, className = '' }: PlayButtonProps) {
+export default function PlayButton({ songId }: PlayButtonProps) {
   const [isLoading, setIsLoading] = useState(false)
-  const { theme } = useTheme()
-
-  const getThemeClasses = () => {
-    const themeMap = {
-      ocean: 'hover:text-ocean-primary active:text-ocean-accent',
-      forest: 'hover:text-forest-primary active:text-forest-accent',
-      sunset: 'hover:text-sunset-primary active:text-sunset-accent',
-      purple: 'hover:text-purple-primary active:text-purple-accent',
-      midnight: 'hover:text-midnight-primary active:text-midnight-accent',
-      christmas: 'hover:text-christmas-primary active:text-christmas-accent',
-    }
-    return themeMap[theme]
-  }
 
   const handlePlay = async () => {
     try {
@@ -54,9 +39,15 @@ export default function PlayButton({ songId, className = '' }: PlayButtonProps) 
     <button
       onClick={handlePlay}
       disabled={isLoading}
-      className={clsx('rounded p-1 transition-colors', getThemeClasses(), className)}
+      className="group flex h-8 w-8 items-center justify-center rounded-full 
+                 bg-gray-50 transition-colors hover:bg-gray-100"
+      aria-label="Play song"
     >
-      {isLoading ? <ArrowPathIcon className="h-5 w-5 animate-spin" /> : <PlayIcon className="h-5 w-5" />}
+      {isLoading ? (
+        <ArrowPathIcon className="h-4 w-4 animate-spin text-gray-600" />
+      ) : (
+        <PlayIcon className="h-4 w-4 text-gray-600 transition-colors group-hover:text-red-600" />
+      )}
     </button>
   )
 }
