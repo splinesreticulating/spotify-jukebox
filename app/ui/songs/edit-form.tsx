@@ -185,7 +185,7 @@ export default function EditSongForm({ song: initialSong }: { song: Song }) {
                 onClick={() => {
                   const currentBpm = watch('bpm')
                   if (currentBpm) {
-                    setValue('bpm', currentBpm * 2 > 200 ? currentBpm / 2 : currentBpm * 2, {
+                    setValue('bpm', Math.round(currentBpm * 2 > 200 ? currentBpm / 2 : currentBpm * 2), {
                       shouldValidate: true,
                       shouldDirty: true,
                     })
