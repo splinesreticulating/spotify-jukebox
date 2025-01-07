@@ -8,7 +8,7 @@ import { useTheme } from '@/app/lib/ThemeContext'
 
 const links = [
   { name: 'Home', href: '/dashboard', icon: HomeIcon },
-  { name: 'Search', href: '/dashboard/songs', icon: MagnifyingGlassIcon },
+  { name: 'Library', href: '/dashboard/songs', icon: MagnifyingGlassIcon },
   { name: 'Now playing', href: '/dashboard/nowPlaying', icon: PlayCircleIcon },
   { name: 'Settings', href: '/dashboard/settings', icon: Cog6ToothIcon },
 ]
