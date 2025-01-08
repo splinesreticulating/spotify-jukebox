@@ -105,7 +105,13 @@ export default function NowPlayingPage() {
   return (
     <main className="flex flex-col items-center justify-center p-4 sm:p-6">
       <section className="w-full max-w-md text-center">
-        <Image src="/squirrelGuitarSanta.png" width={92} height={95} alt="Squirrel button" className="mx-auto my-2" />
+        <Image
+          src="/squirrelRoaringTwenties.png"
+          width={92}
+          height={95}
+          alt="Squirrel button"
+          className="mx-auto my-2"
+        />
         <ul className="flex w-full flex-col items-center space-y-4">
           {lastSong.title && (
             <>
@@ -149,7 +155,11 @@ export default function NowPlayingPage() {
                           artistInfo.bio?.content
                             ?.replace(/<a\b[^>]*>.*?<\/a>/g, '')
                             .replace(/\s*\[.*?\]\s*/g, '')
-                            .replace(/\n/g, '<br />') || 'No artist information available',
+                            .replace(/\n/g, '<br />')
+                            .replace(
+                              /\. User-contributed text is available under the Creative Commons By-SA License; additional terms may apply\./,
+                              '',
+                            ) || 'No artist information available',
                       }}
                     />
                     {artistInfo.tags?.tag && (
