@@ -1,5 +1,5 @@
-import SearchFilters from '@/app/ui/songs/SearchFilters'
-import SearchResults from '@/app/ui/songs/SearchResults'
+import SearchFilters from '@/app/components/songs/SearchFilters'
+import SearchResults from '@/app/components/songs/SearchResults'
 import { fetchSongsPages, fetchNowPlaying } from '@/app/lib/data'
 
 type SearchParams = {
@@ -7,28 +7,31 @@ type SearchParams = {
   page?: string
   levels?: string
   instrumental?: string
-  keyRef?: string
+  keyMatch?: string
+  keyCompatible?: string
   bpmRef?: string
   eighties?: string
   nineties?: string
   lastYear?: string
   thisYear?: string
+  playable?: string
 }
 
 export default async function Page({ searchParams }: { searchParams?: Promise<SearchParams> }) {
-  const params = await (searchParams ||
-    Promise.resolve({
-      query: '',
-      page: '',
-      levels: '',
-      instrumental: '',
-      keyRef: '',
-      bpmRef: '',
-      eighties: '',
-      nineties: '',
-      lastYear: '',
-      thisYear: '',
-    }))
+  const params = await (searchParams || {
+    query: '',
+    page: '1',
+    levels: '',
+    instrumental: '',
+    keyMatch: '',
+    keyCompatible: '',
+    bpmRef: '',
+    eighties: '',
+    nineties: '',
+    lastYear: '',
+    thisYear: '',
+    playable: 'true',
+  })
   const nowPlaying = await fetchNowPlaying()
 
   // Process search params
@@ -36,24 +39,28 @@ export default async function Page({ searchParams }: { searchParams?: Promise<Se
   const currentPage = Number(params.page) || 1
   const levels = params.levels || ''
   const instrumental = params.instrumental || ''
-  const keyRef = params.keyRef || ''
+  const keyMatch = params.keyMatch || ''
+  const keyCompatible = params.keyCompatible || ''
   const bpmRef = params.bpmRef || ''
   const eighties = params.eighties === 'true'
   const nineties = params.nineties === 'true'
   const lastYear = params.lastYear === 'true'
   const thisYear = params.thisYear === 'true'
+  const playable = params.playable === 'true'
 
   // Pre-fetch data on the server
   const totalPages = await fetchSongsPages(
     query,
     levels,
     instrumental,
-    keyRef,
+    keyMatch,
+    keyCompatible,
     bpmRef,
     eighties.toString(),
     nineties.toString(),
     lastYear.toString(),
     thisYear.toString(),
+    playable.toString(),
   )
 
   return (
@@ -68,12 +75,14 @@ export default async function Page({ searchParams }: { searchParams?: Promise<Se
         currentPage={currentPage}
         levels={levels}
         instrumental={instrumental}
-        keyRef={keyRef}
+        keyMatch={keyMatch}
+        keyCompatible={keyCompatible}
         bpmRef={bpmRef}
         eighties={eighties}
         nineties={nineties}
         lastYear={lastYear}
         thisYear={thisYear}
+        playable={playable}
         totalPages={totalPages}
       />
     </div>
