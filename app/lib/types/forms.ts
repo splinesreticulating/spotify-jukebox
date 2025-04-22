@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { songInputSchema, songSchema } from '@/app/lib/schemas'
+import { songSchema } from '@/app/lib/schemas'
 
-export type FormValues = z.infer<typeof songInputSchema>
+export type FormValues = z.infer<typeof songSchema>
 export type SongData = z.infer<typeof songSchema>

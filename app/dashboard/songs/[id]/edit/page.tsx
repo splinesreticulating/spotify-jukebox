@@ -1,11 +1,6 @@
-import Form from '@/app/ui/songs/edit-form'
+import Form from '@/app/components/songs/EditForm'
 import { fetchSongById } from '@/app/lib/data'
 import { notFound } from 'next/navigation'
-import { Metadata } from 'next'
-
-export const metadata: Metadata = {
-  title: 'Edit Song',
-}
 
 export default async function EditSongPage({ params }: { params: Promise<{ id: string }> }) {
   const id = (await params).id

@@ -23,15 +23,40 @@ export async function GET() {
     while (!isStreamClosed) {
       try {
         const data = await fetchNowPlaying()
+
+        // Handle case where data is null or undefined
+        if (!data) {
+          throw new Error('No data returned from fetchNowPlaying')
+        }
+
         if (!isStreamClosed) {
           controller.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`))
         }
       } catch (error) {
-        const timestamp = new Date().toISOString()
-        console.error(`[${timestamp}] Error fetching now playing data:`, error)
+        // Properly format error object for logging
+        const errorObj = {
+          message: error instanceof Error ? error.message : 'Unknown error occurred',
+          timestamp: new Date().toISOString(),
+          details:
+            error instanceof Error
+              ? {
+                  name: error.name,
+                  stack: error.stack,
+                }
+              : null,
+        }
+
+        console.error('Error in Now Playing stream:', errorObj)
+
         if (!isStreamClosed) {
+          // Send a properly formatted error event to the client
           controller.enqueue(
-            encoder.encode(`event: error\ndata: ${JSON.stringify({ message: 'Error fetching data' })}\n\n`),
+            encoder.encode(
+              `event: error\ndata: ${JSON.stringify({
+                message: errorObj.message,
+                timestamp: errorObj.timestamp,
+              })}\n\n`,
+            ),
           )
         }
       }

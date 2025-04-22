@@ -1,6 +1,20 @@
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'i.scdn.co',
+        pathname: '**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'coverartarchive.org',
+        pathname: '**',
+      },
+    ],
+  },
   webpack: (config, { isServer }) => {
     if (!isServer) {
       config.resolve.fallback = {
@@ -11,7 +25,8 @@ const nextConfig: NextConfig = {
     return config
   },
   devIndicators: {
-    appIsrStatus: false, // don't show ISR status in the UI
+    buildActivity: false,
+    appIsrStatus: false,
   },
 }
 

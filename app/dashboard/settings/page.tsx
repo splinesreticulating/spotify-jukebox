@@ -1,11 +1,6 @@
 import { fetchSettings } from '@/app/lib/data'
-import SettingsTable from '@/app/ui/settings/table'
-import ThemeSelector from '@/app/ui/theme-selector'
-import { Metadata } from 'next'
-
-export const metadata: Metadata = {
-  title: 'Settings',
-}
+import SettingsTable from '@/app/components/settings/Table'
+import ThemeSelector from '@/app/components/ThemeSelector'
 
 export default async function SettingsPage() {
   const settings = await fetchSettings()

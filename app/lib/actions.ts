@@ -4,54 +4,7 @@ import { signIn } from '@/auth'
 import { AuthError } from 'next-auth'
 import { db } from './db'
 import { NowPlayingData } from '@/app/lib/types'
-
-export async function updateSong(id: string, formData: FormData) {
-  const fields = {
-    title: formData.get('title')?.toString() || null,
-    artists: formData.get('artists')?.toString()?.split(',').filter(Boolean) || [],
-    album: formData.get('album')?.toString() || null,
-    tags: formData.get('tags')?.toString()?.split(',').filter(Boolean) || [],
-    instrumentalness: formData.get('instrumentalness') ? Number(formData.get('instrumentalness')) : null,
-    year: formData.get('year') ? Number(formData.get('year')) : null,
-    hours_off: formData.get('hoursOff') ? Number(formData.get('hoursOff')) : null,
-    level: formData.get('level') ? Number(formData.get('level')) : null,
-    roboticness: formData.get('roboticness') ? Number(formData.get('roboticness')) : null,
-    key: formData.get('key')?.toString() || null,
-    bpm: formData.get('bpm') ? Number(formData.get('bpm')) : null,
-    spotify_id: formData.get('spotify_id')?.toString() || null,
-    danceability: formData.get('danceability') ? Number(formData.get('danceability')) : null,
-    energy: formData.get('energy') ? Number(formData.get('energy')) : null,
-    valence: formData.get('valence') ? Number(formData.get('valence')) : null,
-    loudness: formData.get('loudness') ? Number(formData.get('loudness')) : null,
-  }
-
-  try {
-    return await db.nuts.update({
-      where: { id: Number(id) },
-      data: {
-        artists: fields.artists.length > 0 ? fields.artists : undefined,
-        title: fields.title || undefined,
-        album: fields.album || undefined,
-        tags: fields.tags.length > 0 ? fields.tags : undefined,
-        instrumentalness: fields.instrumentalness || undefined,
-        year: fields.year ?? undefined,
-        hours_off: fields.hours_off ?? undefined,
-        level: fields.level || undefined,
-        roboticness: fields.roboticness || undefined,
-        key: fields.key || undefined,
-        bpm: fields.bpm || undefined,
-        spotify_id: fields.spotify_id || undefined,
-        danceability: fields.danceability || undefined,
-        energy: fields.energy || undefined,
-        valence: fields.valence || undefined,
-        loudness: fields.loudness || undefined,
-      },
-    })
-  } catch (error) {
-    console.error('Update Error:', error)
-    throw new Error('Failed to update song')
-  }
-}
+import { redirect } from 'next/navigation'
 
 export async function befriend(nowPlayingData: NowPlayingData) {
   const { lastSong, currentSong } = nowPlayingData
@@ -59,8 +12,8 @@ export async function befriend(nowPlayingData: NowPlayingData) {
   try {
     await db.compatibility_tree.create({
       data: {
-        root_id: lastSong.songID,
-        branch_id: currentSong.songID,
+        root_id: lastSong.id,
+        branch_id: currentSong.id,
         branch_level: currentSong.level,
       },
     })
@@ -76,7 +29,7 @@ export async function defriend(nowPlayingData: NowPlayingData) {
   try {
     await db.compatibility_tree.deleteMany({
       where: {
-        AND: [{ root_id: lastSong.songID }, { branch_id: currentSong.songID }],
+        AND: [{ root_id: lastSong.id }, { branch_id: currentSong.id }],
       },
     })
   } catch (error) {
@@ -87,7 +40,12 @@ export async function defriend(nowPlayingData: NowPlayingData) {
 
 export async function authenticate(_prevState: { errorMessage: string } | undefined, formData: FormData) {
   try {
-    await signIn('credentials', formData)
+    await signIn('credentials', {
+      email: formData.get('email'),
+      password: formData.get('password'),
+      redirect: false,
+    })
+    redirect('/dashboard')
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
@@ -124,30 +82,43 @@ export async function addToQueue(songId: number) {
 }
 
 export const fetchCompatibleSongs = async (songId: number, nextSongId: number) => {
-  const compatibleSongs = await db.compatibility_tree.findMany({
+  // First get all compatible songs including the next song
+  const allCompatibleSongs = await db.compatibility_tree.findMany({
     where: {
       root_id: songId,
-      NOT: {
-        branch_id: nextSongId,
-      },
     },
     select: {
+      branch_id: true,
       branch_level: true,
       nuts_compatibility_tree_branch_idTonuts: {
         select: {
           id: true,
           title: true,
           artists: true,
+          spotify_id: true,
+          sam_id: true,
         },
       },
     },
-    take: 5,
   })
 
-  return compatibleSongs.map((item) => ({
-    songID: item.nuts_compatibility_tree_branch_idTonuts.id,
-    title: item.nuts_compatibility_tree_branch_idTonuts.title,
-    artists: item.nuts_compatibility_tree_branch_idTonuts.artists,
-    level: item.branch_level || undefined,
-  }))
+  // Check if next song is in the compatible list
+  const isNextSongCompatible = allCompatibleSongs.some((song) => song.branch_id === nextSongId)
+
+  // Filter out the next song from the list of alternatives
+  const compatibleSongs = allCompatibleSongs
+    .filter((song) => song.branch_id !== nextSongId)
+    .map((item) => ({
+      id: item.nuts_compatibility_tree_branch_idTonuts.id,
+      title: item.nuts_compatibility_tree_branch_idTonuts.title,
+      artists: item.nuts_compatibility_tree_branch_idTonuts.artists,
+      level: item.branch_level || undefined,
+      spotify_id: item.nuts_compatibility_tree_branch_idTonuts.spotify_id || undefined,
+      sam_id: item.nuts_compatibility_tree_branch_idTonuts.sam_id || undefined,
+    }))
+
+  return {
+    compatibleSongs,
+    isNextSongCompatible,
+  }
 }

@@ -4,7 +4,7 @@ export type SearchResultsProps = {
     page?: string
     levels?: string
     instrumental?: string
-    keyRef?: string
+    keyMatch?: string
     bpmRef?: string
     eighties?: string
     nineties?: string
@@ -13,11 +13,12 @@ export type SearchResultsProps = {
   }
 }
 
-export interface TimeOffDropdownProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
+export interface TimeOffDropdownProps extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, 'value'> {
   label: string
+  value?: number | null
 }
 
-export type CardType = 'artists' | 'songs' | 'compatibility'
+export type CardType = 'artists' | 'songs' | 'moments' | 'incoming' | 'unprocessed'
 
 export interface CardProps {
   title: string
@@ -37,10 +38,12 @@ export interface SongsTableProps {
   currentPage: number
   levels: string
   instrumental: number
-  keyRef: string
+  keyMatch: string
+  keyCompatible: string
   bpmRef: string
   eighties?: boolean
   nineties?: boolean
   lastYear?: boolean
   thisYear?: boolean
+  playable?: boolean
 }
