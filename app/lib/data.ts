@@ -66,7 +66,7 @@ const buildWhereClause = ({
     }
 
     if (levelsArray.length > 0)
-        conditions.push(`level = ANY(${levelsArray.map(Number)})`)
+        conditions.push(`level = ANY(ARRAY[${levelsArray.map(Number).join(",")}])`)
     if (instrumental === "1")
         conditions.push(`instrumentalness >= 90`)
     if (keyMatch) conditions.push(`key = ${keyMatch}`)
@@ -107,18 +107,19 @@ const fetchSongsBaseQuery = async (
     const whereClause = buildWhereClause(params)
     const currentTime = new Date()
 
-    return await db.$queryRaw`
-    SELECT * FROM nuts 
-    ${whereClause}
-    ORDER BY 
-      CASE 
-        WHEN date_played IS NULL THEN 1
-        ELSE EXTRACT(EPOCH FROM (date_played + (hours_off || ' hours')::interval - ${currentTime}))::integer
-      END ASC,
-      date_added DESC
-    LIMIT ${ITEMS_PER_PAGE}
-    OFFSET ${offset}
-  `
+    const sqlQuery = `
+        SELECT * FROM nuts
+        ${whereClause}
+        ORDER BY 
+          CASE 
+            WHEN date_played IS NULL THEN 1
+            ELSE EXTRACT(EPOCH FROM (date_played + (hours_off || ' hours')::interval - '${currentTime.toISOString()}'))::integer
+          END ASC,
+          date_added DESC
+        LIMIT ${ITEMS_PER_PAGE}
+        OFFSET ${offset}
+    `;
+    return await db.$queryRawUnsafe(sqlQuery);
 }
 
 export async function fetchLatestSongs(): Promise<LatestSong[]> {
@@ -273,11 +274,12 @@ export async function fetchSongsPages(
             thisYear: thisYear === "true",
         })
 
-        const result = await db.$queryRaw<[{ count: bigint }]>`
-      SELECT COUNT(*)::integer as count
-      FROM nuts
-      ${whereClause}
-    `
+        const sqlQuery = `
+            SELECT COUNT(*)::integer as count
+            FROM nuts
+            ${whereClause}
+        `;
+        const result = await db.$queryRawUnsafe(sqlQuery) as { count: number }[];
         return Math.ceil(Number(result[0].count) / ITEMS_PER_PAGE)
     } catch (error) {
         console.error("Database Error:", error)
