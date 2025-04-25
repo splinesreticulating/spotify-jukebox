@@ -474,22 +474,21 @@ export async function fetchAvailableSongsByLevel(onlyAvailable = true) {
     noStore()
     try {
         const currentTime = new Date()
-        const result = await db.$queryRaw<
-            Array<{ level: number; count: number }>
-        >`
-      SELECT 
+        const sqlQuery = `
+      SELECT  
         level,
         COUNT(*) as count
       FROM nuts
       WHERE
         ${
             onlyAvailable
-                ? `(date_played IS NULL OR date_played + (hours_off || ' hours')::interval < ${currentTime})`
+                ? `(date_played IS NULL OR date_played + (hours_off || ' hours')::interval < '${currentTime.toISOString()}')`
                 : `1=1`
         }
       GROUP BY level
       ORDER BY level
-    `
+    `;
+        const result = await db.$queryRawUnsafe(sqlQuery);
 
         return result.map((row: { level: number; count: number }) => ({
             level: Number(row.level),
@@ -506,26 +505,24 @@ export async function fetchAvailableSongsByPeriod(onlyAvailable = true) {
     try {
         const currentDate = new Date()
         const daysInYear = 365.25
-        const result = await db.$queryRaw<
-            Array<{ period: string; count: number }>
-        >`
+        const sqlQuery = `
       WITH periods AS (
         SELECT
           CASE
-            WHEN date_part('days', ${currentDate}::timestamp - (year || '-01-01')::timestamp) / ${daysInYear} <= 3 THEN 'Last 3 years'
-            WHEN date_part('days', ${currentDate}::timestamp - (year || '-01-01')::timestamp) / ${daysInYear} <= 5 THEN '3-5 years'
-            WHEN date_part('days', ${currentDate}::timestamp - (year || '-01-01')::timestamp) / ${daysInYear} <= 10 THEN '5-10 years'
-            WHEN date_part('days', ${currentDate}::timestamp - (year || '-01-01')::timestamp) / ${daysInYear} <= 15 THEN '10-15 years'
-            WHEN date_part('days', ${currentDate}::timestamp - (year || '-01-01')::timestamp) / ${daysInYear} <= 20 THEN '15-20 years'
-            WHEN date_part('days', ${currentDate}::timestamp - (year || '-01-01')::timestamp) / ${daysInYear} <= 30 THEN '20-30 years'
-            WHEN date_part('days', ${currentDate}::timestamp - (year || '-01-01')::timestamp) / ${daysInYear} <= 40 THEN '30-40 years'
+            WHEN date_part('days', '${currentDate.toISOString()}'::timestamp - (year || '-01-01')::timestamp) / ${daysInYear} <= 3 THEN 'Last 3 years'
+            WHEN date_part('days', '${currentDate.toISOString()}'::timestamp - (year || '-01-01')::timestamp) / ${daysInYear} <= 5 THEN '3-5 years'
+            WHEN date_part('days', '${currentDate.toISOString()}'::timestamp - (year || '-01-01')::timestamp) / ${daysInYear} <= 10 THEN '5-10 years'
+            WHEN date_part('days', '${currentDate.toISOString()}'::timestamp - (year || '-01-01')::timestamp) / ${daysInYear} <= 15 THEN '10-15 years'
+            WHEN date_part('days', '${currentDate.toISOString()}'::timestamp - (year || '-01-01')::timestamp) / ${daysInYear} <= 20 THEN '15-20 years'
+            WHEN date_part('days', '${currentDate.toISOString()}'::timestamp - (year || '-01-01')::timestamp) / ${daysInYear} <= 30 THEN '20-30 years'
+            WHEN date_part('days', '${currentDate.toISOString()}'::timestamp - (year || '-01-01')::timestamp) / ${daysInYear} <= 40 THEN '30-40 years'
             ELSE '40+ years'
           END as period
         FROM nuts
         WHERE
           ${
               onlyAvailable
-                  ? `(date_played IS NULL OR date_played + (hours_off || ' hours')::interval < ${currentDate})`
+                  ? `(date_played IS NULL OR date_played + (hours_off || ' hours')::interval < '${currentDate.toISOString()}')`
                   : `1=1`
           }
       )
@@ -545,7 +542,8 @@ export async function fetchAvailableSongsByPeriod(onlyAvailable = true) {
           WHEN '30-40 years' THEN 7
           ELSE 8
         END
-    `
+    `;
+        const result = await db.$queryRawUnsafe(sqlQuery);
 
         return result.map((row: { period: string; count: number }) => ({
             period: row.period,
@@ -610,15 +608,13 @@ export async function fetchArtistInfo(
 export async function fetchAvailableSongsByTag(showOnlyAvailable = true) {
     noStore()
     try {
-        const result = await db.$queryRaw<
-            Array<{ tag: string; count: number }>
-        >`
+        const sqlQuery = `
       WITH RECURSIVE unnested_tags AS (
         SELECT id, unnest(tags) as tag
         FROM nuts
         WHERE ${
             showOnlyAvailable
-                ? `date_played < NOW() - INTERVAL '1 day' * COALESCE(hours_off, 24) / 24 OR date_played IS NULL`
+                ? `(date_played < NOW() - INTERVAL '1 day' * COALESCE(hours_off, 24) / 24 OR date_played IS NULL)`
                 : `1=1`
         }
       )
@@ -627,7 +623,8 @@ export async function fetchAvailableSongsByTag(showOnlyAvailable = true) {
       GROUP BY tag
       ORDER BY count DESC
       LIMIT 10
-    `
+    `;
+        const result = await db.$queryRawUnsafe(sqlQuery);
         return result
     } catch (error) {
         console.error("Database Error:", error)
@@ -639,16 +636,14 @@ export async function fetchAvailableSongsByArtist(showOnlyAvailable = true) {
     noStore()
     try {
         const currentTime = new Date()
-        const result = await db.$queryRaw<
-            Array<{ artist: string; count: number }>
-        >`
+        const sqlQuery = `
       WITH RECURSIVE unnested_artists AS (
         SELECT id, unnest(artists) as artist
         FROM nuts
         WHERE
           ${
               showOnlyAvailable
-                  ? `(date_played IS NULL OR date_played + (hours_off || ' hours')::interval < ${currentTime})`
+                  ? `(date_played IS NULL OR date_played + (hours_off || ' hours')::interval < '${currentTime.toISOString()}')`
                   : `1=1`
           }
       )
@@ -657,7 +652,8 @@ export async function fetchAvailableSongsByArtist(showOnlyAvailable = true) {
       GROUP BY artist
       ORDER BY count DESC
       LIMIT 10
-    `
+    `;
+        const result = await db.$queryRawUnsafe(sqlQuery);
         return result
     } catch (error) {
         console.error("Database Error:", error)
