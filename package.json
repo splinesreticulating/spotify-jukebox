@@ -5,7 +5,7 @@
         "dev": "next dev -p 2309",
         "lint": "biome check .",
         "format": "biome format . --write",
-        "seed": "node -r dotenv/config ./scripts/seed.js",
+        "prisma:seed": "node prisma/seed.cjs",
         "start": "next start -p 3000 -H 0.0.0.0",
         "ts-prune": "ts-prune --ignore \"app/lib/(types|components)/index\\.(ts|tsx)$|app/(api|dashboard)/.*\\.(ts|tsx)$|auth\\.|middleware\\.ts|\\.next/|.*\\.config\\.ts$|page\\.tsx$\""
     },
@@ -15,7 +15,7 @@
         "@prisma/client": "^6.2.1",
         "@tailwindcss/forms": "^0.5.7",
         "@tanstack/react-query": "^5.62.3",
-        "@types/node": "22.15.2",
+        "@types/node": "^22.15.2",
         "@vercel/postgres": "^0.10.0",
         "autoprefixer": "10.4.21",
         "bcrypt": "^5.1.1",
@@ -46,7 +46,8 @@
         "@types/bcrypt": "^5.0.1",
         "@types/react": "^19.1.2",
         "@types/react-dom": "19.1.2",
-        "dotenv": "^16.3.1"
+        "dotenv": "^16.3.1",
+        "ts-node": "^10.9.2"
     },
     "engines": {
         "node": ">=18.17.0"
