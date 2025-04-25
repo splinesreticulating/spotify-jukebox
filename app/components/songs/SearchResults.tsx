@@ -17,7 +17,6 @@ interface SearchResultsProps {
     nineties: boolean | ""
     lastYear: boolean | ""
     thisYear: boolean | ""
-    playable: boolean | ""
     totalPages: number
 }
 
@@ -50,7 +49,6 @@ export default function SearchResults(props: SearchResultsProps) {
                 nineties={props.nineties || undefined}
                 lastYear={props.lastYear || undefined}
                 thisYear={props.thisYear || undefined}
-                playable={props.playable || undefined}
             />
 
             {props.totalPages > 1 && (

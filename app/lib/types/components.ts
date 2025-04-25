@@ -52,5 +52,4 @@ export interface SongsTableProps {
     nineties?: boolean
     lastYear?: boolean
     thisYear?: boolean
-    playable?: boolean
 }

@@ -15,7 +15,6 @@ export async function GET(request: Request) {
     const nineties = searchParams.get("nineties") === "true"
     const lastYear = searchParams.get("lastYear") === "true"
     const thisYear = searchParams.get("thisYear") === "true"
-    const playable = searchParams.get("playable") === "true"
 
     try {
         const songs = await fetchFilteredSongs(
@@ -30,7 +29,6 @@ export async function GET(request: Request) {
             lastYear,
             thisYear,
             keyCompatible,
-            playable,
         )
         return NextResponse.json(songs)
     } catch (error) {

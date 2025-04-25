@@ -2,7 +2,6 @@ import { SongLink } from "@/app/components/SongLink"
 import PlayButton from "@/app/components/songs/PlayButton"
 import { fetchLatestSongs } from "@/app/lib/data"
 import { daysAgo } from "@/app/lib/utils"
-import { isPlayable } from "@/app/lib/utils"
 
 export default async function LatestSongs() {
     const songs = await fetchLatestSongs()
@@ -37,9 +36,7 @@ export default async function LatestSongs() {
                                     className="transition-colors hover:bg-gray-50"
                                 >
                                     <td className="whitespace-nowrap px-3 py-4">
-                                        {isPlayable(song) && (
-                                            <PlayButton songId={song.id} />
-                                        )}
+                                        <PlayButton songId={song.id} />
                                     </td>
                                     <td className="whitespace-nowrap py-4 pl-3 pr-4">
                                         <SongLink
@@ -70,9 +67,7 @@ export default async function LatestSongs() {
                         className="rounded-lg bg-white p-3 shadow-sm transition-shadow duration-200 hover:shadow-md"
                     >
                         <div className="flex items-center gap-3">
-                            {isPlayable(song) && (
-                                <PlayButton songId={song.id} />
-                            )}
+                            <PlayButton songId={song.id} />
 
                             <div className="min-w-0 flex-1">
                                 <SongLink

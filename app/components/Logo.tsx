@@ -23,7 +23,7 @@ export function Logo() {
                 </div>
             )}
             <p className="text-center text-[40px] sm:text-[35px] md:text-[45px]">
-                Squirrel Radio
+                Spotify Jukebox
             </p>
         </div>
     )

@@ -10,7 +10,7 @@ import { befriend, defriend } from "@/app/lib/actions"
 import { fetchCompatibleSongs } from "@/app/lib/actions"
 import { getThemeClasses } from "@/app/lib/theme-utils"
 import type { NowPlayingData, NowPlayingSong } from "@/app/lib/types/songs"
-import { getLevelColor, isPlayable } from "@/app/lib/utils"
+import { getLevelColor } from "@/app/lib/utils"
 import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/24/outline"
 import clsx from "clsx"
 import Image from "next/image"
@@ -269,15 +269,11 @@ export default function NowPlayingPage() {
                                                                 key={song.id}
                                                                 className="flex items-center justify-center gap-1"
                                                             >
-                                                                {isPlayable(
-                                                                    song,
-                                                                ) && (
-                                                                    <PlayButton
-                                                                        songId={
-                                                                            song.id
-                                                                        }
-                                                                    />
-                                                                )}
+                                                                <PlayButton
+                                                                    songId={
+                                                                        song.id
+                                                                    }
+                                                                />
                                                                 <SongLink
                                                                     song={song}
                                                                 />

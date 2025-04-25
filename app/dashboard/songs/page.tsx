@@ -14,7 +14,6 @@ type SearchParams = {
     nineties?: string
     lastYear?: string
     thisYear?: string
-    playable?: string
 }
 
 export default async function Page({
@@ -32,7 +31,6 @@ export default async function Page({
         nineties: "",
         lastYear: "",
         thisYear: "",
-        playable: "true",
     })
     const nowPlaying = await fetchNowPlaying()
 
@@ -52,7 +50,6 @@ export default async function Page({
     const nineties = params.nineties === "true"
     const lastYear = params.lastYear === "true"
     const thisYear = params.thisYear === "true"
-    const playable = params.playable === "true"
 
     // Pre-fetch data on the server
     const totalPages = await fetchSongsPages(
@@ -66,7 +63,6 @@ export default async function Page({
         nineties.toString(),
         lastYear.toString(),
         thisYear.toString(),
-        playable.toString(),
     )
 
     return (
@@ -88,7 +84,6 @@ export default async function Page({
                 nineties={nineties}
                 lastYear={lastYear}
                 thisYear={thisYear}
-                playable={playable}
                 totalPages={totalPages}
             />
         </div>

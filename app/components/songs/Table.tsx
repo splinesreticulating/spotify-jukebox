@@ -4,7 +4,6 @@ import { SongLink } from "@/app/components"
 import TableRowSkeleton from "@/app/components/Skeletons"
 import PlayButton from "@/app/components/songs/PlayButton"
 import type { Song, SongsTableProps } from "@/app/lib/types"
-import { isPlayable } from "@/app/lib/utils"
 import Link from "next/link"
 import { useEffect, useState, useTransition } from "react"
 import React from "react"
@@ -21,7 +20,6 @@ export default function Table({
     nineties,
     lastYear,
     thisYear,
-    playable,
 }: SongsTableProps) {
     const [songs, setSongs] = useState<Song[]>([])
     const [error, setError] = useState<string | null>(null)
@@ -44,7 +42,6 @@ export default function Table({
                         nineties: nineties?.toString() || "",
                         lastYear: lastYear?.toString() || "",
                         thisYear: thisYear?.toString() || "",
-                        playable: playable?.toString() || "",
                     })
 
                     const response = await fetch(
@@ -79,7 +76,6 @@ export default function Table({
         nineties,
         lastYear,
         thisYear,
-        playable,
     ])
 
     if (isPending) {
@@ -108,11 +104,9 @@ export default function Table({
                                         >
                                             {/* Main Row - Always Visible */}
                                             <div className="mb-2 flex w-full items-center gap-3">
-                                                {isPlayable(song) && (
-                                                    <PlayButton
-                                                        songId={song.id}
-                                                    />
-                                                )}
+                                                <PlayButton
+                                                    songId={song.id}
+                                                />
                                                 <div className="min-w-0 flex-1 overflow-hidden">
                                                     <SongLink
                                                         song={{
@@ -250,11 +244,9 @@ export default function Table({
                                                 className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
                                             >
                                                 <td className="flex items-center gap-2 whitespace-nowrap py-4 pl-3 pr-4">
-                                                    {isPlayable(song) && (
-                                                        <PlayButton
-                                                            songId={song.id}
-                                                        />
-                                                    )}
+                                                    <PlayButton
+                                                        songId={song.id}
+                                                    />
                                                     <SongLink
                                                         song={{
                                                             ...song,

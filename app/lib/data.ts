@@ -3,7 +3,11 @@
 import type { NowPlayingData, NowPlayingSong, Song } from "@/app/lib/types"
 import type { LatestSong, SongSelectFields } from "@/app/lib/types"
 import type { SongQueryParams } from "@/app/lib/types/api"
-import { Prisma } from "@prisma/client"
+// Helper for joining SQL fragments
+function arrayJoin(arr: string[], sep: string) {
+  return arr.join(sep);
+}
+
 import { unstable_noStore as noStore } from "next/cache"
 import { unstable_cache } from "next/cache"
 import { ITEMS_PER_PAGE, db } from "./db"
@@ -49,13 +53,12 @@ const buildWhereClause = ({
     lastYear,
     thisYear,
     keyCompatible,
-    playable,
 }: SongQueryParams) => {
     const conditions = []
 
     if (query) {
         const searchTerm = `%${query}%`
-        conditions.push(Prisma.sql`(
+        conditions.push(`(
       title ILIKE ${searchTerm} OR 
       EXISTS (SELECT 1 FROM unnest(artists) a WHERE a ILIKE ${searchTerm}) OR
       EXISTS (SELECT 1 FROM unnest(tags) t WHERE t ILIKE ${searchTerm})
@@ -63,49 +66,36 @@ const buildWhereClause = ({
     }
 
     if (levelsArray.length > 0)
-        conditions.push(Prisma.sql`level = ANY(${levelsArray.map(Number)})`)
+        conditions.push(`level = ANY(${levelsArray.map(Number)})`)
     if (instrumental === "1")
-        conditions.push(Prisma.sql`instrumentalness >= 90`)
-    if (keyMatch) conditions.push(Prisma.sql`key = ${keyMatch}`)
+        conditions.push(`instrumentalness >= 90`)
+    if (keyMatch) conditions.push(`key = ${keyMatch}`)
     if (keyCompatible)
         conditions.push(
-            Prisma.sql`key = ANY(${getCompatibleKeys(keyCompatible)}::text[])`,
+            `key = ANY(${getCompatibleKeys(keyCompatible)}::text[])`,
         )
     if (bpmRef)
         conditions.push(
-            Prisma.sql`bpm BETWEEN ${Number(bpmRef) - 5} AND ${Number(bpmRef) + 5}`,
+            `bpm BETWEEN ${Number(bpmRef) - 5} AND ${Number(bpmRef) + 5}`,
         )
 
-    if (playable) {
-        const platformField =
-            process.env.NEXT_PUBLIC_PLATFORM === "spotify"
-                ? "spotify_id"
-                : "sam_id"
-        if (platformField === "spotify_id") {
-            conditions.push(
-                Prisma.sql`spotify_id IS NOT NULL AND spotify_id != ''`,
-            )
-        } else {
-            conditions.push(Prisma.sql`sam_id IS NOT NULL`)
-        }
-    }
-
     const eraConditions = []
-    if (eighties) eraConditions.push(Prisma.sql`(year >= 1980 AND year < 1990)`)
-    if (nineties) eraConditions.push(Prisma.sql`(year >= 1990 AND year < 2000)`)
+
+    if (eighties) eraConditions.push(`(year >= 1980 AND year < 1990)`)
+    if (nineties) eraConditions.push(`(year >= 1990 AND year < 2000)`)
     if (lastYear)
-        eraConditions.push(Prisma.sql`year = ${new Date().getFullYear() - 1}`)
+        eraConditions.push(`year = ${new Date().getFullYear() - 1}`)
     if (thisYear)
-        eraConditions.push(Prisma.sql`year = ${new Date().getFullYear()}`)
+        eraConditions.push(`year = ${new Date().getFullYear()}`)
 
     if (eraConditions.length > 0) {
-        conditions.push(Prisma.sql`(${Prisma.join(eraConditions, " OR ")})`)
+        conditions.push(`(${arrayJoin(eraConditions, " OR ")})`)
     }
 
     const whereClause =
         conditions.length > 0
-            ? Prisma.sql`WHERE ${Prisma.join(conditions, " AND ")}`
-            : Prisma.empty
+            ? `WHERE ${arrayJoin(conditions, " AND ")}`
+            : ""
 
     return whereClause
 }
@@ -227,7 +217,6 @@ export const fetchFilteredSongs = unstable_cache(
         lastYear?: boolean,
         thisYear?: boolean,
         keyCompatible?: string,
-        playable?: boolean,
     ) => {
         const levelsArray = levels ? levels.split(",") : []
         try {
@@ -242,7 +231,6 @@ export const fetchFilteredSongs = unstable_cache(
                 lastYear,
                 thisYear,
                 keyCompatible,
-                playable,
                 currentPage,
             })
             return result
@@ -269,7 +257,6 @@ export async function fetchSongsPages(
     nineties: string,
     lastYear: string,
     thisYear: string,
-    playable: string,
 ): Promise<number> {
     const levelsArray = levels ? levels.split(",") : []
     try {
@@ -284,7 +271,6 @@ export async function fetchSongsPages(
             nineties: nineties === "true",
             lastYear: lastYear === "true",
             thisYear: thisYear === "true",
-            playable: playable === "true",
         })
 
         const result = await db.$queryRaw<[{ count: bigint }]>`
@@ -486,11 +472,6 @@ export async function fetchAvailableSongsByLevel(onlyAvailable = true) {
     noStore()
     try {
         const currentTime = new Date()
-        const platformField =
-            process.env.NEXT_PUBLIC_PLATFORM === "spotify"
-                ? "spotify_id"
-                : "sam_id"
-
         const result = await db.$queryRaw<
             Array<{ level: number; count: number }>
         >`
@@ -501,15 +482,14 @@ export async function fetchAvailableSongsByLevel(onlyAvailable = true) {
       WHERE
         ${
             onlyAvailable
-                ? Prisma.sql`(date_played IS NULL OR date_played + (hours_off || ' hours')::interval < ${currentTime})
-               AND ${Prisma.raw(platformField)} IS NOT NULL`
-                : Prisma.sql`1=1`
+                ? `(date_played IS NULL OR date_played + (hours_off || ' hours')::interval < ${currentTime})`
+                : `1=1`
         }
       GROUP BY level
       ORDER BY level
     `
 
-        return result.map((row) => ({
+        return result.map((row: { level: number; count: number }) => ({
             level: Number(row.level),
             count: Number(row.count),
         }))
@@ -524,11 +504,6 @@ export async function fetchAvailableSongsByPeriod(onlyAvailable = true) {
     try {
         const currentDate = new Date()
         const daysInYear = 365.25
-        const platformField =
-            process.env.NEXT_PUBLIC_PLATFORM === "spotify"
-                ? "spotify_id"
-                : "sam_id"
-
         const result = await db.$queryRaw<
             Array<{ period: string; count: number }>
         >`
@@ -548,9 +523,8 @@ export async function fetchAvailableSongsByPeriod(onlyAvailable = true) {
         WHERE
           ${
               onlyAvailable
-                  ? Prisma.sql`(date_played IS NULL OR date_played + (hours_off || ' hours')::interval < ${currentDate})
-                 AND ${Prisma.raw(platformField)} IS NOT NULL`
-                  : Prisma.sql`1=1`
+                  ? `(date_played IS NULL OR date_played + (hours_off || ' hours')::interval < ${currentDate})`
+                  : `1=1`
           }
       )
       SELECT 
@@ -571,7 +545,7 @@ export async function fetchAvailableSongsByPeriod(onlyAvailable = true) {
         END
     `
 
-        return result.map((row) => ({
+        return result.map((row: { period: string; count: number }) => ({
             period: row.period,
             count: Number(row.count),
         }))
@@ -642,8 +616,8 @@ export async function fetchAvailableSongsByTag(showOnlyAvailable = true) {
         FROM nuts
         WHERE ${
             showOnlyAvailable
-                ? Prisma.sql`date_played < NOW() - INTERVAL '1 day' * COALESCE(hours_off, 24) / 24 OR date_played IS NULL`
-                : Prisma.sql`1=1`
+                ? `date_played < NOW() - INTERVAL '1 day' * COALESCE(hours_off, 24) / 24 OR date_played IS NULL`
+                : `1=1`
         }
       )
       SELECT tag, COUNT(*) as count
@@ -663,11 +637,6 @@ export async function fetchAvailableSongsByArtist(showOnlyAvailable = true) {
     noStore()
     try {
         const currentTime = new Date()
-        const platformField =
-            process.env.NEXT_PUBLIC_PLATFORM === "spotify"
-                ? "spotify_id"
-                : "sam_id"
-
         const result = await db.$queryRaw<
             Array<{ artist: string; count: number }>
         >`
@@ -677,9 +646,8 @@ export async function fetchAvailableSongsByArtist(showOnlyAvailable = true) {
         WHERE
           ${
               showOnlyAvailable
-                  ? Prisma.sql`(date_played IS NULL OR date_played + (hours_off || ' hours')::interval < ${currentTime})
-                 AND ${Prisma.raw(platformField)} IS NOT NULL`
-                  : Prisma.sql`1=1`
+                  ? `(date_played IS NULL OR date_played + (hours_off || ' hours')::interval < ${currentTime})`
+                  : `1=1`
           }
       )
       SELECT artist, COUNT(*) as count

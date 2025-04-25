@@ -7,8 +7,8 @@ import { Providers } from "./providers"
 
 export const metadata: Metadata = {
     title: {
-        template: "%s | Squirrel Radio",
-        default: "Squirrel Radio",
+        template: "%s | Spotify Jukebox",
+        default: "Spotify Jukebox",
     },
     description: "Complimentary mixed nuts",
     metadataBase: new URL(process.env.NEXTAUTH_URL || "http://localhost:2309"),

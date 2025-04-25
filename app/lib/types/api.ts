@@ -13,7 +13,6 @@ export interface SongQueryParams {
     nineties?: boolean
     lastYear?: boolean
     thisYear?: boolean
-    playable?: boolean
 }
 
 export type SongSelectFields = {

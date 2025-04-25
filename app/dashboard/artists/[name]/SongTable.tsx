@@ -3,7 +3,6 @@
 import { SongLink } from "@/app/components/SongLink"
 import PlayButton from "@/app/components/songs/PlayButton"
 import type { ArtistSongView } from "@/app/lib/types/artists"
-import { isPlayable } from "@/app/lib/utils"
 import { format } from "date-fns"
 import { useState } from "react"
 
@@ -94,9 +93,7 @@ export default function SongTable({
                         <tr key={song.id} className="hover:bg-gray-50">
                             <td className="w-2/3 px-2 py-3 sm:w-2/5 sm:px-3">
                                 <div className="flex items-center gap-2">
-                                    {isPlayable(song) && (
-                                        <PlayButton songId={song.id} />
-                                    )}
+                                    <PlayButton songId={song.id} />
                                     <div className="max-w-[calc(60vw-3rem)] overflow-hidden sm:max-w-[calc(40vw-6rem)]">
                                         <SongLink
                                             song={song}

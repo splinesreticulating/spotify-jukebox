@@ -60,15 +60,6 @@ export const getLevelColor = (level?: number | null): string => {
     return level ? (colorMap[level] ?? "") : ""
 }
 
-export const isPlayable = (song: {
-    spotify_id?: string | null
-    sam_id?: number | null
-}) => {
-    return process.env.NEXT_PUBLIC_PLATFORM === "spotify"
-        ? !!song.spotify_id
-        : !!song.sam_id
-}
-
 export function cleanLastFMText(text: string): string {
     return (
         text
