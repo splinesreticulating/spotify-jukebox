@@ -34,6 +34,10 @@ export default async function Page({ searchParams }: { searchParams?: Promise<Se
   })
   const nowPlaying = await fetchNowPlaying()
 
+  // If nothing is playing, show nothing playing
+  const nowPlayingKey = nowPlaying?.currentSong?.key || undefined
+  const nowPlayingBPM = nowPlaying?.currentSong?.bpm || undefined
+
   // Process search params
   const query = params.query || ''
   const currentPage = Number(params.page) || 1
@@ -67,8 +71,8 @@ export default async function Page({ searchParams }: { searchParams?: Promise<Se
     <div className="w-full">
       <SearchFilters
         initialValues={params}
-        nowPlayingKey={nowPlaying.currentSong.key || undefined}
-        nowPlayingBPM={nowPlaying.currentSong.bpm || undefined}
+        nowPlayingKey={nowPlayingKey}
+        nowPlayingBPM={nowPlayingBPM}
       />
       <SearchResults
         query={query}

@@ -291,7 +291,7 @@ export async function fetchSongById(id: number) {
   }
 }
 
-export const fetchNowPlaying = async (): Promise<NowPlayingData> => {
+export const fetchNowPlaying = async (): Promise<NowPlayingData | null> => {
   // Get the two most recent history entries
   const recentHistory = await db.history.findMany({
     select: {
@@ -303,7 +303,7 @@ export const fetchNowPlaying = async (): Promise<NowPlayingData> => {
   })
 
   if (recentHistory.length === 0) {
-    throw new Error('No history found')
+    return null
   }
 
   // Get the song details for both current and last songs
@@ -313,7 +313,7 @@ export const fetchNowPlaying = async (): Promise<NowPlayingData> => {
   ])
 
   if (!currentSongData) {
-    throw new Error('Current song not found')
+    return null
   }
 
   const currentSong: NowPlayingSong = {
