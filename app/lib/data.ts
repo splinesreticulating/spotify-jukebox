@@ -3,23 +3,22 @@
 import type { NowPlayingData, NowPlayingSong, Song } from "@/app/lib/types"
 import type { LatestSong, SongSelectFields } from "@/app/lib/types"
 import type { SongQueryParams } from "@/app/lib/types/api"
-// Helper for joining SQL fragments
-function arrayJoin(arr: string[], sep: string) {
-  return arr.join(sep);
-}
-
-import { unstable_noStore as noStore } from "next/cache"
-import { unstable_cache } from "next/cache"
-import { ITEMS_PER_PAGE, db } from "./db"
 import type { ArtistSongView } from "./types/artists"
 import type { ArtistPayload, LatestSongPayload } from "./types/database"
 import { cleanLastFMText } from "./utils"
 import { getCompatibleKeys } from "./utils"
+import { unstable_noStore as noStore } from "next/cache"
+import { unstable_cache } from "next/cache"
+import { ITEMS_PER_PAGE, db } from "./db"
 
+// Helper for joining SQL fragments
+function arrayJoin(arr: string[], sep: string) {
+    return arr.join(sep);
+  }
+  
 const songSelectFields: SongSelectFields = {
     id: true,
     spotify_id: true,
-    sam_id: true,
     title: true,
     artists: true,
     tags: true,
@@ -133,7 +132,6 @@ export async function fetchLatestSongs(): Promise<LatestSong[]> {
                 artists: true,
                 date_added: true,
                 spotify_id: true,
-                sam_id: true,
                 level: true,
                 roboticness: true,
             },
@@ -149,7 +147,6 @@ export async function fetchLatestSongs(): Promise<LatestSong[]> {
             title: song.title ?? "",
             date_added: song.date_added ?? new Date(),
             spotify_id: song.spotify_id,
-            sam_id: song.sam_id,
             level: song.level,
             roboticness: song.roboticness,
         }))
@@ -174,7 +171,7 @@ export async function fetchCardData() {
         })
         const incomingCountPromise = db.nuts.count({
             where: {
-                AND: [{ spotify_id: { not: null } }, { sam_id: null }],
+                AND: [{ spotify_id: { not: null } }],
             },
         })
 
@@ -343,7 +340,6 @@ export const fetchNowPlaying = async (): Promise<NowPlayingData | null> => {
               title: lastSongData.title,
               level: Number(lastSongData.level),
               spotify_id: lastSongData.spotify_id,
-              sam_id: lastSongData.sam_id,
               roboticness: lastSongData.roboticness,
           }
         : {
@@ -352,7 +348,6 @@ export const fetchNowPlaying = async (): Promise<NowPlayingData | null> => {
               title: "",
               level: undefined,
               spotify_id: null,
-              sam_id: null,
               roboticness: 2,
           }
 
@@ -488,9 +483,9 @@ export async function fetchAvailableSongsByLevel(onlyAvailable = true) {
       GROUP BY level
       ORDER BY level
     `;
-        const result = await db.$queryRawUnsafe(sqlQuery);
+        const result = await db.$queryRawUnsafe(sqlQuery) as Array<{ level: number; count: number }>;
 
-        return result.map((row: { level: number; count: number }) => ({
+        return result.map((row) => ({
             level: Number(row.level),
             count: Number(row.count),
         }))
@@ -543,9 +538,9 @@ export async function fetchAvailableSongsByPeriod(onlyAvailable = true) {
           ELSE 8
         END
     `;
-        const result = await db.$queryRawUnsafe(sqlQuery);
+        const result = await db.$queryRawUnsafe(sqlQuery) as Array<{ period: string; count: number }>;
 
-        return result.map((row: { period: string; count: number }) => ({
+        return result.map((row) => ({
             period: row.period,
             count: Number(row.count),
         }))
@@ -567,7 +562,6 @@ export async function fetchSongsByArtist(
             album: true,
             level: true,
             spotify_id: true,
-            sam_id: true,
             date_added: true,
             tags: true,
             image_urls: true,

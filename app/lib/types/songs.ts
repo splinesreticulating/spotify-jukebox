@@ -1,7 +1,6 @@
 export type Song = {
     id: number
     spotify_id: string | null
-    sam_id: number | null
     artists: string[]
     title: string | null
     album: string | null
@@ -45,7 +44,6 @@ export type NowPlayingSong = {
     key?: Song["key"]
     bpm?: Song["bpm"]
     spotify_id?: Song["spotify_id"]
-    sam_id?: Song["sam_id"]
     roboticness?: Song["roboticness"]
 }
 
@@ -67,7 +65,6 @@ export interface LatestSong {
     artists: string[]
     date_added: Date
     spotify_id: string | null
-    sam_id: number | null
     level: number | null
     roboticness: number | null // TODO: Remove the need for null [TREE-145]
 }

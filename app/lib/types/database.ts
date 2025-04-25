@@ -7,7 +7,6 @@ export type LatestSongPayload = Prisma.nutsGetPayload<{
         artists: true
         date_added: true
         spotify_id: true
-        sam_id: true
         level: true
         roboticness: true
     }

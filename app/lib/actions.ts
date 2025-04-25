@@ -5,6 +5,7 @@ import { signIn } from "@/auth"
 import { AuthError } from "next-auth"
 import { redirect } from "next/navigation"
 import { db } from "./db"
+import type { Prisma } from "@prisma/client"
 
 export async function befriend(nowPlayingData: NowPlayingData) {
     const { lastSong, currentSong } = nowPlayingData
@@ -51,7 +52,8 @@ export async function authenticate(
         redirect("/dashboard")
     } catch (error) {
         if (error instanceof AuthError) {
-            switch (error.type) {
+            // AuthError from next-auth does not have a 'type' property, use 'code' instead
+            switch ((error as any).code) {
                 case "CredentialsSignin":
                     return { errorMessage: "Invalid credentials" }
                 default:
@@ -65,7 +67,7 @@ export async function authenticate(
 export async function addToQueue(songId: number) {
     try {
         // Start a transaction to ensure atomicity
-        return await db.$transaction(async (tx) => {
+        return await db.$transaction(async (tx: Prisma.TransactionClient) => {
             // Delete existing queue items
             await tx.queue.deleteMany({})
 
@@ -102,30 +104,36 @@ export const fetchCompatibleSongs = async (
                     title: true,
                     artists: true,
                     spotify_id: true,
-                    sam_id: true,
                 },
             },
         },
     })
 
     // Check if next song is in the compatible list
+    type CompatibilitySongItem = {
+        branch_id: number;
+        branch_level: number | null;
+        nuts_compatibility_tree_branch_idTonuts: {
+            id: number;
+            title: string | null;
+            artists: string[];
+            spotify_id: string | null;
+        };
+    };
     const isNextSongCompatible = allCompatibleSongs.some(
-        (song) => song.branch_id === nextSongId,
+        (song: CompatibilitySongItem) => song.branch_id === nextSongId,
     )
 
     // Filter out the next song from the list of alternatives
     const compatibleSongs = allCompatibleSongs
-        .filter((song) => song.branch_id !== nextSongId)
-        .map((item) => ({
+        .filter((song: CompatibilitySongItem) => song.branch_id !== nextSongId)
+        .map((item: CompatibilitySongItem) => ({
             id: item.nuts_compatibility_tree_branch_idTonuts.id,
-            title: item.nuts_compatibility_tree_branch_idTonuts.title,
+            title: item.nuts_compatibility_tree_branch_idTonuts.title ?? "",
             artists: item.nuts_compatibility_tree_branch_idTonuts.artists,
             level: item.branch_level || undefined,
             spotify_id:
                 item.nuts_compatibility_tree_branch_idTonuts.spotify_id ||
-                undefined,
-            sam_id:
-                item.nuts_compatibility_tree_branch_idTonuts.sam_id ||
                 undefined,
         }))
 

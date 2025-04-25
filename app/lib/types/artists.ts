@@ -7,7 +7,6 @@ export type ArtistSongView = Pick<
     | "artists"
     | "album"
     | "spotify_id"
-    | "sam_id"
     | "date_added"
     | "tags"
     | "image_urls"
