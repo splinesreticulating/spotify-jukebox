@@ -24,10 +24,6 @@ const nextConfig: NextConfig = {
     }
     return config
   },
-  devIndicators: {
-    buildActivity: false,
-    appIsrStatus: false,
-  },
 }
 
 export default nextConfig
