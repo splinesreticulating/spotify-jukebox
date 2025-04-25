@@ -6,4 +6,6 @@
 1. cd to the repo and install dependencies: `yarn install`
 
 # To run
+1. run `yarn prisma db push`
+1. run `yarn prisma:seed`
 1. run `yarn dev`
