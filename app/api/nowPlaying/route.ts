@@ -26,11 +26,14 @@ export async function GET() {
 
         // Handle case where data is null or undefined
         if (!data) {
-          throw new Error('No data returned from fetchNowPlaying')
-        }
-
-        if (!isStreamClosed) {
-          controller.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`))
+          // Send a 'nothing playing' event
+          if (!isStreamClosed) {
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ currentSong: null, lastSong: null, nextSong: null, friends: false })}\n\n`))
+          }
+        } else {
+          if (!isStreamClosed) {
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`))
+          }
         }
       } catch (error) {
         // Properly format error object for logging
