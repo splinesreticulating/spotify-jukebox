@@ -158,51 +158,65 @@ export default function NowPlayingPage() {
         <Image src="/squirrelGuitarButton.png" width={92} height={95} alt="Squirrel button" className="mx-auto my-2" />
         <ul className="flex w-full flex-col items-center space-y-4">
           <li>
-            <span className={getLevelColor(lastSong.level)}>last:</span> <SongLink song={lastSong} />
+            {lastSong ? (
+              <>
+                <span className={getLevelColor(lastSong.level)}>last:</span> <SongLink song={lastSong} />
+              </>
+            ) : (
+              <span className="text-gray-400">last: (none)</span>
+            )}
           </li>
           <li>
             <Heart onHeartClick={toggleFriendship} isHeartFilled={friends} />
           </li>
           <li>
             <div className="flex items-center justify-center gap-2">
-              <span className={getLevelColor(currentSong.level ?? 3)}>
-                <strong>now:</strong> <SongLink song={currentSong} className="font-bold" />
-              </span>
+              {currentSong ? (
+                <span className={getLevelColor(currentSong.level ?? 3)}>
+                  <strong>now:</strong> <SongLink song={currentSong} className="font-bold" />
+                </span>
+              ) : (
+                <span className="text-gray-400">now: (none)</span>
+              )}
             </div>
           </li>
           <li className="w-full">
-            {nextSong.title ? (
-              <>
-                <div className="flex items-center justify-center gap-2">
-                  {compatibleSongs.length > 0 && (
-                    <button
-                      onClick={toggleExpanded}
-                      className="rounded-full p-1 hover:bg-gray-100"
-                      aria-label={isExpanded ? 'Hide compatible songs' : 'Show compatible songs'}
-                    >
-                      {isExpanded ? <ChevronDownIcon className="h-5 w-5" /> : <ChevronRightIcon className="h-5 w-5" />}
-                    </button>
-                  )}
-                  <span>
-                    <span className={getLevelColor(nextSong.level)}>next:</span> <SongLink song={nextSong} />
-                    {isNextSongCompatible && <sup className="ml-1 text-red-500">❤️</sup>}
-                  </span>
-                </div>
-                {isExpanded && compatibleSongs.length > 0 && (
-                  <div className="mt-4 space-y-2 text-sm text-gray-600">
-                    <p className="font-medium">or...</p>
-                    <ul className="space-y-1 text-center">
-                      {compatibleSongs.map((song) => (
-                        <li key={song.id} className="flex items-center justify-center gap-1">
-                          {isPlayable(song) && <PlayButton songId={song.id} />}
-                          <SongLink song={song} />
-                        </li>
-                      ))}
-                    </ul>
+            {nextSong ? (
+              nextSong.title ? (
+                <>
+                  <div className="flex items-center justify-center gap-2">
+                    {compatibleSongs.length > 0 && (
+                      <button
+                        onClick={toggleExpanded}
+                        className="rounded-full p-1 hover:bg-gray-100"
+                        aria-label={isExpanded ? 'Hide compatible songs' : 'Show compatible songs'}
+                      >
+                        {isExpanded ? <ChevronDownIcon className="h-5 w-5" /> : <ChevronRightIcon className="h-5 w-5" />}
+                      </button>
+                    )}
+                    <span>
+                      <span className={getLevelColor(nextSong.level)}>next:</span> <SongLink song={nextSong} />
+                      {isNextSongCompatible && <sup className="ml-1 text-red-500">❤️</sup>}
+                    </span>
                   </div>
-                )}
-              </>
-            ) : null}
+                  {isExpanded && compatibleSongs.length > 0 && (
+                    <div className="mt-4 space-y-2 text-sm text-gray-600">
+                      <p className="font-medium">or...</p>
+                      <ul className="space-y-1 text-center">
+                        {compatibleSongs.map((song) => (
+                          <li key={song.id} className="flex items-center justify-center gap-1">
+                            {isPlayable(song) && <PlayButton songId={song.id} />}
+                            <SongLink song={song} />
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </>
+              ) : null
+            ) : (
+              <span className="text-gray-400">next: (none)</span>
+            )}
           </li>
         </ul>
       </section>
