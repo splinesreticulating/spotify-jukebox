@@ -11,7 +11,7 @@ export const metadata: Metadata = {
         default: "Squirrel Radio",
     },
     description: "Complimentary mixed nuts",
-    metadataBase: new URL("https://treehouse.squirrelradio.com"),
+    metadataBase: new URL(process.env.NEXTAUTH_URL || "http://localhost:2309"),
     icons: {
         icon: [
             {
