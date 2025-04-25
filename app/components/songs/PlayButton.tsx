@@ -1,53 +1,53 @@
-'use client'
+"use client"
 
-import { useState } from 'react'
-import { PlayIcon, ArrowPathIcon } from '@heroicons/react/24/solid'
-import { toast } from 'sonner'
+import { ArrowPathIcon, PlayIcon } from "@heroicons/react/24/solid"
+import { useState } from "react"
+import { toast } from "sonner"
 
 interface PlayButtonProps {
-  songId: number
-  className?: string
+    songId: number
+    className?: string
 }
 
 export default function PlayButton({ songId }: PlayButtonProps) {
-  const [isLoading, setIsLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
 
-  const handlePlay = async () => {
-    try {
-      setIsLoading(true)
-      const response = await fetch(`/api/play/${songId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
+    const handlePlay = async () => {
+        try {
+            setIsLoading(true)
+            const response = await fetch(`/api/play/${songId}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            })
 
-      if (!response.ok) {
-        throw new Error('Failed to queue song')
-      }
+            if (!response.ok) {
+                throw new Error("Failed to queue song")
+            }
 
-      toast.success('Song added to queue')
-    } catch (error) {
-      console.error('Error queueing song:', error)
-      toast.error('Failed to queue song')
-    } finally {
-      setIsLoading(false)
+            toast.success("Song added to queue")
+        } catch (error) {
+            console.error("Error queueing song:", error)
+            toast.error("Failed to queue song")
+        } finally {
+            setIsLoading(false)
+        }
     }
-  }
 
-  return (
-    <button
-      onClick={handlePlay}
-      disabled={isLoading}
-      className="group flex h-8 w-8 items-center justify-center rounded-full 
+    return (
+        <button
+            onClick={handlePlay}
+            disabled={isLoading}
+            className="group flex h-8 w-8 items-center justify-center rounded-full 
                  bg-gray-50 transition-colors hover:bg-gray-100"
-      aria-label="Play song"
-    >
-      {isLoading ? (
-        <ArrowPathIcon className="h-4 w-4 animate-spin text-gray-600" />
-      ) : (
-        <PlayIcon className="h-4 w-4 text-gray-600 transition-colors group-hover:text-red-600" />
-      )}
-    </button>
-  )
+            aria-label="Play song"
+        >
+            {isLoading ? (
+                <ArrowPathIcon className="h-4 w-4 animate-spin text-gray-600" />
+            ) : (
+                <PlayIcon className="h-4 w-4 text-gray-600 transition-colors group-hover:text-red-600" />
+            )}
+        </button>
+    )
 }

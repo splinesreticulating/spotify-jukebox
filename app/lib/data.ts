@@ -1,103 +1,123 @@
-'use server'
+"use server"
 
-import { ITEMS_PER_PAGE, db } from './db'
-import { NowPlayingData, NowPlayingSong, Song } from '@/app/lib/types'
-import { unstable_noStore as noStore } from 'next/cache'
-import type { LatestSong, SongSelectFields } from '@/app/lib/types'
-import { ArtistPayload, LatestSongPayload } from './types/database'
-import { unstable_cache } from 'next/cache'
-import type { SongQueryParams } from '@/app/lib/types/api'
-import { Prisma } from '@prisma/client'
-import { cleanLastFMText } from './utils'
-import { ArtistSongView } from './types/artists'
-import { getCompatibleKeys } from './utils'
+import type { NowPlayingData, NowPlayingSong, Song } from "@/app/lib/types"
+import type { LatestSong, SongSelectFields } from "@/app/lib/types"
+import type { SongQueryParams } from "@/app/lib/types/api"
+import { Prisma } from "@prisma/client"
+import { unstable_noStore as noStore } from "next/cache"
+import { unstable_cache } from "next/cache"
+import { ITEMS_PER_PAGE, db } from "./db"
+import type { ArtistSongView } from "./types/artists"
+import type { ArtistPayload, LatestSongPayload } from "./types/database"
+import { cleanLastFMText } from "./utils"
+import { getCompatibleKeys } from "./utils"
 
 const songSelectFields: SongSelectFields = {
-  id: true,
-  spotify_id: true,
-  sam_id: true,
-  title: true,
-  artists: true,
-  tags: true,
-  key: true,
-  level: true,
-  bpm: true,
-  date_added: true,
-  date_liked: true,
-  year: true,
-  hours_off: true,
-  album: true,
-  instrumentalness: true,
-  count_played: true,
-  date_played: true,
-  roboticness: true,
-  danceability: true,
-  energy: true,
-  valence: true,
-  loudness: true,
-  image_urls: true,
+    id: true,
+    spotify_id: true,
+    sam_id: true,
+    title: true,
+    artists: true,
+    tags: true,
+    key: true,
+    level: true,
+    bpm: true,
+    date_added: true,
+    date_liked: true,
+    year: true,
+    hours_off: true,
+    album: true,
+    instrumentalness: true,
+    count_played: true,
+    date_played: true,
+    roboticness: true,
+    danceability: true,
+    energy: true,
+    valence: true,
+    loudness: true,
+    image_urls: true,
 }
 
 const buildWhereClause = ({
-  query,
-  levelsArray,
-  instrumental,
-  keyMatch,
-  bpmRef,
-  eighties,
-  nineties,
-  lastYear,
-  thisYear,
-  keyCompatible,
-  playable,
+    query,
+    levelsArray,
+    instrumental,
+    keyMatch,
+    bpmRef,
+    eighties,
+    nineties,
+    lastYear,
+    thisYear,
+    keyCompatible,
+    playable,
 }: SongQueryParams) => {
-  const conditions = []
+    const conditions = []
 
-  if (query) {
-    const searchTerm = `%${query}%`
-    conditions.push(Prisma.sql`(
+    if (query) {
+        const searchTerm = `%${query}%`
+        conditions.push(Prisma.sql`(
       title ILIKE ${searchTerm} OR 
       EXISTS (SELECT 1 FROM unnest(artists) a WHERE a ILIKE ${searchTerm}) OR
       EXISTS (SELECT 1 FROM unnest(tags) t WHERE t ILIKE ${searchTerm})
     )`)
-  }
-
-  if (levelsArray.length > 0) conditions.push(Prisma.sql`level = ANY(${levelsArray.map(Number)})`)
-  if (instrumental === '1') conditions.push(Prisma.sql`instrumentalness >= 90`)
-  if (keyMatch) conditions.push(Prisma.sql`key = ${keyMatch}`)
-  if (keyCompatible) conditions.push(Prisma.sql`key = ANY(${getCompatibleKeys(keyCompatible)}::text[])`)
-  if (bpmRef) conditions.push(Prisma.sql`bpm BETWEEN ${Number(bpmRef) - 5} AND ${Number(bpmRef) + 5}`)
-
-  if (playable) {
-    const platformField = process.env.NEXT_PUBLIC_PLATFORM === 'spotify' ? 'spotify_id' : 'sam_id'
-    if (platformField === 'spotify_id') {
-      conditions.push(Prisma.sql`spotify_id IS NOT NULL AND spotify_id != ''`)
-    } else {
-      conditions.push(Prisma.sql`sam_id IS NOT NULL`)
     }
-  }
 
-  const eraConditions = []
-  if (eighties) eraConditions.push(Prisma.sql`(year >= 1980 AND year < 1990)`)
-  if (nineties) eraConditions.push(Prisma.sql`(year >= 1990 AND year < 2000)`)
-  if (lastYear) eraConditions.push(Prisma.sql`year = ${new Date().getFullYear() - 1}`)
-  if (thisYear) eraConditions.push(Prisma.sql`year = ${new Date().getFullYear()}`)
+    if (levelsArray.length > 0)
+        conditions.push(Prisma.sql`level = ANY(${levelsArray.map(Number)})`)
+    if (instrumental === "1")
+        conditions.push(Prisma.sql`instrumentalness >= 90`)
+    if (keyMatch) conditions.push(Prisma.sql`key = ${keyMatch}`)
+    if (keyCompatible)
+        conditions.push(
+            Prisma.sql`key = ANY(${getCompatibleKeys(keyCompatible)}::text[])`,
+        )
+    if (bpmRef)
+        conditions.push(
+            Prisma.sql`bpm BETWEEN ${Number(bpmRef) - 5} AND ${Number(bpmRef) + 5}`,
+        )
 
-  if (eraConditions.length > 0) {
-    conditions.push(Prisma.sql`(${Prisma.join(eraConditions, ' OR ')})`)
-  }
+    if (playable) {
+        const platformField =
+            process.env.NEXT_PUBLIC_PLATFORM === "spotify"
+                ? "spotify_id"
+                : "sam_id"
+        if (platformField === "spotify_id") {
+            conditions.push(
+                Prisma.sql`spotify_id IS NOT NULL AND spotify_id != ''`,
+            )
+        } else {
+            conditions.push(Prisma.sql`sam_id IS NOT NULL`)
+        }
+    }
 
-  const whereClause = conditions.length > 0 ? Prisma.sql`WHERE ${Prisma.join(conditions, ' AND ')}` : Prisma.empty
+    const eraConditions = []
+    if (eighties) eraConditions.push(Prisma.sql`(year >= 1980 AND year < 1990)`)
+    if (nineties) eraConditions.push(Prisma.sql`(year >= 1990 AND year < 2000)`)
+    if (lastYear)
+        eraConditions.push(Prisma.sql`year = ${new Date().getFullYear() - 1}`)
+    if (thisYear)
+        eraConditions.push(Prisma.sql`year = ${new Date().getFullYear()}`)
 
-  return whereClause
+    if (eraConditions.length > 0) {
+        conditions.push(Prisma.sql`(${Prisma.join(eraConditions, " OR ")})`)
+    }
+
+    const whereClause =
+        conditions.length > 0
+            ? Prisma.sql`WHERE ${Prisma.join(conditions, " AND ")}`
+            : Prisma.empty
+
+    return whereClause
 }
 
-const fetchSongsBaseQuery = async (params: SongQueryParams & { currentPage?: number }) => {
-  const offset = ((params.currentPage || 1) - 1) * ITEMS_PER_PAGE
-  const whereClause = buildWhereClause(params)
-  const currentTime = new Date()
+const fetchSongsBaseQuery = async (
+    params: SongQueryParams & { currentPage?: number },
+) => {
+    const offset = ((params.currentPage || 1) - 1) * ITEMS_PER_PAGE
+    const whereClause = buildWhereClause(params)
+    const currentTime = new Date()
 
-  return await db.$queryRaw`
+    return await db.$queryRaw`
     SELECT * FROM nuts 
     ${whereClause}
     ORDER BY 
@@ -112,335 +132,341 @@ const fetchSongsBaseQuery = async (params: SongQueryParams & { currentPage?: num
 }
 
 export async function fetchLatestSongs(): Promise<LatestSong[]> {
-  noStore()
+    noStore()
 
-  try {
-    const songs: LatestSongPayload[] = await db.nuts.findMany({
-      select: {
-        id: true,
-        title: true,
-        artists: true,
-        date_added: true,
-        spotify_id: true,
-        sam_id: true,
-        level: true,
-        roboticness: true,
-      },
-      orderBy: {
-        date_added: 'desc',
-      },
-      take: 5,
-    })
+    try {
+        const songs: LatestSongPayload[] = await db.nuts.findMany({
+            select: {
+                id: true,
+                title: true,
+                artists: true,
+                date_added: true,
+                spotify_id: true,
+                sam_id: true,
+                level: true,
+                roboticness: true,
+            },
+            orderBy: {
+                date_added: "desc",
+            },
+            take: 5,
+        })
 
-    return songs.map((song) => ({
-      id: song.id,
-      artists: Array.isArray(song.artists) ? song.artists : [],
-      title: song.title ?? '',
-      date_added: song.date_added ?? new Date(),
-      spotify_id: song.spotify_id,
-      sam_id: song.sam_id,
-      level: song.level,
-      roboticness: song.roboticness,
-    }))
-  } catch (err) {
-    console.error(err)
-    return []
-  }
+        return songs.map((song) => ({
+            id: song.id,
+            artists: Array.isArray(song.artists) ? song.artists : [],
+            title: song.title ?? "",
+            date_added: song.date_added ?? new Date(),
+            spotify_id: song.spotify_id,
+            sam_id: song.sam_id,
+            level: song.level,
+            roboticness: song.roboticness,
+        }))
+    } catch (err) {
+        console.error(err)
+        return []
+    }
 }
 
 export async function fetchCardData() {
-  noStore()
-  try {
-    const songCountPromise = db.nuts.count()
-    const artistsPromise = db.nuts.findMany({
-      select: { artists: true },
-    })
-    const compatibilityCountPromise = db.compatibility_tree.count()
-    const unprocessedCountPromise = db.nuts.count({
-      where: {
-        OR: [{ bpm: null }, { key: null }],
-      },
-    })
-    const incomingCountPromise = db.nuts.count({
-      where: {
-        AND: [{ spotify_id: { not: null } }, { sam_id: null }],
-      },
-    })
+    noStore()
+    try {
+        const songCountPromise = db.nuts.count()
+        const artistsPromise = db.nuts.findMany({
+            select: { artists: true },
+        })
+        const compatibilityCountPromise = db.compatibility_tree.count()
+        const unprocessedCountPromise = db.nuts.count({
+            where: {
+                OR: [{ bpm: null }, { key: null }],
+            },
+        })
+        const incomingCountPromise = db.nuts.count({
+            where: {
+                AND: [{ spotify_id: { not: null } }, { sam_id: null }],
+            },
+        })
 
-    const data = await Promise.all([
-      songCountPromise,
-      artistsPromise,
-      compatibilityCountPromise,
-      unprocessedCountPromise,
-      incomingCountPromise,
-    ])
+        const data = await Promise.all([
+            songCountPromise,
+            artistsPromise,
+            compatibilityCountPromise,
+            unprocessedCountPromise,
+            incomingCountPromise,
+        ])
 
-    // Get unique primary artists (first artist in each array)
-    const primaryArtists = data[1].map((song: ArtistPayload) => song.artists[0]).filter(Boolean)
-    const uniqueArtists = new Set(primaryArtists)
+        // Get unique primary artists (first artist in each array)
+        const primaryArtists = data[1]
+            .map((song: ArtistPayload) => song.artists[0])
+            .filter(Boolean)
+        const uniqueArtists = new Set(primaryArtists)
 
-    return {
-      numberOfSongs: data[0],
-      numberOfArtists: uniqueArtists.size,
-      numberOfCompatibilities: data[2],
-      numberOfUnprocessed: data[3],
-      numberOfIncoming: data[4],
+        return {
+            numberOfSongs: data[0],
+            numberOfArtists: uniqueArtists.size,
+            numberOfCompatibilities: data[2],
+            numberOfUnprocessed: data[3],
+            numberOfIncoming: data[4],
+        }
+    } catch (error) {
+        console.error("Database Error:", error)
+        throw new Error("Failed to fetch card data.")
     }
-  } catch (error) {
-    console.error('Database Error:', error)
-    throw new Error('Failed to fetch card data.')
-  }
 }
 
 export const fetchFilteredSongs = unstable_cache(
-  async (
-    query: string,
-    currentPage: number,
-    levels: string,
-    instrumental: string,
-    keyMatch?: string,
-    bpmRef?: string,
-    eighties?: boolean,
-    nineties?: boolean,
-    lastYear?: boolean,
-    thisYear?: boolean,
-    keyCompatible?: string,
-    playable?: boolean,
-  ) => {
-    const levelsArray = levels ? levels.split(',') : []
-    try {
-      const result = await fetchSongsBaseQuery({
-        query,
-        levelsArray,
-        instrumental,
-        keyMatch,
-        bpmRef,
-        eighties,
-        nineties,
-        lastYear,
-        thisYear,
-        keyCompatible,
-        playable,
-        currentPage,
-      })
-      return result
-    } catch (error) {
-      console.error('Database Error:', error)
-      throw new Error('Failed to fetch songs.')
-    }
-  },
-  ['filtered-songs'],
-  {
-    revalidate: 60, // Cache for 1 minute
-    tags: ['songs'],
-  },
+    async (
+        query: string,
+        currentPage: number,
+        levels: string,
+        instrumental: string,
+        keyMatch?: string,
+        bpmRef?: string,
+        eighties?: boolean,
+        nineties?: boolean,
+        lastYear?: boolean,
+        thisYear?: boolean,
+        keyCompatible?: string,
+        playable?: boolean,
+    ) => {
+        const levelsArray = levels ? levels.split(",") : []
+        try {
+            const result = await fetchSongsBaseQuery({
+                query,
+                levelsArray,
+                instrumental,
+                keyMatch,
+                bpmRef,
+                eighties,
+                nineties,
+                lastYear,
+                thisYear,
+                keyCompatible,
+                playable,
+                currentPage,
+            })
+            return result
+        } catch (error) {
+            console.error("Database Error:", error)
+            throw new Error("Failed to fetch songs.")
+        }
+    },
+    ["filtered-songs"],
+    {
+        revalidate: 60, // Cache for 1 minute
+        tags: ["songs"],
+    },
 )
 
 export async function fetchSongsPages(
-  query: string,
-  levels: string,
-  instrumental: string,
-  keyMatch: string,
-  keyCompatible: string,
-  bpmRef: string,
-  eighties: string,
-  nineties: string,
-  lastYear: string,
-  thisYear: string,
-  playable: string,
+    query: string,
+    levels: string,
+    instrumental: string,
+    keyMatch: string,
+    keyCompatible: string,
+    bpmRef: string,
+    eighties: string,
+    nineties: string,
+    lastYear: string,
+    thisYear: string,
+    playable: string,
 ): Promise<number> {
-  const levelsArray = levels ? levels.split(',') : []
-  try {
-    const whereClause = buildWhereClause({
-      query,
-      levelsArray,
-      instrumental,
-      keyMatch,
-      keyCompatible,
-      bpmRef,
-      eighties: eighties === 'true',
-      nineties: nineties === 'true',
-      lastYear: lastYear === 'true',
-      thisYear: thisYear === 'true',
-      playable: playable === 'true',
-    })
+    const levelsArray = levels ? levels.split(",") : []
+    try {
+        const whereClause = buildWhereClause({
+            query,
+            levelsArray,
+            instrumental,
+            keyMatch,
+            keyCompatible,
+            bpmRef,
+            eighties: eighties === "true",
+            nineties: nineties === "true",
+            lastYear: lastYear === "true",
+            thisYear: thisYear === "true",
+            playable: playable === "true",
+        })
 
-    const result = await db.$queryRaw<[{ count: BigInt }]>`
+        const result = await db.$queryRaw<[{ count: bigint }]>`
       SELECT COUNT(*)::integer as count
       FROM nuts
       ${whereClause}
     `
-    return Math.ceil(Number(result[0].count) / ITEMS_PER_PAGE)
-  } catch (error) {
-    console.error('Database Error:', error)
-    throw new Error('Failed to fetch total number of songs')
-  }
+        return Math.ceil(Number(result[0].count) / ITEMS_PER_PAGE)
+    } catch (error) {
+        console.error("Database Error:", error)
+        throw new Error("Failed to fetch total number of songs")
+    }
 }
 
 export async function fetchSongById(id: number) {
-  try {
-    const song = (await db.nuts.findUnique({
-      where: { id },
-      select: songSelectFields,
-    })) as Song | null
+    try {
+        const song = (await db.nuts.findUnique({
+            where: { id },
+            select: songSelectFields,
+        })) as Song | null
 
-    return song
-  } catch (error) {
-    console.error('Database Error:', error)
-    throw new Error('Failed to fetch song.')
-  }
+        return song
+    } catch (error) {
+        console.error("Database Error:", error)
+        throw new Error("Failed to fetch song.")
+    }
 }
 
 export const fetchNowPlaying = async (): Promise<NowPlayingData | null> => {
-  // Get the two most recent history entries
-  const recentHistory = await db.history.findMany({
-    select: {
-      nut_id: true,
-      played_at: true,
-    },
-    orderBy: { played_at: 'desc' },
-    take: 2,
-  })
-
-  if (recentHistory.length === 0) {
-    return null
-  }
-
-  // Get the song details for both current and last songs
-  const [currentSongData, lastSongData] = await Promise.all([
-    fetchSongById(recentHistory[0].nut_id),
-    recentHistory[1] ? fetchSongById(recentHistory[1].nut_id) : null,
-  ])
-
-  if (!currentSongData) {
-    return null
-  }
-
-  const currentSong: NowPlayingSong = {
-    id: currentSongData.id,
-    artists: currentSongData.artists,
-    title: currentSongData.title,
-    level: Number(currentSongData.level),
-    key: currentSongData.key,
-    bpm: currentSongData.bpm,
-    roboticness: currentSongData.roboticness,
-  }
-
-  const lastSong: NowPlayingSong = lastSongData
-    ? {
-        id: lastSongData.id,
-        artists: lastSongData.artists,
-        title: lastSongData.title,
-        level: Number(lastSongData.level),
-        spotify_id: lastSongData.spotify_id,
-        sam_id: lastSongData.sam_id,
-        roboticness: lastSongData.roboticness,
-      }
-    : {
-        id: 0,
-        artists: [],
-        title: '',
-        level: undefined,
-        spotify_id: null,
-        sam_id: null,
-        roboticness: 2,
-      }
-
-  // Check if there's a friendship between the songs
-  const friends = lastSongData
-    ? await db.compatibility_tree.findFirst({
-        where: {
-          branch_id: currentSong.id,
-          root_id: lastSong.id,
-        },
-      })
-    : null
-
-  const nextQueueItem = await db.queue.findFirst({
-    select: {
-      nut: {
+    // Get the two most recent history entries
+    const recentHistory = await db.history.findMany({
         select: {
-          id: true,
-          title: true,
-          artists: true,
-          level: true,
-          roboticness: true,
+            nut_id: true,
+            played_at: true,
         },
-      },
-    },
-    orderBy: {
-      added_at: 'desc',
-    },
-  })
+        orderBy: { played_at: "desc" },
+        take: 2,
+    })
 
-  const nextSong: NowPlayingSong = nextQueueItem?.nut
-    ? {
-        id: Number(nextQueueItem.nut.id),
-        artists: Array.isArray(nextQueueItem.nut.artists) ? nextQueueItem.nut.artists : [],
-        title: String(nextQueueItem.nut.title),
-        level: nextQueueItem.nut.level ? Number(nextQueueItem.nut.level) : 3,
-        roboticness: nextQueueItem.nut.roboticness ?? 2,
-      }
-    : {
-        id: 0,
-        artists: [],
-        title: null,
-        roboticness: 2,
-      }
+    if (recentHistory.length === 0) {
+        return null
+    }
 
-  return {
-    currentSong,
-    lastSong,
-    nextSong,
-    friends: !!friends,
-  }
+    // Get the song details for both current and last songs
+    const [currentSongData, lastSongData] = await Promise.all([
+        fetchSongById(recentHistory[0].nut_id),
+        recentHistory[1] ? fetchSongById(recentHistory[1].nut_id) : null,
+    ])
+
+    if (!currentSongData) {
+        return null
+    }
+
+    const currentSong: NowPlayingSong = {
+        id: currentSongData.id,
+        artists: currentSongData.artists,
+        title: currentSongData.title,
+        level: Number(currentSongData.level),
+        key: currentSongData.key,
+        bpm: currentSongData.bpm,
+        roboticness: currentSongData.roboticness,
+    }
+
+    const lastSong: NowPlayingSong = lastSongData
+        ? {
+              id: lastSongData.id,
+              artists: lastSongData.artists,
+              title: lastSongData.title,
+              level: Number(lastSongData.level),
+              spotify_id: lastSongData.spotify_id,
+              sam_id: lastSongData.sam_id,
+              roboticness: lastSongData.roboticness,
+          }
+        : {
+              id: 0,
+              artists: [],
+              title: "",
+              level: undefined,
+              spotify_id: null,
+              sam_id: null,
+              roboticness: 2,
+          }
+
+    // Check if there's a friendship between the songs
+    const friends = lastSongData
+        ? await db.compatibility_tree.findFirst({
+              where: {
+                  branch_id: currentSong.id,
+                  root_id: lastSong.id,
+              },
+          })
+        : null
+
+    const nextQueueItem = await db.queue.findFirst({
+        select: {
+            nut: {
+                select: {
+                    id: true,
+                    title: true,
+                    artists: true,
+                    level: true,
+                    roboticness: true,
+                },
+            },
+        },
+        orderBy: {
+            added_at: "desc",
+        },
+    })
+
+    const nextSong: NowPlayingSong = nextQueueItem?.nut
+        ? {
+              id: Number(nextQueueItem.nut.id),
+              artists: Array.isArray(nextQueueItem.nut.artists)
+                  ? nextQueueItem.nut.artists
+                  : [],
+              title: String(nextQueueItem.nut.title),
+              level: nextQueueItem.nut.level
+                  ? Number(nextQueueItem.nut.level)
+                  : 3,
+              roboticness: nextQueueItem.nut.roboticness ?? 2,
+          }
+        : {
+              id: 0,
+              artists: [],
+              title: null,
+              roboticness: 2,
+          }
+
+    return {
+        currentSong,
+        lastSong,
+        nextSong,
+        friends: !!friends,
+    }
 }
 
 export async function getLastPlayedDatesFromHistory(
-  nutId: number,
+    nutId: number,
 ): Promise<{ lastPlayed: Date | null; beforeThat: Date | null }> {
-  noStore()
+    noStore()
 
-  try {
-    const historyEntries = await db.history.findMany({
-      where: { nut_id: nutId },
-      orderBy: { played_at: 'desc' },
-      take: 2,
-    })
+    try {
+        const historyEntries = await db.history.findMany({
+            where: { nut_id: nutId },
+            orderBy: { played_at: "desc" },
+            take: 2,
+        })
 
-    const lastPlayed = historyEntries[0]?.played_at || null
-    const beforeThat = historyEntries[1]?.played_at || null
+        const lastPlayed = historyEntries[0]?.played_at || null
+        const beforeThat = historyEntries[1]?.played_at || null
 
-    return { lastPlayed, beforeThat }
-  } catch (error) {
-    console.error('Database Error:', error)
-    throw new Error('Failed to fetch history dates')
-  }
+        return { lastPlayed, beforeThat }
+    } catch (error) {
+        console.error("Database Error:", error)
+        throw new Error("Failed to fetch history dates")
+    }
 }
 
 export async function fetchSettings() {
-  noStore()
-  try {
-    const settings = await db.settings.findMany({
-      orderBy: {
-        name: 'asc',
-      },
-    })
-    return settings
-  } catch (error) {
-    console.error('Database Error:', error)
-    throw new Error('Failed to fetch settings data')
-  }
+    noStore()
+    try {
+        const settings = await db.settings.findMany({
+            orderBy: {
+                name: "asc",
+            },
+        })
+        return settings
+    } catch (error) {
+        console.error("Database Error:", error)
+        throw new Error("Failed to fetch settings data")
+    }
 }
 
-export async function fetchWeeklyAverageYear(days: number = 7) {
-  noStore()
-  try {
-    const startDate = new Date()
-    const hoursToSubtract = days < 1 ? days * 24 : days * 24
-    startDate.setHours(startDate.getHours() - hoursToSubtract)
+export async function fetchWeeklyAverageYear(days = 7) {
+    noStore()
+    try {
+        const startDate = new Date()
+        const hoursToSubtract = days < 1 ? days * 24 : days * 24
+        startDate.setHours(startDate.getHours() - hoursToSubtract)
 
-    const result = await db.$queryRaw<[{ avg_year: number }]>`
+        const result = await db.$queryRaw<[{ avg_year: number }]>`
       SELECT AVG(n.year) as avg_year
       FROM history h
       JOIN nuts n ON h.nut_id = n.id
@@ -449,53 +475,63 @@ export async function fetchWeeklyAverageYear(days: number = 7) {
       AND n.year >= 1900
     `
 
-    return Math.round(Number(result[0].avg_year)) || null
-  } catch (error) {
-    console.error('Database Error:', error)
-    throw new Error('Failed to fetch average year')
-  }
+        return Math.round(Number(result[0].avg_year)) || null
+    } catch (error) {
+        console.error("Database Error:", error)
+        throw new Error("Failed to fetch average year")
+    }
 }
 
-export async function fetchAvailableSongsByLevel(onlyAvailable: boolean = true) {
-  noStore()
-  try {
-    const currentTime = new Date()
-    const platformField = process.env.NEXT_PUBLIC_PLATFORM === 'spotify' ? 'spotify_id' : 'sam_id'
+export async function fetchAvailableSongsByLevel(onlyAvailable = true) {
+    noStore()
+    try {
+        const currentTime = new Date()
+        const platformField =
+            process.env.NEXT_PUBLIC_PLATFORM === "spotify"
+                ? "spotify_id"
+                : "sam_id"
 
-    const result = await db.$queryRaw<Array<{ level: number; count: number }>>`
+        const result = await db.$queryRaw<
+            Array<{ level: number; count: number }>
+        >`
       SELECT 
         level,
         COUNT(*) as count
       FROM nuts
       WHERE
         ${
-          onlyAvailable
-            ? Prisma.sql`(date_played IS NULL OR date_played + (hours_off || ' hours')::interval < ${currentTime})
+            onlyAvailable
+                ? Prisma.sql`(date_played IS NULL OR date_played + (hours_off || ' hours')::interval < ${currentTime})
                AND ${Prisma.raw(platformField)} IS NOT NULL`
-            : Prisma.sql`1=1`
+                : Prisma.sql`1=1`
         }
       GROUP BY level
       ORDER BY level
     `
 
-    return result.map((row) => ({
-      level: Number(row.level),
-      count: Number(row.count),
-    }))
-  } catch (error) {
-    console.error('Database Error:', error)
-    throw new Error('Failed to fetch songs by level')
-  }
+        return result.map((row) => ({
+            level: Number(row.level),
+            count: Number(row.count),
+        }))
+    } catch (error) {
+        console.error("Database Error:", error)
+        throw new Error("Failed to fetch songs by level")
+    }
 }
 
-export async function fetchAvailableSongsByPeriod(onlyAvailable: boolean = true) {
-  noStore()
-  try {
-    const currentDate = new Date()
-    const daysInYear = 365.25
-    const platformField = process.env.NEXT_PUBLIC_PLATFORM === 'spotify' ? 'spotify_id' : 'sam_id'
+export async function fetchAvailableSongsByPeriod(onlyAvailable = true) {
+    noStore()
+    try {
+        const currentDate = new Date()
+        const daysInYear = 365.25
+        const platformField =
+            process.env.NEXT_PUBLIC_PLATFORM === "spotify"
+                ? "spotify_id"
+                : "sam_id"
 
-    const result = await db.$queryRaw<Array<{ period: string; count: number }>>`
+        const result = await db.$queryRaw<
+            Array<{ period: string; count: number }>
+        >`
       WITH periods AS (
         SELECT
           CASE
@@ -511,10 +547,10 @@ export async function fetchAvailableSongsByPeriod(onlyAvailable: boolean = true)
         FROM nuts
         WHERE
           ${
-            onlyAvailable
-              ? Prisma.sql`(date_played IS NULL OR date_played + (hours_off || ' hours')::interval < ${currentDate})
+              onlyAvailable
+                  ? Prisma.sql`(date_played IS NULL OR date_played + (hours_off || ' hours')::interval < ${currentDate})
                  AND ${Prisma.raw(platformField)} IS NOT NULL`
-              : Prisma.sql`1=1`
+                  : Prisma.sql`1=1`
           }
       )
       SELECT 
@@ -535,73 +571,79 @@ export async function fetchAvailableSongsByPeriod(onlyAvailable: boolean = true)
         END
     `
 
-    return result.map((row) => ({
-      period: row.period,
-      count: Number(row.count),
-    }))
-  } catch (error) {
-    console.error('Database Error:', error)
-    throw new Error('Failed to fetch songs by period')
-  }
-}
-
-export async function fetchSongsByArtist(name: string): Promise<ArtistSongView[]> {
-  const songs = (await db.nuts.findMany({
-    where: { artists: { has: name } },
-    select: {
-      id: true,
-      title: true,
-      artists: true,
-      album: true,
-      level: true,
-      spotify_id: true,
-      sam_id: true,
-      date_added: true,
-      tags: true,
-      image_urls: true,
-      roboticness: true,
-    },
-  })) as unknown as ArtistSongView[]
-  return songs
-}
-
-export async function fetchArtistInfo(artistName: string): Promise<{ bio: string; tags: { name: string }[] } | null> {
-  noStore()
-
-  try {
-    const response = await fetch(
-      `http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=${encodeURIComponent(
-        artistName,
-      )}&autocorrect=1&api_key=${process.env.LASTFM_API_KEY}&format=json`,
-    )
-
-    if (!response.ok) {
-      return null
+        return result.map((row) => ({
+            period: row.period,
+            count: Number(row.count),
+        }))
+    } catch (error) {
+        console.error("Database Error:", error)
+        throw new Error("Failed to fetch songs by period")
     }
-
-    const data = await response.json()
-
-    return {
-      bio: cleanLastFMText(data.artist?.bio?.summary),
-      tags: data.artist?.tags?.tag || [],
-    }
-  } catch (error) {
-    console.error('LastFM API Error:', error)
-    return null
-  }
 }
 
-export async function fetchAvailableSongsByTag(showOnlyAvailable: boolean = true) {
-  noStore()
-  try {
-    const result = await db.$queryRaw<Array<{ tag: string; count: number }>>`
+export async function fetchSongsByArtist(
+    name: string,
+): Promise<ArtistSongView[]> {
+    const songs = (await db.nuts.findMany({
+        where: { artists: { has: name } },
+        select: {
+            id: true,
+            title: true,
+            artists: true,
+            album: true,
+            level: true,
+            spotify_id: true,
+            sam_id: true,
+            date_added: true,
+            tags: true,
+            image_urls: true,
+            roboticness: true,
+        },
+    })) as unknown as ArtistSongView[]
+    return songs
+}
+
+export async function fetchArtistInfo(
+    artistName: string,
+): Promise<{ bio: string; tags: { name: string }[] } | null> {
+    noStore()
+
+    try {
+        const response = await fetch(
+            `http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=${encodeURIComponent(
+                artistName,
+            )}&autocorrect=1&api_key=${process.env.LASTFM_API_KEY}&format=json`,
+        )
+
+        if (!response.ok) {
+            return null
+        }
+
+        const data = await response.json()
+
+        return {
+            bio: cleanLastFMText(data.artist?.bio?.summary),
+            tags: data.artist?.tags?.tag || [],
+        }
+    } catch (error) {
+        console.error("LastFM API Error:", error)
+        return null
+    }
+}
+
+export async function fetchAvailableSongsByTag(showOnlyAvailable = true) {
+    noStore()
+    try {
+        const result = await db.$queryRaw<
+            Array<{ tag: string; count: number }>
+        >`
       WITH RECURSIVE unnested_tags AS (
         SELECT id, unnest(tags) as tag
         FROM nuts
         WHERE ${
-          showOnlyAvailable
-            ? Prisma.sql`date_played < NOW() - INTERVAL '1 day' * COALESCE(hours_off, 24) / 24 OR date_played IS NULL`
-            : Prisma.sql`1=1`
+            showOnlyAvailable
+                ? Prisma.sql`date_played < NOW() - INTERVAL '1 day' * COALESCE(hours_off, 24) / 24 OR date_played IS NULL`
+                : Prisma.sql`1=1`
         }
       )
       SELECT tag, COUNT(*) as count
@@ -610,29 +652,34 @@ export async function fetchAvailableSongsByTag(showOnlyAvailable: boolean = true
       ORDER BY count DESC
       LIMIT 10
     `
-    return result
-  } catch (error) {
-    console.error('Database Error:', error)
-    throw new Error('Failed to fetch tags data')
-  }
+        return result
+    } catch (error) {
+        console.error("Database Error:", error)
+        throw new Error("Failed to fetch tags data")
+    }
 }
 
-export async function fetchAvailableSongsByArtist(showOnlyAvailable: boolean = true) {
-  noStore()
-  try {
-    const currentTime = new Date()
-    const platformField = process.env.NEXT_PUBLIC_PLATFORM === 'spotify' ? 'spotify_id' : 'sam_id'
+export async function fetchAvailableSongsByArtist(showOnlyAvailable = true) {
+    noStore()
+    try {
+        const currentTime = new Date()
+        const platformField =
+            process.env.NEXT_PUBLIC_PLATFORM === "spotify"
+                ? "spotify_id"
+                : "sam_id"
 
-    const result = await db.$queryRaw<Array<{ artist: string; count: number }>>`
+        const result = await db.$queryRaw<
+            Array<{ artist: string; count: number }>
+        >`
       WITH RECURSIVE unnested_artists AS (
         SELECT id, unnest(artists) as artist
         FROM nuts
         WHERE
           ${
-            showOnlyAvailable
-              ? Prisma.sql`(date_played IS NULL OR date_played + (hours_off || ' hours')::interval < ${currentTime})
+              showOnlyAvailable
+                  ? Prisma.sql`(date_played IS NULL OR date_played + (hours_off || ' hours')::interval < ${currentTime})
                  AND ${Prisma.raw(platformField)} IS NOT NULL`
-              : Prisma.sql`1=1`
+                  : Prisma.sql`1=1`
           }
       )
       SELECT artist, COUNT(*) as count
@@ -641,9 +688,9 @@ export async function fetchAvailableSongsByArtist(showOnlyAvailable: boolean = t
       ORDER BY count DESC
       LIMIT 10
     `
-    return result
-  } catch (error) {
-    console.error('Database Error:', error)
-    throw new Error('Failed to fetch artists data')
-  }
+        return result
+    } catch (error) {
+        console.error("Database Error:", error)
+        throw new Error("Failed to fetch artists data")
+    }
 }
