@@ -1,18 +1,29 @@
-import type { NextConfig } from 'next'
+import type { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        punycode: false,
-      }
-    }
-    return config
-  },
-  devIndicators: {
-    appIsrStatus: false, // don't show ISR status in the UI
-  },
+    images: {
+        remotePatterns: [
+            {
+                protocol: "https",
+                hostname: "i.scdn.co",
+                pathname: "**",
+            },
+            {
+                protocol: "https",
+                hostname: "coverartarchive.org",
+                pathname: "**",
+            },
+        ],
+    },
+    webpack: (config, { isServer }) => {
+        if (!isServer) {
+            config.resolve.fallback = {
+                ...config.resolve.fallback,
+                punycode: false,
+            }
+        }
+        return config
+    },
 }
 
 export default nextConfig

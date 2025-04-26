@@ -1,27 +1,22 @@
-import CardWrapper from '@/app/ui/dashboard/cards'
-import LatestSongs from '@/app/ui/dashboard/latest-songs'
-import { openSans } from '@/app/ui/fonts'
-import { Suspense } from 'react'
-import { LatestSongsSkeleton, CardsSkeleton } from '@/app/ui/skeletons'
+import { CardsSkeleton, LatestSongsSkeleton } from "@/app/components/Skeletons"
+import CardWrapper from "@/app/components/dashboard/Cards"
+import LatestSongs from "@/app/components/dashboard/LatestSongs"
+import { Suspense } from "react"
 
 export default async function Page() {
-  return (
-    <main>
-      <h1 className={`${openSans.className} mb-6 text-xl md:text-2xl`}>Dashboard</h1>
+    return (
+        <main>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+                <Suspense fallback={<CardsSkeleton />}>
+                    <CardWrapper />
+                </Suspense>
+            </div>
 
-      {/* Cards Section */}
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        <Suspense fallback={<CardsSkeleton />}>
-          <CardWrapper />
-        </Suspense>
-      </div>
-
-      {/* Latest Songs Section - Full Width */}
-      <div className="mt-8">
-        <Suspense fallback={<LatestSongsSkeleton />}>
-          <LatestSongs />
-        </Suspense>
-      </div>
-    </main>
-  )
+            <div className="mt-6">
+                <Suspense fallback={<LatestSongsSkeleton />}>
+                    <LatestSongs />
+                </Suspense>
+            </div>
+        </main>
+    )
 }

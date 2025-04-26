@@ -8,42 +8,6 @@ datasource db {
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
-model bad_nuts {
-  id                 Int       @id @default(autoincrement())
-  reason             String?
-  spotify_id         String?   @db.Char(22)
-  title              String?   @db.VarChar(150)
-  artists            String[]
-  album              String?   @db.VarChar(150)
-  bpm                Int?
-  level              Int?
-  key                String?   @db.VarChar(3)
-  date_added         DateTime? @default(now()) @db.Timestamp(6)
-  date_liked         DateTime? @db.Timestamp(6)
-  date_played        DateTime? @db.Timestamp(6)
-  date_artist_played DateTime? @db.Timestamp(6)
-  date_album_played  DateTime? @db.Timestamp(6)
-  date_title_played  DateTime? @db.Timestamp(6)
-  image_urls         String[]
-  file_path          String?
-  hours_off          Int?      @default(24)
-  year               Int?
-  tags               String[]
-  instrumentalness   Int?
-  duration           Int?
-  explicit           Boolean?
-  danceability       Int?
-  energy             Int?
-  liveness           Int?
-  loudness           Int?
-  speechiness        Int?
-  valence            Int?
-  time_signature     Int?
-  roboticness        Int?      @default(2)
-  count_played       Int?      @default(0)
-}
-
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model compatibility_tree {
   id                                      Int  @id @default(autoincrement())
   root_id                                 Int
@@ -69,7 +33,9 @@ model history {
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model nuts {
   id                                                    Int                  @id @default(autoincrement())
-  spotify_id                                            String               @unique @db.Char(22)
+  spotify_id                                            String?              @unique @db.Char(22)
+  sam_id                                                Int?                 @unique
+  youtube_id                                            String?              @db.VarChar(11)
   title                                                 String?              @db.VarChar(150)
   artists                                               String[]
   album                                                 String?              @db.VarChar(150)
@@ -89,7 +55,7 @@ model nuts {
   tags                                                  String[]
   instrumentalness                                      Int?
   duration                                              Int?
-  explicit                                              Boolean?
+  explicit                                              Boolean
   danceability                                          Int?
   energy                                                Int?
   liveness                                              Int?
@@ -128,4 +94,15 @@ model queue {
 
   @@index([added_at], map: "idx_queue_added_at")
   @@index([nut_id], map: "idx_queue_nut_id")
+}
+
+model show_schedule {
+  id               Int    @id @default(autoincrement())
+  show_name        String
+  rules            Json
+  level_lock       Int?
+  genre_lock       String @default(".*")
+  roboticness_lock Int    @default(0)
+  year_min         Int    @default(1800)
+  year_max         Int    @default(5000)
 }

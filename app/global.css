@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+td {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+    padding: 4px; /* Add some padding for better readability */
+}
+
+table {
+    width: 100%; /* Ensure the table takes up full width */
+    border-spacing: 0; /* Remove any default spacing between table cells */
+}
