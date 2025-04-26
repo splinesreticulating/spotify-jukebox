@@ -1,6 +1,7 @@
 "use client"
 
 import { useTheme } from "@/app/lib/ThemeContext"
+import type { Theme } from "@/app/lib/ThemeContext"
 
 export default function ThemeSelector() {
     const { theme, setTheme } = useTheme()
@@ -8,7 +9,9 @@ export default function ThemeSelector() {
     return (
         <select
             value={theme}
-            onChange={(e) => setTheme(e.target.value as any)}
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                setTheme(e.target.value as Theme)
+            }
             className="rounded-md border border-gray-300 px-2 py-1 text-sm"
         >
             <option value="ocean">Ocean</option>

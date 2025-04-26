@@ -173,7 +173,7 @@ export function getThemeClasses<T extends ThemeElement>(
     }
 
     if (variant && typeof elementConfig === "object") {
-        return (elementConfig as any)[variant] || ""
+        return (elementConfig as Record<string, string>)[variant] || ""
     }
 
     return ""

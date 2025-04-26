@@ -73,10 +73,10 @@ const settingConfigs: Record<
 
 export default function SettingsTable({ settings }: { settings: Setting[] }) {
     const [values, setValues] = useState<Record<string, string>>(
-        settings.reduce(
-            (acc, setting) => ({ ...acc, [setting.name]: setting.value }),
-            {},
-        ),
+        settings.reduce<Record<string, string>>((acc, setting) => {
+            acc[setting.name] = setting.value
+            return acc
+        }, {}),
     )
     const [debouncedValues] = useDebounce(values, 1000)
 
@@ -86,30 +86,37 @@ export default function SettingsTable({ settings }: { settings: Setting[] }) {
 
     // Effect to save changes after debounce
     useEffect(() => {
-        Object.entries(debouncedValues).forEach(async ([name, value]) => {
-            if (value !== settings.find((s) => s.name === name)?.value) {
-                try {
-                    const response = await fetch(`/api/settings/${name}`, {
-                        method: "PUT",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify({ value }),
-                    })
+        const updateSettings = async () => {
+            for (const [name, value] of Object.entries(debouncedValues)) {
+                if (value !== settings.find((s) => s.name === name)?.value) {
+                    try {
+                        const response = await fetch(`/api/settings/${name}`, {
+                            method: "PUT",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({ value }),
+                        })
 
-                    if (!response.ok)
-                        throw new Error("Failed to update setting")
-                    toast.success("Setting updated", toastStyles.success)
-                } catch (error) {
-                    toast.error("Failed to update setting", toastStyles.error)
-                    setValues((prev) => ({
-                        ...prev,
-                        [name]:
-                            settings.find((s) => s.name === name)?.value || "",
-                    }))
+                        if (!response.ok)
+                            throw new Error("Failed to update setting")
+                        toast.success("Setting updated", toastStyles.success)
+                    } catch (error) {
+                        toast.error(
+                            "Failed to update setting",
+                            toastStyles.error,
+                        )
+                        setValues((prev) => ({
+                            ...prev,
+                            [name]:
+                                settings.find((s) => s.name === name)?.value ||
+                                "",
+                        }))
+                    }
                 }
             }
-        })
+        }
+        updateSettings()
     }, [debouncedValues, settings])
 
     const renderInput = (setting: Setting) => {
@@ -136,7 +143,7 @@ export default function SettingsTable({ settings }: { settings: Setting[] }) {
             after:rounded-full after:border after:border-gray-300 after:bg-white 
             after:transition-all after:content-[''] peer-checked:bg-indigo-600 peer-checked:after:translate-x-full 
             peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300"
-                    ></div>
+                    />
                 </label>
             )
         }

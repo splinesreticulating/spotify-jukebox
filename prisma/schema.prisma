@@ -55,7 +55,7 @@ model nuts {
   tags                                                  String[]
   instrumentalness                                      Int?
   duration                                              Int?
-  explicit                                              Boolean?
+  explicit                                              Boolean
   danceability                                          Int?
   energy                                                Int?
   liveness                                              Int?

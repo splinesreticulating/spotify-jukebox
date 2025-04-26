@@ -14,6 +14,7 @@ export const Heart: React.FC<HeartProps> = ({
 
     return (
         <button
+            type="button"
             onClick={onHeartClick}
             className="flex items-center justify-center"
         >

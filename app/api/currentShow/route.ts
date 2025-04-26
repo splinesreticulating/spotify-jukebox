@@ -1,4 +1,5 @@
 import { db } from "@/app/lib/db"
+import type { ShowRule } from "@/app/lib/types/show"
 import { NextResponse } from "next/server"
 
 export async function GET() {
@@ -14,10 +15,7 @@ export async function GET() {
         const nowLA = new Date(nowUTC.getTime() + laOffset)
 
         // Format the time in 24-hour format HH:MM
-        const currentTime =
-            nowLA.getUTCHours().toString().padStart(2, "0") +
-            ":" +
-            nowLA.getUTCMinutes().toString().padStart(2, "0")
+        const currentTime = `${nowLA.getUTCHours().toString().padStart(2, "0")}:${nowLA.getUTCMinutes().toString().padStart(2, "0")}`
 
         // Get day of week in LA (0 = Sunday, 6 = Saturday)
         const currentDayNumber = nowLA.getUTCDay()
@@ -25,15 +23,33 @@ export async function GET() {
         // Get all show schedules
         const shows = await db.show_schedule.findMany()
 
+        // Type guard to check if value is ShowRule[]
+        function isShowRuleArray(val: unknown): val is ShowRule[] {
+            return (
+                Array.isArray(val) &&
+                val.every(
+                    (item) =>
+                        typeof item === "object" &&
+                        item !== null &&
+                        typeof (item as import("@/app/lib/types/show").ShowRule)
+                            .start_time === "string" &&
+                        typeof (item as import("@/app/lib/types/show").ShowRule)
+                            .end_time === "string",
+                )
+            )
+        }
+
         // Find the current show
         const currentShow =
-            shows.find((show) =>
-                (show.rules as any[]).some(
-                    (rule) =>
-                        rule.days?.includes(currentDayNumber) &&
-                        rule.start_time <= currentTime &&
-                        rule.end_time > currentTime,
-                ),
+            shows.find(
+                (show) =>
+                    isShowRuleArray(show.rules) &&
+                    show.rules.some(
+                        (rule) =>
+                            rule.days?.includes(currentDayNumber) &&
+                            rule.start_time <= currentTime &&
+                            rule.end_time > currentTime,
+                    ),
             )?.show_name ?? "Variety Mix"
 
         return NextResponse.json({ showName: currentShow })

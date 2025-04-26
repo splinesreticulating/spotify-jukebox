@@ -67,7 +67,7 @@ export default function EditSongForm({ song: initialSong }: { song: Song }) {
             danceability: initialSong.danceability,
             energy: initialSong.energy,
             instrumentalness: initialSong.instrumentalness,
-            explicit: initialSong.explicit ?? false,
+            explicit: initialSong.explicit,
         },
     })
 
@@ -373,10 +373,14 @@ export default function EditSongForm({ song: initialSong }: { song: Song }) {
                         </div>
                         <div className="space-y-4">
                             <div>
-                                <label className="mb-1 block text-sm font-medium text-gray-700">
+                                <label
+                                    htmlFor="instrumentalness"
+                                    className="mb-1 block text-sm font-medium text-gray-700"
+                                >
                                     Instrumentalness
                                 </label>
                                 <input
+                                    id="instrumentalness"
                                     type="range"
                                     min="0"
                                     max="100"
@@ -387,10 +391,14 @@ export default function EditSongForm({ song: initialSong }: { song: Song }) {
                                 />
                             </div>
                             <div>
-                                <label className="mb-1 block text-sm font-medium text-gray-700">
+                                <label
+                                    htmlFor="danceability"
+                                    className="mb-1 block text-sm font-medium text-gray-700"
+                                >
                                     Danceability
                                 </label>
                                 <input
+                                    id="danceability"
                                     type="range"
                                     min="0"
                                     max="100"
@@ -401,10 +409,14 @@ export default function EditSongForm({ song: initialSong }: { song: Song }) {
                                 />
                             </div>
                             <div>
-                                <label className="mb-1 block text-sm font-medium text-gray-700">
+                                <label
+                                    htmlFor="energy"
+                                    className="mb-1 block text-sm font-medium text-gray-700"
+                                >
                                     Energy
                                 </label>
                                 <input
+                                    id="energy"
                                     type="range"
                                     min="0"
                                     max="100"

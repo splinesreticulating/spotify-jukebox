@@ -9,7 +9,8 @@ export function Logo() {
     const [showTooltip, setShowTooltip] = useState(false)
 
     return (
-        <div
+        <button
+            type="button"
             className={`${currentFont.className} relative flex h-full w-full cursor-pointer items-center justify-center leading-none text-white`}
             onClick={nextFont}
             onMouseEnter={() => setShowTooltip(true)}
@@ -25,6 +26,6 @@ export function Logo() {
             <p className="text-center text-[40px] sm:text-[35px] md:text-[45px]">
                 Spotify Jukebox
             </p>
-        </div>
+        </button>
     )
 }

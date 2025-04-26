@@ -2,10 +2,10 @@
 
 import type { NowPlayingData } from "@/app/lib/types"
 import { signIn } from "@/auth"
+import type { Prisma } from "@prisma/client"
 import { AuthError } from "next-auth"
 import { redirect } from "next/navigation"
 import { db } from "./db"
-import type { Prisma } from "@prisma/client"
 
 export async function befriend(nowPlayingData: NowPlayingData) {
     const { lastSong, currentSong } = nowPlayingData
@@ -53,7 +53,8 @@ export async function authenticate(
     } catch (error) {
         if (error instanceof AuthError) {
             // AuthError from next-auth does not have a 'type' property, use 'code' instead
-            switch ((error as any).code) {
+            type AuthErrorWithCode = AuthError & { code?: string }
+            switch ((error as AuthErrorWithCode).code) {
                 case "CredentialsSignin":
                     return { errorMessage: "Invalid credentials" }
                 default:
@@ -111,15 +112,15 @@ export const fetchCompatibleSongs = async (
 
     // Check if next song is in the compatible list
     type CompatibilitySongItem = {
-        branch_id: number;
-        branch_level: number | null;
+        branch_id: number
+        branch_level: number | null
         nuts_compatibility_tree_branch_idTonuts: {
-            id: number;
-            title: string | null;
-            artists: string[];
-            spotify_id: string | null;
-        };
-    };
+            id: number
+            title: string | null
+            artists: string[]
+            spotify_id: string | null
+        }
+    }
     const isNextSongCompatible = allCompatibleSongs.some(
         (song: CompatibilitySongItem) => song.branch_id === nextSongId,
     )

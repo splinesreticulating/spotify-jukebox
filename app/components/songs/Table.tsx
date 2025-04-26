@@ -104,9 +104,7 @@ export default function Table({
                                         >
                                             {/* Main Row - Always Visible */}
                                             <div className="mb-2 flex w-full items-center gap-3">
-                                                <PlayButton
-                                                    songId={song.id}
-                                                />
+                                                <PlayButton songId={song.id} />
                                                 <div className="min-w-0 flex-1 overflow-hidden">
                                                     <SongLink
                                                         song={{
@@ -125,6 +123,7 @@ export default function Table({
                                                     </p>
                                                 </div>
                                                 <button
+                                                    type="button"
                                                     onClick={() =>
                                                         setExpandedSong(
                                                             expandedSong ===
@@ -141,6 +140,7 @@ export default function Table({
                                                         fill="none"
                                                         stroke="currentColor"
                                                         viewBox="0 0 24 24"
+                                                        aria-hidden="true"
                                                     >
                                                         <path
                                                             strokeLinecap="round"

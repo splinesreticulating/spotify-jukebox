@@ -4,8 +4,8 @@ import Link from "next/link"
 
 export default function Page() {
     const getFrontPageImages = (): string[] => {
-        const fs = require("fs")
-        const path = require("path")
+        const fs = require("node:fs")
+        const path = require("node:path")
 
         const directoryPath = path.join(__dirname, "../../../public")
         const files: string[] = fs.readdirSync(directoryPath)

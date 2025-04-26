@@ -1,6 +1,7 @@
 "use client"
 
 import { ArcElement, Chart as ChartJS, Legend, Title, Tooltip } from "chart.js"
+import type { TooltipItem } from "chart.js"
 import { Pie } from "react-chartjs-2"
 
 ChartJS.register(ArcElement, Title, Tooltip, Legend)
@@ -46,9 +47,9 @@ export function ArtistChart({ data }: ArtistChartProps) {
             },
             tooltip: {
                 callbacks: {
-                    label: (context: any) => {
+                    label: (context: TooltipItem<"pie">) => {
                         const label = context.label || ""
-                        const value = context.raw
+                        const value = context.raw as number
                         const total = context.dataset.data.reduce(
                             (a: number, b: number) => a + b,
                             0,

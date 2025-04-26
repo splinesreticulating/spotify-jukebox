@@ -29,11 +29,11 @@ export default function Pagination({
             />
 
             <div className="flex -space-x-px">
-                {allPages.map((page, index) => {
+                {allPages.map((page) => {
                     if (page === "...") {
                         return (
                             <span
-                                key={`${page}-${index}`}
+                                key={`ellipsis-${page}-${Math.random()}`}
                                 className="px-4 py-2 text-sm text-gray-700"
                             >
                                 {page}
@@ -45,6 +45,7 @@ export default function Pagination({
                     return (
                         <button
                             key={page}
+                            type="button"
                             onClick={() => onPageChange(Number(page))}
                             className={clsx(
                                 "relative inline-flex items-center px-4 py-2 text-sm font-semibold",
@@ -83,6 +84,7 @@ function PaginationArrow({
 
     return (
         <button
+            type="button"
             className={clsx(
                 "inline-flex h-10 w-10 items-center justify-center rounded-md",
                 disabled

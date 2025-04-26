@@ -73,6 +73,7 @@ export default function Search({ placeholder }: { placeholder: string }) {
 
             {searchParams.get("query") && (
                 <button
+                    type="button"
                     onClick={clearSearch}
                     className={clsx(
                         "absolute right-3 top-1/2 -translate-y-1/2",
@@ -84,6 +85,7 @@ export default function Search({ placeholder }: { placeholder: string }) {
                         className="h-4 w-4"
                         viewBox="0 0 20 20"
                         fill="currentColor"
+                        aria-hidden="true"
                     >
                         <path
                             fillRule="evenodd"

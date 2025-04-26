@@ -92,13 +92,13 @@ export function NowPlayingSkeleton() {
         <main className="flex flex-col items-center justify-center p-4 sm:p-6">
             <div className="w-full max-w-md text-center">
                 <div className="my-2 flex justify-center">
-                    <div className="h-24 w-24 animate-pulse rounded-full bg-gray-100"></div>
+                    <div className="h-24 w-24 animate-pulse rounded-full bg-gray-100" />
                 </div>
                 <ul className="flex w-full flex-col items-center space-y-4">
-                    <li className="h-8 w-32 animate-pulse rounded bg-gray-100"></li>
-                    <li className="h-8 w-8 animate-pulse rounded-full bg-red-100"></li>
-                    <li className="h-8 w-32 animate-pulse rounded bg-gray-100"></li>
-                    <li className="h-8 w-32 animate-pulse rounded bg-gray-100"></li>
+                    <li className="h-8 w-32 animate-pulse rounded bg-gray-100" />
+                    <li className="h-8 w-8 animate-pulse rounded-full bg-red-100" />
+                    <li className="h-8 w-32 animate-pulse rounded bg-gray-100" />
+                    <li className="h-8 w-32 animate-pulse rounded bg-gray-100" />
                 </ul>
             </div>
         </main>

@@ -58,33 +58,66 @@ export default function SongTable({
                     <tr className="bg-gray-50">
                         <th
                             scope="col"
-                            className="w-2/3 cursor-pointer px-2 py-3 text-left text-sm font-semibold text-gray-900 hover:text-gray-700 sm:w-2/5 sm:px-3"
-                            onClick={() => handleSort("title")}
+                            className="w-2/3 px-2 py-3 text-left text-sm font-semibold text-gray-900 sm:w-2/5 sm:px-3"
                         >
-                            Title{" "}
-                            {sortField === "title" && (
-                                <SortArrow direction={sortDirection} />
-                            )}
+                            <button
+                                type="button"
+                                className="w-full cursor-pointer hover:text-gray-700 text-left"
+                                onClick={() => handleSort("title")}
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter" || e.key === " ") {
+                                        handleSort("title")
+                                    }
+                                }}
+                                aria-pressed={sortField === "title"}
+                            >
+                                Title{" "}
+                                {sortField === "title" && (
+                                    <SortArrow direction={sortDirection} />
+                                )}
+                            </button>
                         </th>
                         <th
                             scope="col"
-                            className="hidden w-1/6 cursor-pointer px-3 py-3 text-left text-sm font-semibold text-gray-900 hover:text-gray-700 sm:table-cell"
-                            onClick={() => handleSort("album")}
+                            className="hidden w-1/6 px-3 py-3 text-left text-sm font-semibold text-gray-900 sm:table-cell"
                         >
-                            Album{" "}
-                            {sortField === "album" && (
-                                <SortArrow direction={sortDirection} />
-                            )}
+                            <button
+                                type="button"
+                                className="w-full cursor-pointer hover:text-gray-700 text-left"
+                                onClick={() => handleSort("album")}
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter" || e.key === " ") {
+                                        handleSort("album")
+                                    }
+                                }}
+                                aria-pressed={sortField === "album"}
+                            >
+                                Album{" "}
+                                {sortField === "album" && (
+                                    <SortArrow direction={sortDirection} />
+                                )}
+                            </button>
                         </th>
                         <th
                             scope="col"
-                            className="w-1/3 cursor-pointer px-2 py-3 text-left text-sm font-semibold text-gray-900 hover:text-gray-700 sm:w-1/4 sm:px-3"
-                            onClick={() => handleSort("date_added")}
+                            className="w-1/3 px-2 py-3 text-left text-sm font-semibold text-gray-900 sm:w-1/4 sm:px-3"
                         >
-                            Added{" "}
-                            {sortField === "date_added" && (
-                                <SortArrow direction={sortDirection} />
-                            )}
+                            <button
+                                type="button"
+                                className="w-full cursor-pointer hover:text-gray-700 text-left"
+                                onClick={() => handleSort("date_added")}
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter" || e.key === " ") {
+                                        handleSort("date_added")
+                                    }
+                                }}
+                                aria-pressed={sortField === "date_added"}
+                            >
+                                Added{" "}
+                                {sortField === "date_added" && (
+                                    <SortArrow direction={sortDirection} />
+                                )}
+                            </button>
                         </th>
                     </tr>
                 </thead>

@@ -154,12 +154,18 @@ export default function NowPlayingPage() {
         <main className="flex flex-col items-center justify-center p-4 sm:p-6">
             <section className="w-full max-w-md text-center">
                 {currentShow && (
-                    <div
+                    <button
                         className={clsx(
                             "mb-4 cursor-pointer rounded-lg px-4 py-2 shadow-sm",
                             getThemeClasses<"background">(theme, "background"),
                         )}
                         onClick={nextFont}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                                nextFont()
+                            }
+                        }}
+                        type="button"
                     >
                         <h2
                             className={clsx(
@@ -169,7 +175,7 @@ export default function NowPlayingPage() {
                         >
                             {currentShow}
                         </h2>
-                    </div>
+                    </button>
                 )}
                 <Image
                     src="/squirrelGuitarButton.png"
@@ -217,74 +223,55 @@ export default function NowPlayingPage() {
                                 </span>
                             )}
                         </div>
+                        {isExpanded && compatibleSongs.length > 0 && (
+                            <div className="mt-4 space-y-2 text-sm text-gray-600">
+                                <p className="font-medium">or...</p>
+                                <ul className="space-y-1 text-center">
+                                    {compatibleSongs.map((song) => (
+                                        <li
+                                            key={song.id}
+                                            className="flex items-center justify-center gap-1"
+                                        >
+                                            <PlayButton songId={song.id} />
+                                            <SongLink song={song} />
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
                     </li>
-                    <li className="w-full">
+                    <li>
                         {nextSong ? (
-                            nextSong.title ? (
-                                <>
-                                    <div className="flex items-center justify-center gap-2">
-                                        {compatibleSongs.length > 0 && (
-                                            <button
-                                                onClick={toggleExpanded}
-                                                className="rounded-full p-1 hover:bg-gray-100"
-                                                aria-label={
-                                                    isExpanded
-                                                        ? "Hide compatible songs"
-                                                        : "Show compatible songs"
-                                                }
-                                            >
-                                                {isExpanded ? (
-                                                    <ChevronDownIcon className="h-5 w-5" />
-                                                ) : (
-                                                    <ChevronRightIcon className="h-5 w-5" />
-                                                )}
-                                            </button>
+                            <span className="flex items-center gap-2">
+                                {compatibleSongs.length > 0 && (
+                                    <button
+                                        type="button"
+                                        onClick={toggleExpanded}
+                                        className="rounded-full p-1 hover:bg-gray-100"
+                                        aria-label={
+                                            isExpanded
+                                                ? "Hide compatible songs"
+                                                : "Show compatible songs"
+                                        }
+                                    >
+                                        {isExpanded ? (
+                                            <ChevronDownIcon className="h-5 w-5" />
+                                        ) : (
+                                            <ChevronRightIcon className="h-5 w-5" />
                                         )}
-                                        <span>
-                                            <span
-                                                className={getLevelColor(
-                                                    nextSong.level,
-                                                )}
-                                            >
-                                                next:
-                                            </span>{" "}
-                                            <SongLink song={nextSong} />
-                                            {isNextSongCompatible && (
-                                                <sup className="ml-1 text-red-500">
-                                                    ❤️
-                                                </sup>
-                                            )}
-                                        </span>
-                                    </div>
-                                    {isExpanded &&
-                                        compatibleSongs.length > 0 && (
-                                            <div className="mt-4 space-y-2 text-sm text-gray-600">
-                                                <p className="font-medium">
-                                                    or...
-                                                </p>
-                                                <ul className="space-y-1 text-center">
-                                                    {compatibleSongs.map(
-                                                        (song) => (
-                                                            <li
-                                                                key={song.id}
-                                                                className="flex items-center justify-center gap-1"
-                                                            >
-                                                                <PlayButton
-                                                                    songId={
-                                                                        song.id
-                                                                    }
-                                                                />
-                                                                <SongLink
-                                                                    song={song}
-                                                                />
-                                                            </li>
-                                                        ),
-                                                    )}
-                                                </ul>
-                                            </div>
-                                        )}
-                                </>
-                            ) : null
+                                    </button>
+                                )}
+                                <span
+                                    className={getLevelColor(
+                                        nextSong.level ?? 3,
+                                    )}
+                                >
+                                    next: <SongLink song={nextSong} />
+                                </span>
+                                {isNextSongCompatible && (
+                                    <sup className="ml-1 text-red-500">❤️</sup>
+                                )}
+                            </span>
                         ) : (
                             <span className="text-gray-400">next: (none)</span>
                         )}

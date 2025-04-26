@@ -60,6 +60,7 @@ export default function SearchFilters({
                 {["1", "2", "3", "4", "5"].map((level) => (
                     <button
                         key={level}
+                        type="button"
                         onClick={() => {
                             const currentLevels =
                                 initialValues.levels
@@ -97,6 +98,7 @@ export default function SearchFilters({
                 ].map(({ id, label }, index, array) => (
                     <button
                         key={id}
+                        type="button"
                         onClick={() => {
                             if (initialValues[id] === "true") {
                                 handleFilterChange(id, "")
@@ -118,6 +120,7 @@ export default function SearchFilters({
 
                 {/* Music Buttons */}
                 <button
+                    type="button"
                     onClick={() =>
                         handleFilterChange(
                             "instrumental",
@@ -134,6 +137,7 @@ export default function SearchFilters({
                     Instrumental
                 </button>
                 <button
+                    type="button"
                     onClick={() =>
                         handleFilterChange(
                             "bpmRef",
@@ -151,6 +155,7 @@ export default function SearchFilters({
                     ~ BPM
                 </button>
                 <button
+                    type="button"
                     onClick={() =>
                         handleFilterChange(
                             "keyCompatible",
@@ -170,6 +175,7 @@ export default function SearchFilters({
                     ~ Key
                 </button>
                 <button
+                    type="button"
                     onClick={() =>
                         handleFilterChange(
                             "keyMatch",

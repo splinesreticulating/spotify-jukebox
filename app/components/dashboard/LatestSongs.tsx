@@ -14,7 +14,7 @@ export default async function LatestSongs() {
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
-                                <th scope="col" className="w-12 px-3 py-3"></th>
+                                <th scope="col" className="w-12 px-3 py-3" />
                                 <th
                                     scope="col"
                                     className="px-3 py-3 text-left text-sm font-semibold text-gray-900"
@@ -88,7 +88,9 @@ export default async function LatestSongs() {
                             </div>
 
                             <span className="flex-shrink-0 text-xs text-gray-400">
-                                {daysAgo(song.date_added!)}d
+                                {song.date_added
+                                    ? `${daysAgo(song.date_added)}d`
+                                    : ""}
                             </span>
                         </div>
                     </div>

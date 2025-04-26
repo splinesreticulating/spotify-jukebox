@@ -3,19 +3,19 @@
 import type { NowPlayingData, NowPlayingSong, Song } from "@/app/lib/types"
 import type { LatestSong, SongSelectFields } from "@/app/lib/types"
 import type { SongQueryParams } from "@/app/lib/types/api"
+import { unstable_noStore as noStore } from "next/cache"
+import { unstable_cache } from "next/cache"
+import { ITEMS_PER_PAGE, db } from "./db"
 import type { ArtistSongView } from "./types/artists"
 import type { ArtistPayload, LatestSongPayload } from "./types/database"
 import { cleanLastFMText } from "./utils"
 import { getCompatibleKeys } from "./utils"
-import { unstable_noStore as noStore } from "next/cache"
-import { unstable_cache } from "next/cache"
-import { ITEMS_PER_PAGE, db } from "./db"
 
 // Helper for joining SQL fragments
 function arrayJoin(arr: string[], sep: string) {
-    return arr.join(sep);
-  }
-  
+    return arr.join(sep)
+}
+
 const songSelectFields: SongSelectFields = {
     id: true,
     spotify_id: true,
@@ -65,9 +65,10 @@ const buildWhereClause = ({
     }
 
     if (levelsArray.length > 0)
-        conditions.push(`level = ANY(ARRAY[${levelsArray.map(Number).join(",")}])`)
-    if (instrumental === "1")
-        conditions.push(`instrumentalness >= 90`)
+        conditions.push(
+            `level = ANY(ARRAY[${levelsArray.map(Number).join(",")}])`,
+        )
+    if (instrumental === "1") conditions.push("instrumentalness >= 90")
     if (keyMatch) conditions.push(`key = ${keyMatch}`)
     if (keyCompatible)
         conditions.push(
@@ -80,21 +81,17 @@ const buildWhereClause = ({
 
     const eraConditions = []
 
-    if (eighties) eraConditions.push(`(year >= 1980 AND year < 1990)`)
-    if (nineties) eraConditions.push(`(year >= 1990 AND year < 2000)`)
-    if (lastYear)
-        eraConditions.push(`year = ${new Date().getFullYear() - 1}`)
-    if (thisYear)
-        eraConditions.push(`year = ${new Date().getFullYear()}`)
+    if (eighties) eraConditions.push("(year >= 1980 AND year < 1990)")
+    if (nineties) eraConditions.push("(year >= 1990 AND year < 2000)")
+    if (lastYear) eraConditions.push(`year = ${new Date().getFullYear() - 1}`)
+    if (thisYear) eraConditions.push(`year = ${new Date().getFullYear()}`)
 
     if (eraConditions.length > 0) {
         conditions.push(`(${arrayJoin(eraConditions, " OR ")})`)
     }
 
     const whereClause =
-        conditions.length > 0
-            ? `WHERE ${arrayJoin(conditions, " AND ")}`
-            : ""
+        conditions.length > 0 ? `WHERE ${arrayJoin(conditions, " AND ")}` : ""
 
     return whereClause
 }
@@ -117,8 +114,8 @@ const fetchSongsBaseQuery = async (
           date_added DESC
         LIMIT ${ITEMS_PER_PAGE}
         OFFSET ${offset}
-    `;
-    return await db.$queryRawUnsafe(sqlQuery);
+    `
+    return await db.$queryRawUnsafe(sqlQuery)
 }
 
 export async function fetchLatestSongs(): Promise<LatestSong[]> {
@@ -275,8 +272,10 @@ export async function fetchSongsPages(
             SELECT COUNT(*)::integer as count
             FROM nuts
             ${whereClause}
-        `;
-        const result = await db.$queryRawUnsafe(sqlQuery) as { count: number }[];
+        `
+        const result = (await db.$queryRawUnsafe(sqlQuery)) as {
+            count: number
+        }[]
         return Math.ceil(Number(result[0].count) / ITEMS_PER_PAGE)
     } catch (error) {
         console.error("Database Error:", error)
@@ -478,12 +477,15 @@ export async function fetchAvailableSongsByLevel(onlyAvailable = true) {
         ${
             onlyAvailable
                 ? `(date_played IS NULL OR date_played + (hours_off || ' hours')::interval < '${currentTime.toISOString()}')`
-                : `1=1`
+                : "1=1"
         }
       GROUP BY level
       ORDER BY level
-    `;
-        const result = await db.$queryRawUnsafe(sqlQuery) as Array<{ level: number; count: number }>;
+    `
+        const result = (await db.$queryRawUnsafe(sqlQuery)) as Array<{
+            level: number
+            count: number
+        }>
 
         return result.map((row) => ({
             level: Number(row.level),
@@ -518,7 +520,7 @@ export async function fetchAvailableSongsByPeriod(onlyAvailable = true) {
           ${
               onlyAvailable
                   ? `(date_played IS NULL OR date_played + (hours_off || ' hours')::interval < '${currentDate.toISOString()}')`
-                  : `1=1`
+                  : "1=1"
           }
       )
       SELECT 
@@ -537,8 +539,11 @@ export async function fetchAvailableSongsByPeriod(onlyAvailable = true) {
           WHEN '30-40 years' THEN 7
           ELSE 8
         END
-    `;
-        const result = await db.$queryRawUnsafe(sqlQuery) as Array<{ period: string; count: number }>;
+    `
+        const result = (await db.$queryRawUnsafe(sqlQuery)) as Array<{
+            period: string
+            count: number
+        }>
 
         return result.map((row) => ({
             period: row.period,
@@ -599,7 +604,9 @@ export async function fetchArtistInfo(
     }
 }
 
-export async function fetchAvailableSongsByTag(showOnlyAvailable = true) {
+export async function fetchAvailableSongsByTag(
+    showOnlyAvailable = true,
+): Promise<Array<{ tag: string; count: number }>> {
     noStore()
     try {
         const sqlQuery = `
@@ -609,7 +616,7 @@ export async function fetchAvailableSongsByTag(showOnlyAvailable = true) {
         WHERE ${
             showOnlyAvailable
                 ? `(date_played < NOW() - INTERVAL '1 day' * COALESCE(hours_off, 24) / 24 OR date_played IS NULL)`
-                : `1=1`
+                : "1=1"
         }
       )
       SELECT tag, COUNT(*) as count
@@ -617,16 +624,24 @@ export async function fetchAvailableSongsByTag(showOnlyAvailable = true) {
       GROUP BY tag
       ORDER BY count DESC
       LIMIT 10
-    `;
-        const result = await db.$queryRawUnsafe(sqlQuery);
-        return result
+    `
+        const result = (await db.$queryRawUnsafe(sqlQuery)) as Array<{
+            tag: string
+            count: number
+        }>
+        return result.map((row) => ({
+            tag: row.tag,
+            count: Number(row.count),
+        }))
     } catch (error) {
         console.error("Database Error:", error)
         throw new Error("Failed to fetch tags data")
     }
 }
 
-export async function fetchAvailableSongsByArtist(showOnlyAvailable = true) {
+export async function fetchAvailableSongsByArtist(
+    showOnlyAvailable = true,
+): Promise<Array<{ artist: string; count: number }>> {
     noStore()
     try {
         const currentTime = new Date()
@@ -638,7 +653,7 @@ export async function fetchAvailableSongsByArtist(showOnlyAvailable = true) {
           ${
               showOnlyAvailable
                   ? `(date_played IS NULL OR date_played + (hours_off || ' hours')::interval < '${currentTime.toISOString()}')`
-                  : `1=1`
+                  : "1=1"
           }
       )
       SELECT artist, COUNT(*) as count
@@ -646,9 +661,15 @@ export async function fetchAvailableSongsByArtist(showOnlyAvailable = true) {
       GROUP BY artist
       ORDER BY count DESC
       LIMIT 10
-    `;
-        const result = await db.$queryRawUnsafe(sqlQuery);
-        return result
+    `
+        const result = (await db.$queryRawUnsafe(sqlQuery)) as Array<{
+            artist: string
+            count: number
+        }>
+        return result.map((row) => ({
+            artist: row.artist,
+            count: Number(row.count),
+        }))
     } catch (error) {
         console.error("Database Error:", error)
         throw new Error("Failed to fetch artists data")

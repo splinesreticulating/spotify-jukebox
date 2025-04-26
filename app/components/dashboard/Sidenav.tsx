@@ -37,11 +37,12 @@ export default function SideNav() {
                 <NavLinks />
                 <div
                     className={clsx(
-                        "hidden h-auto w-full grow rounded-md md:block",
+                        "hidden h-auto w/full grow rounded-md md:block",
                         getThemeClasses<"background">(theme, "background"),
                     )}
-                ></div>
+                />
                 <button
+                    type="button"
                     onClick={handleSubmit}
                     className={clsx(
                         "flex h-12 w-full grow items-center justify-center gap-2 rounded-md p-2 text-sm font-medium md:flex-none md:justify-start md:p-2 md:px-3",
