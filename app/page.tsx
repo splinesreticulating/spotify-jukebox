@@ -62,7 +62,7 @@ export default function Page() {
                                 Spotify Jukebox
                             </h1>
                             <p className="mb-8 text-lg text-gray-200 md:text-xl">
-                                Complimentary mixed nuts
+                                Pick the perfect next song
                             </p>
                             <Link
                                 href="/login"

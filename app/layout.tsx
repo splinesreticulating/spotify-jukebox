@@ -10,7 +10,7 @@ export const metadata: Metadata = {
         template: "%s | Spotify Jukebox",
         default: "Spotify Jukebox",
     },
-    description: "Complimentary mixed nuts",
+    description: "Pick the perfect next song",
     metadataBase: new URL(process.env.NEXTAUTH_URL || "http://localhost:2309"),
     icons: {
         icon: [
