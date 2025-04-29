@@ -129,7 +129,3 @@ This project is open-source under the [MIT License](LICENSE).
 
 Developed by [Splines Reticulating](https://github.com/splinesreticulating).  
 Focused on building smart, user-centric music tools and automation projects.
-
----
-
-# 🎧 Thanks for checking out **Spotify Jukebox**!
