@@ -4,6 +4,8 @@
 
 Built with **Next.js 15**, **Prisma**, and **PostgreSQL**, this project brings intelligent music automation to life.
 
+> 🛰️ Part of [Queue FM](https://github.com/splinesreticulating/queuefm) – a Spotify-powered radio station with a smart, self-updating playlist.
+
 ---
 
 ## 🚀 Features
