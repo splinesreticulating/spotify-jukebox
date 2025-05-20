@@ -166,18 +166,12 @@ export async function fetchCardData() {
                 OR: [{ bpm: null }, { key: null }],
             },
         })
-        const incomingCountPromise = db.nuts.count({
-            where: {
-                AND: [{ spotify_id: { not: null } }],
-            },
-        })
 
         const data = await Promise.all([
             songCountPromise,
             artistsPromise,
             compatibilityCountPromise,
             unprocessedCountPromise,
-            incomingCountPromise,
         ])
 
         // Get unique primary artists (first artist in each array)
@@ -191,7 +185,6 @@ export async function fetchCardData() {
             numberOfArtists: uniqueArtists.size,
             numberOfCompatibilities: data[2],
             numberOfUnprocessed: data[3],
-            numberOfIncoming: data[4],
         }
     } catch (error) {
         console.error("Database Error:", error)

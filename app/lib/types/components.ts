@@ -23,7 +23,6 @@ export type CardType =
     | "artists"
     | "songs"
     | "moments"
-    | "incoming"
     | "unprocessed"
 
 export interface CardProps {

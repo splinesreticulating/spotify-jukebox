@@ -4,7 +4,6 @@ import type { CardProps } from "@/app/lib/types"
 import {
     ClockIcon,
     HeartIcon,
-    InboxIcon,
     MusicalNoteIcon,
     UserGroupIcon,
 } from "@heroicons/react/24/outline"
@@ -13,7 +12,6 @@ const iconMap = {
     songs: MusicalNoteIcon,
     artists: UserGroupIcon,
     moments: HeartIcon,
-    incoming: InboxIcon,
     unprocessed: ClockIcon,
 }
 
@@ -23,7 +21,6 @@ export default async function CardWrapper() {
         numberOfArtists,
         numberOfCompatibilities,
         numberOfUnprocessed,
-        numberOfIncoming,
     } = await fetchCardData()
 
     return (
@@ -42,11 +39,6 @@ export default async function CardWrapper() {
                 title="Magic Moments"
                 value={numberOfCompatibilities.toLocaleString()}
                 type="moments"
-            />
-            <Card
-                title="Incoming"
-                value={numberOfIncoming.toLocaleString()}
-                type="incoming"
             />
             <Card
                 title="Unprocessed"
