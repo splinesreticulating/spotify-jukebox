@@ -36,7 +36,7 @@ export default function RootLayout({
                 {process.env.NODE_ENV === "production" && (
                     <Script
                         src="https://gc.zgo.at/count.js"
-                        data-goatcounter="https://squirrelradio.goatcounter.com/count"
+                        data-goatcounter={process.env.NEXT_PUBLIC_GOATCOUNTER_URL}
                         strategy="afterInteractive"
                     />
                 )}
