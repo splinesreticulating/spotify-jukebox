@@ -6,6 +6,7 @@ import Script from "next/script"
 import { Providers } from "./providers"
 
 export const metadata: Metadata = {
+    manifest: '/manifest.json',
     title: {
         template: "%s | Spotify Jukebox",
         default: "Spotify Jukebox",
@@ -20,6 +21,7 @@ export const metadata: Metadata = {
             },
             { url: "/favicon.ico" },
         ],
+        apple: '/icons/512.png',
     },
 }
 
