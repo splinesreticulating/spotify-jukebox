@@ -1,25 +1,25 @@
-# 🎶 Spotify Jukebox
+# Spotify Jukebox
 
 **Spotify Jukebox** turns your Spotify library into a fully featured, smart radio station — complete with dynamic track selection, song metadata management, and a powerful dashboard.
 
 Built with **Next.js 15**, **Prisma**, and **PostgreSQL**, this project brings intelligent music automation to life.
 
-> 🛰️ Part of [Queue FM](https://github.com/splinesreticulating/queuefm) – a Spotify-powered radio station with a smart, self-updating playlist.
+> Part of [Queue FM](https://github.com/splinesreticulating/queuefm) – a Spotify-powered radio station with a smart, self-updating playlist.
 
 ---
 
-## 🚀 Features
+## Features
 
-- 🎵 **Smart Music Playback**: Dynamically selects and queues songs based on metadata like BPM, energy, key, and recent playback.
-- 🎚️ **Admin Dashboard**: Manage tracks, settings, and view detailed playback statistics.
-- 📈 **Track Analysis**: Visualize song attributes to optimize listening experience.
-- 🔍 **Search and Edit Songs**: Quickly search your collection and fine-tune metadata.
-- ⚡ **Serverless APIs**: Efficient, lightweight serverless functions deployed via Vercel.
-- 🔐 **Authentication**: Secure login system using NextAuth.js.
+- **Smart Music Playback**: Dynamically selects and queues songs based on metadata like BPM, energy, key, and recent playback.
+- **Admin Dashboard**: Manage tracks, settings, and view detailed playback statistics.
+- **Track Analysis**: Visualize song attributes to optimize listening experience.
+- **Search and Edit Songs**: Quickly search your collection and fine-tune metadata.
+- **Serverless APIs**: Efficient, lightweight serverless functions deployed via Vercel.
+- **Authentication**: Secure login system using NextAuth.js.
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Technology | Description |
 |:---|:---|
@@ -30,7 +30,7 @@ Built with **Next.js 15**, **Prisma**, and **PostgreSQL**, this project brings i
 
 ---
 
-## 📦 Installation
+## Installation
 
 Clone the repository:
 
@@ -80,7 +80,7 @@ Visit `http://localhost:3000` in your browser.
 
 ---
 
-## ⚙️ Environment Variables
+## Environment Variables
 
 You will need to set the following variables in your `.env` file:
 
@@ -94,7 +94,7 @@ You will need to set the following variables in your `.env` file:
 
 ---
 
-## 🔥 Deployment
+## Deployment
 
 The app is optimized for deployment on **Vercel**.
 
@@ -104,30 +104,23 @@ When deploying:
 
 ---
 
-## 🧠 Future Improvements
+## Future Improvements
 
-- 🎚️ Fine-grained playlist creation controls
-- 🎶 Crossfade and smart transition support
-- 📱 Mobile app integration
-- 🎨 UI/UX polish for a more immersive experience
-- 🌐 Custom domain setup
+- Fine-grained playlist creation controls
+- Crossfade and smart transition support
+- Mobile app integration
+- UI/UX polish for a more immersive experience
+- Custom domain setup
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Pull requests and issues are welcome!  
 If you have ideas for new features or enhancements, feel free to open an issue or PR.
 
 ---
 
-## 📄 License
+##  License
 
 This project is open-source under the [MIT License](LICENSE).
-
----
-
-## 👋 About the Author
-
-Developed by [Splines Reticulating](https://github.com/splinesreticulating).  
-Focused on building smart, user-centric music tools and automation projects.
