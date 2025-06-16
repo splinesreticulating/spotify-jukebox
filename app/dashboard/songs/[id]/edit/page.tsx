@@ -1,16 +1,21 @@
-import Form from "@/app/components/songs/EditForm"
-import { fetchSongById } from "@/app/lib/data"
-import { notFound } from "next/navigation"
+import { Metadata } from 'next'
+import Form from '@/app/components/songs/EditForm'
+import { fetchSongById } from '@/app/lib/data'
+import { notFound } from 'next/navigation'
 
-export default async function EditSongPage({
-    params,
-}: { params: Promise<{ id: string }> }) {
-    const id = (await params).id
-    const song = await fetchSongById(Number(id))
+export const metadata: Metadata = {
+  title: 'Edit Song | Spotify Jukebox',
+}
 
-    if (!song) {
-        notFound()
-    }
+export default async function EditSongPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const song = await fetchSongById(Number(id))
+
+  if (!song) {
+    notFound()
+  }
+
+  metadata.title = `${song.title} by ${song.artists?.[0]}`
 
     return (
         <main>
