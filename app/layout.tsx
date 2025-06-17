@@ -13,6 +13,16 @@ export const metadata: Metadata = {
     },
     description: "Pick the perfect next song",
     metadataBase: new URL(process.env.NEXTAUTH_URL || "http://localhost:2309"),
+    robots: {
+        index: false,
+        follow: false,
+        nocache: true,
+        googleBot: {
+            index: false,
+            follow: false,
+            noimageindex: true,
+        },
+    },
     icons: {
         icon: [
             {
