@@ -19,11 +19,7 @@ export interface TimeOffDropdownProps
     value?: number | null
 }
 
-export type CardType =
-    | "artists"
-    | "songs"
-    | "moments"
-    | "unprocessed"
+export type CardType = "artists" | "songs" | "moments" | "unprocessed"
 
 export interface CardProps {
     title: string

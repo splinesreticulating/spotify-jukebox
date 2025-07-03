@@ -90,10 +90,9 @@ const buildWhereClause = ({
     if (eighties) eraConditions.push(Prisma.sql`(year >= 1980 AND year < 1990)`)
     if (nineties) eraConditions.push(Prisma.sql`(year >= 1990 AND year < 2000)`)
     if (lastYear)
-        eraConditions.push(
-            Prisma.sql`year = ${new Date().getFullYear() - 1}`,
-        )
-    if (thisYear) eraConditions.push(Prisma.sql`year = ${new Date().getFullYear()}`)
+        eraConditions.push(Prisma.sql`year = ${new Date().getFullYear() - 1}`)
+    if (thisYear)
+        eraConditions.push(Prisma.sql`year = ${new Date().getFullYear()}`)
 
     if (eraConditions.length > 0) {
         conditions.push(

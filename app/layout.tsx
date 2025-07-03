@@ -6,7 +6,7 @@ import Script from "next/script"
 import { Providers } from "./providers"
 
 export const metadata: Metadata = {
-    manifest: '/manifest.json',
+    manifest: "/manifest.json",
     title: {
         template: "%s | Spotify Jukebox",
         default: "Spotify Jukebox",
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
             },
             { url: "/favicon.ico" },
         ],
-        apple: '/icons/512.png',
+        apple: "/icons/512.png",
     },
 }
 
@@ -48,7 +48,9 @@ export default function RootLayout({
                 {process.env.NODE_ENV === "production" && (
                     <Script
                         src="https://gc.zgo.at/count.js"
-                        data-goatcounter={process.env.NEXT_PUBLIC_GOATCOUNTER_URL}
+                        data-goatcounter={
+                            process.env.NEXT_PUBLIC_GOATCOUNTER_URL
+                        }
                         strategy="afterInteractive"
                     />
                 )}
