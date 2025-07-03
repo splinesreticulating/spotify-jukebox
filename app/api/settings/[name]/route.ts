@@ -1,10 +1,15 @@
 import { db } from "@/app/lib/db"
 import { NextResponse } from "next/server"
+import { auth } from "@/auth"
 
 export async function PUT(
     request: Request,
     { params }: { params: Promise<{ name: string }> },
 ) {
+    const session = await auth()
+    if (!session?.user) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
     try {
         const { name } = await params
         const { value } = await request.json()

@@ -1,9 +1,14 @@
 import { fetchNowPlaying } from "@/app/lib/data"
 import { NextResponse } from "next/server"
+import { auth } from "@/auth"
 
 const NOW_PLAYING_REFRESH_INTERVAL_MS = 10_000
 
 export async function GET() {
+    const session = await auth()
+    if (!session?.user) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
     let controller: ReadableStreamDefaultController
     let isStreamClosed = false
 
