@@ -9,13 +9,7 @@ import { unstable_cache } from "next/cache"
 import { ITEMS_PER_PAGE, db } from "./db"
 import type { ArtistSongView } from "./types/artists"
 import type { ArtistPayload, LatestSongPayload } from "./types/database"
-import { cleanLastFMText } from "./utils"
-import { getCompatibleKeys } from "./utils"
-
-// Helper for joining SQL fragments
-function arrayJoin(arr: string[], sep: string) {
-    return arr.join(sep)
-}
+import { cleanLastFMText, getCompatibleKeys } from "./utils"
 
 const songSelectFields: SongSelectFields = {
     id: true,
@@ -95,13 +89,11 @@ const buildWhereClause = ({
         eraConditions.push(Prisma.sql`year = ${new Date().getFullYear()}`)
 
     if (eraConditions.length > 0) {
-        conditions.push(
-            Prisma.sql`(${Prisma.join(eraConditions, Prisma.sql` OR `)})`,
-        )
+        conditions.push(Prisma.sql`(${Prisma.join(eraConditions, ' OR ')})`)
     }
 
     if (conditions.length > 0) {
-        return Prisma.sql`WHERE ${Prisma.join(conditions, Prisma.sql` AND `)}`
+        return Prisma.sql`WHERE ${Prisma.join(conditions, ' AND ')}`
     }
 
     return Prisma.sql``
@@ -272,14 +264,11 @@ export async function fetchSongsPages(
             thisYear: thisYear === "true",
         })
 
-        const sqlQuery = `
+        const result = await db.$queryRaw<{ count: number }[]>(Prisma.sql`
             SELECT COUNT(*)::integer as count
             FROM nuts
             ${whereClause}
-        `
-        const result = (await db.$queryRawUnsafe(sqlQuery)) as {
-            count: number
-        }[]
+        `)
         return Math.ceil(Number(result[0].count) / ITEMS_PER_PAGE)
     } catch (error) {
         console.error("Database Error:", error)
