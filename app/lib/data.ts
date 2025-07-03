@@ -104,7 +104,6 @@ const fetchSongsBaseQuery = async (
 ) => {
     const offset = ((params.currentPage || 1) - 1) * ITEMS_PER_PAGE
     const whereClause = buildWhereClause(params)
-    const currentTime = new Date()
 
     const sqlQuery = Prisma.sql`
         SELECT * FROM nuts
@@ -112,7 +111,7 @@ const fetchSongsBaseQuery = async (
         ORDER BY
           CASE
             WHEN date_played IS NULL THEN 1
-            ELSE EXTRACT(EPOCH FROM (date_played + (hours_off || ' hours')::interval - ${currentTime.toISOString()}))::integer
+            ELSE EXTRACT(EPOCH FROM (date_played + (hours_off::integer * interval '1 hour') - NOW()))::integer
           END ASC,
           date_added DESC
         LIMIT ${ITEMS_PER_PAGE}
