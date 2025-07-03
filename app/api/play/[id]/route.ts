@@ -1,6 +1,6 @@
 import { addToQueue } from "@/app/lib/actions"
-import { NextResponse } from "next/server"
 import { auth } from "@/auth"
+import { NextResponse } from "next/server"
 
 export async function POST(
     _request: Request,

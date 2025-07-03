@@ -1,6 +1,6 @@
-import { Metadata } from "next"
 import Form from "@/app/components/songs/EditForm"
 import { fetchSongById } from "@/app/lib/data"
+import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 
 export const metadata: Metadata = {

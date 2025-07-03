@@ -1,6 +1,6 @@
 import { fetchNowPlaying } from "@/app/lib/data"
-import { NextResponse } from "next/server"
 import { auth } from "@/auth"
+import { NextResponse } from "next/server"
 
 const NOW_PLAYING_REFRESH_INTERVAL_MS = 10_000
 

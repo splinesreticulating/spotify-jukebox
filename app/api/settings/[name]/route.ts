@@ -1,6 +1,6 @@
 import { db } from "@/app/lib/db"
-import { NextResponse } from "next/server"
 import { auth } from "@/auth"
+import { NextResponse } from "next/server"
 
 export async function PUT(
     request: Request,
