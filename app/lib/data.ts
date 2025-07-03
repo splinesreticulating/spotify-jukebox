@@ -89,11 +89,11 @@ const buildWhereClause = ({
         eraConditions.push(Prisma.sql`year = ${new Date().getFullYear()}`)
 
     if (eraConditions.length > 0) {
-        conditions.push(Prisma.sql`(${Prisma.join(eraConditions, ' OR ')})`)
+        conditions.push(Prisma.sql`(${Prisma.join(eraConditions, " OR ")})`)
     }
 
     if (conditions.length > 0) {
-        return Prisma.sql`WHERE ${Prisma.join(conditions, ' AND ')}`
+        return Prisma.sql`WHERE ${Prisma.join(conditions, " AND ")}`
     }
 
     return Prisma.sql``
