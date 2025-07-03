@@ -3,18 +3,13 @@
 import type { NowPlayingData, NowPlayingSong, Song } from "@/app/lib/types"
 import type { LatestSong, SongSelectFields } from "@/app/lib/types"
 import type { SongQueryParams } from "@/app/lib/types/api"
+import { Prisma } from "@prisma/client"
 import { unstable_noStore as noStore } from "next/cache"
 import { unstable_cache } from "next/cache"
 import { ITEMS_PER_PAGE, db } from "./db"
 import type { ArtistSongView } from "./types/artists"
 import type { ArtistPayload, LatestSongPayload } from "./types/database"
-import { cleanLastFMText } from "./utils"
-import { getCompatibleKeys } from "./utils"
-
-// Helper for joining SQL fragments
-function arrayJoin(arr: string[], sep: string) {
-    return arr.join(sep)
-}
+import { cleanLastFMText, getCompatibleKeys } from "./utils"
 
 const songSelectFields: SongSelectFields = {
     id: true,
@@ -53,47 +48,55 @@ const buildWhereClause = ({
     thisYear,
     keyCompatible,
 }: SongQueryParams) => {
-    const conditions = []
+    const conditions: Prisma.Sql[] = []
 
     if (query) {
         const searchTerm = `%${query}%`
-        conditions.push(`(
-      title ILIKE ${searchTerm} OR 
-      EXISTS (SELECT 1 FROM unnest(artists) a WHERE a ILIKE ${searchTerm}) OR
-      EXISTS (SELECT 1 FROM unnest(tags) t WHERE t ILIKE ${searchTerm})
-    )`)
+        conditions.push(
+            Prisma.sql`(
+                title ILIKE ${searchTerm} OR
+                EXISTS (SELECT 1 FROM unnest(artists) a WHERE a ILIKE ${searchTerm}) OR
+                EXISTS (SELECT 1 FROM unnest(tags) t WHERE t ILIKE ${searchTerm})
+            )`,
+        )
     }
 
     if (levelsArray.length > 0)
         conditions.push(
-            `level = ANY(ARRAY[${levelsArray.map(Number).join(",")}])`,
+            Prisma.sql`level = ANY(ARRAY[${Prisma.join(levelsArray.map(Number))}])`,
         )
-    if (instrumental === "1") conditions.push("instrumentalness >= 90")
-    if (keyMatch) conditions.push(`key = ${keyMatch}`)
-    if (keyCompatible)
+    if (instrumental === "1")
+        conditions.push(Prisma.sql`instrumentalness >= 90`)
+    if (keyMatch) conditions.push(Prisma.sql`key = ${keyMatch}`)
+    if (keyCompatible) {
+        const keys = getCompatibleKeys(keyCompatible)
         conditions.push(
-            `key = ANY(${getCompatibleKeys(keyCompatible)}::text[])`,
+            Prisma.sql`key = ANY(ARRAY[${Prisma.join(keys)}]::text[])`,
         )
+    }
     if (bpmRef)
         conditions.push(
-            `bpm BETWEEN ${Number(bpmRef) - 5} AND ${Number(bpmRef) + 5}`,
+            Prisma.sql`bpm BETWEEN ${Number(bpmRef) - 5} AND ${Number(bpmRef) + 5}`,
         )
 
-    const eraConditions = []
+    const eraConditions: Prisma.Sql[] = []
 
-    if (eighties) eraConditions.push("(year >= 1980 AND year < 1990)")
-    if (nineties) eraConditions.push("(year >= 1990 AND year < 2000)")
-    if (lastYear) eraConditions.push(`year = ${new Date().getFullYear() - 1}`)
-    if (thisYear) eraConditions.push(`year = ${new Date().getFullYear()}`)
+    if (eighties) eraConditions.push(Prisma.sql`(year >= 1980 AND year < 1990)`)
+    if (nineties) eraConditions.push(Prisma.sql`(year >= 1990 AND year < 2000)`)
+    if (lastYear)
+        eraConditions.push(Prisma.sql`year = ${new Date().getFullYear() - 1}`)
+    if (thisYear)
+        eraConditions.push(Prisma.sql`year = ${new Date().getFullYear()}`)
 
     if (eraConditions.length > 0) {
-        conditions.push(`(${arrayJoin(eraConditions, " OR ")})`)
+        conditions.push(Prisma.sql`(${Prisma.join(eraConditions, " OR ")})`)
     }
 
-    const whereClause =
-        conditions.length > 0 ? `WHERE ${arrayJoin(conditions, " AND ")}` : ""
+    if (conditions.length > 0) {
+        return Prisma.sql`WHERE ${Prisma.join(conditions, " AND ")}`
+    }
 
-    return whereClause
+    return Prisma.sql``
 }
 
 const fetchSongsBaseQuery = async (
@@ -101,21 +104,20 @@ const fetchSongsBaseQuery = async (
 ) => {
     const offset = ((params.currentPage || 1) - 1) * ITEMS_PER_PAGE
     const whereClause = buildWhereClause(params)
-    const currentTime = new Date()
 
-    const sqlQuery = `
+    const sqlQuery = Prisma.sql`
         SELECT * FROM nuts
         ${whereClause}
-        ORDER BY 
-          CASE 
+        ORDER BY
+          CASE
             WHEN date_played IS NULL THEN 1
-            ELSE EXTRACT(EPOCH FROM (date_played + (hours_off || ' hours')::interval - '${currentTime.toISOString()}'))::integer
+            ELSE EXTRACT(EPOCH FROM (date_played + (hours_off::integer * interval '1 hour') - NOW()))::integer
           END ASC,
           date_added DESC
         LIMIT ${ITEMS_PER_PAGE}
         OFFSET ${offset}
     `
-    return await db.$queryRawUnsafe(sqlQuery)
+    return await db.$queryRaw(sqlQuery)
 }
 
 export async function fetchLatestSongs(): Promise<LatestSong[]> {
@@ -261,14 +263,11 @@ export async function fetchSongsPages(
             thisYear: thisYear === "true",
         })
 
-        const sqlQuery = `
+        const result = await db.$queryRaw<{ count: number }[]>(Prisma.sql`
             SELECT COUNT(*)::integer as count
             FROM nuts
             ${whereClause}
-        `
-        const result = (await db.$queryRawUnsafe(sqlQuery)) as {
-            count: number
-        }[]
+        `)
         return Math.ceil(Number(result[0].count) / ITEMS_PER_PAGE)
     } catch (error) {
         console.error("Database Error:", error)
@@ -576,7 +575,7 @@ export async function fetchArtistInfo(
 
     try {
         const response = await fetch(
-            `http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=${encodeURIComponent(
+            `https://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=${encodeURIComponent(
                 artistName,
             )}&autocorrect=1&api_key=${process.env.LASTFM_API_KEY}&format=json`,
         )

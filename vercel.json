@@ -2,5 +2,4 @@
     "buildCommand": "yarn build",
     "outputDirectory": ".next",
     "framework": "nextjs"
-  }
-  
+}

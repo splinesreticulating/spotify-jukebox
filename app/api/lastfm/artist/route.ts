@@ -15,7 +15,7 @@ export async function GET(request: Request) {
 
     try {
         const response = await fetch(
-            `http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=${encodeURIComponent(
+            `https://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=${encodeURIComponent(
                 artistName,
             )}&api_key=${LASTFM_API_KEY}&format=json`,
         )
